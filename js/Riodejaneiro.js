@@ -675,7 +675,7 @@
     const initNoticeProceed = () => {
         const proceedButton = document.querySelector('.rio-notice .btn-proceed');
         const notice = document.querySelector('.rio-notice');
-        const target = document.querySelector('#tours');
+        const target = document.querySelector('.rio-hero-overlay');
         if (!proceedButton) return;
 
         proceedButton.addEventListener('click', () => {

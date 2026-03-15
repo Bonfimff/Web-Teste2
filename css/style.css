@@ -291,6 +291,22 @@ header {
   }
 }
 
+@media (min-width: 900px) {
+  .header-center {
+    order: -1;
+    justify-content: flex-start;
+    flex: 0;
+  }
+
+  .lang-selector {
+    margin-right: 1.5rem;
+  }
+
+  .header-spacer {
+    display: none;
+  }
+}
+
 /* Footer info card */
 .footer-info {
   padding: 2rem 0;
@@ -363,17 +379,23 @@ header {
   border: none;
   background: transparent;
   color: #ffffff;
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   cursor: pointer;
-  padding: 0.35rem;
-  width: 50px;
-  height: 50px;
+  padding: 0.3rem;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   box-shadow: none;
   transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.profile-btn i {
+  font-size: 1.4rem;
+  color: #ffffff;
+  line-height: 1;
 }
 
 .profile-btn:hover {
