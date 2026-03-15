@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel the World · Home</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="main-container">
+        <header>
+            <div class="nav-left">
+                <div class="lang-selector" id="langSelector">
+                    <button class="lang-btn" type="button" id="langBtn">
+                        <span class="flag flag-pt"></span><span class="lang-label" data-i18n="lang_label">Português</span>
+                    </button>
+                    <ul class="lang-list" id="langList">
+                        <li data-lang="pt"><span class="flag flag-pt"></span><span class="lang-label">Português</span></li>
+                        <li data-lang="en"><span class="flag flag-en"></span><span class="lang-label">English</span></li>
+                        <li data-lang="fr"><span class="flag flag-fr"></span><span class="lang-label">Français</span></li>
+                        <li data-lang="es"><span class="flag flag-es"></span><span class="lang-label">Español</span></li>
+                        <li data-lang="it"><span class="flag flag-it"></span><span class="lang-label">Italiano</span></li>
+                        <li data-lang="zh"><span class="flag flag-zh"></span><span class="lang-label">中文(普通话)</span></li>
+                    </ul>
+                </div>
+                <nav>
+                    <a href="#inicio" data-i18n="nav_home">INÍCIO</a>
+                    <a href="#" data-footer-action="sobre" data-i18n="nav_about">SOBRE</a>
+                    <a href="#" data-footer-action="contato" data-i18n="nav_contact">CONTATO</a>
+                    <a href="#" data-footer-action="ajuda" data-i18n="nav_help">AJUDA</a>
+                </nav>
+            </div>
+
+            <button class="hamburger" id="hamburger" type="button" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+
+            <div class="nav-right" id="navRight">
+                <a href="feed.html" class="btn-signup">Previsão do Tempo</a>
+                <a href="Riodejaneiro.html" class="btn-signup">Rio de Janeiro</a>
+            </div>
+        </header>
+
+        <main>
+            <section id="inicio" style="padding:2rem 0;">
+                <h1 data-i18n="index_title">Travel the World</h1>
+                <p data-i18n="index_desc">Bem-vindo ao projeto de demonstração. Use o menu para explorar as páginas do site.</p>
+            </section>
+            <section id="sobre" style="padding:2rem 0;">
+                <h2 data-i18n="index_sobre_title">Sobre</h2>
+                <p data-i18n="index_sobre_text">Este site demonstra um layout simples com suporte a múltiplos idiomas e rotas estáticas.</p>
+            </section>
+            <section id="contato" style="padding:2rem 0;">
+                <h2 data-i18n="index_contato_title">Contato</h2>
+                <p data-i18n="index_contato_text">Entre em contato via WhatsApp ou redes sociais nas páginas de destino.</p>
+            </section>
+            <section id="ajuda" style="padding:2rem 0;">
+                <h2 data-i18n="index_ajuda_title">Ajuda</h2>
+                <p data-i18n="index_ajuda_text">Se precisar, abra a ferramenta de desenvolvedor do navegador para inspecionar erros de console.</p>
+            </section>
+        </main>
+
+        <footer class="footer-info">
+            <div class="footer-info-card hidden" id="footerInfoCard">
+                <h3 class="footer-info-title">Informações</h3>
+                <div class="footer-info-body" id="footerInfoBody">
+                    Clique em um dos botões do menu para ver as informações aqui.
+                </div>
+                <div class="footer-info-icons">
+                    <a href="https://www.instagram.com/tourbyfootbrasil/?hl=en" aria-label="Instagram" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>
+                    <a href="https://wa.me/5521964458696" aria-label="WhatsApp" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i></a>
+                    <a href="mailto:contato@tourbyfoot.com" aria-label="Email"><i class="fa fa-envelope"></i></a>
+                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
