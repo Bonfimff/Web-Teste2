@@ -12,7 +12,45 @@
             nav_help: 'AJUDA',
             profile_login: 'Entrar',
             profile_register: 'Cadastrar',
+            login_title: 'Entrar',
+            login_email: 'Email',
+            login_password: 'Senha',
+            login_button: 'Entrar',
+            login_show: 'Mostrar senha',
+            login_hide: 'Ocultar senha',
+            login_forgot: 'Esqueci minha senha',
+            login_close: 'Fechar',
+            register_title: 'Cadastrar',
+            register_first_name: 'Nome',
+            register_last_name: 'Sobrenome',
+            register_email: 'Email',
+            register_dob: 'Data de nascimento',
+            register_phone: 'Celular',
+            register_country: 'País de origem',
+            register_password: 'Senha',
+            register_confirm: 'Confirmar senha',
+            register_button: 'Cadastrar',
+            register_close: 'Fechar',
+            register_next: 'Próximo',
+            register_back: 'Voltar',
+            register_gender: 'Gênero',
+            register_gender_male: 'Masculino',
+            register_gender_female: 'Feminino',
+            register_gender_nonbinary: 'Não-binário',
+            register_gender_prefer_not: 'Prefiro não dizer',
+            register_gender_other: 'Outro',
+            register_mismatch: 'As senhas não coincidem.',
+            register_invalid_email: 'Por favor, insira um email válido.',
+            register_invalid_phone: 'Por favor, insira um número de celular válido.',
+            register_invalid_dob: 'Data de nascimento inválida (não pode ser no futuro e deve ter no máximo 123 anos).',
+            register_invalid_code: 'Por favor, insira o código de confirmação.',
+            register_resend_code: 'Reenviar código',
+            register_resend_wait: 'Reenviar código em',
+            register_code_sent: 'Código enviado.',
+            register_code: 'Código de confirmação',
+            register_fill_all: 'Por favor, preencha todos os campos.',
             btn_book: 'Conhecer Tours',
+
             hero_title: 'Free Walking Tour',
             city_preposition: 'no',
             city_rio: 'Rio de Janeiro',
@@ -53,6 +91,43 @@
             nav_help: 'HELP',
             profile_login: 'Login',
             profile_register: 'Register',
+            login_title: 'Login',
+            login_email: 'Email',
+            login_password: 'Password',
+            login_button: 'Sign in',
+            login_show: 'Show password',
+            login_hide: 'Hide password',
+            login_forgot: 'Forgot password?',
+            login_close: 'Close',
+            register_title: 'Register',
+            register_first_name: 'First name',
+            register_last_name: 'Last name',
+            register_email: 'Email',
+            register_dob: 'Date of birth',
+            register_phone: 'Phone',
+            register_country: 'Country',
+            register_password: 'Password',
+            register_confirm: 'Confirm password',
+            register_button: 'Register',
+            register_close: 'Close',
+            register_fill_all: 'Please fill out all fields.',
+            register_next: 'Next',
+            register_back: 'Back',
+            register_gender: 'Gender',
+            register_gender_male: 'Male',
+            register_gender_female: 'Female',
+            register_gender_nonbinary: 'Non-binary',
+            register_gender_prefer_not: 'Prefer not to say',
+            register_gender_other: 'Other',
+            register_mismatch: 'Passwords do not match.',
+            register_invalid_email: 'Please enter a valid email.',
+            register_invalid_phone: 'Please enter a valid phone number.',
+            register_invalid_dob: 'Please enter a date of birth between now and 123 years ago.',
+            register_invalid_code: 'Please enter the confirmation code.',
+            register_resend_code: 'Resend code',
+            register_resend_wait: 'Resend code in',
+            register_code_sent: 'Code sent.',
+            register_code: 'Confirmation code',
             btn_book: 'Get to Know Tours',
             hero_title: 'Free Walking Tour',
             city_preposition: 'in',
@@ -94,6 +169,43 @@
             nav_help: 'AIDE',
             profile_login: 'Connexion',
             profile_register: 'S\u0027inscrire',
+            login_title: 'Connexion',
+            login_email: 'Email',
+            login_password: 'Mot de passe',
+            login_button: 'Se connecter',
+            login_show: 'Montrer le mot de passe',
+            login_hide: 'Masquer le mot de passe',
+            login_forgot: 'Mot de passe oublié ?',
+            login_close: 'Fermer',
+            register_title: 'S\u0027inscrire',
+            register_first_name: 'Prénom',
+            register_last_name: 'Nom',
+            register_email: 'Email',
+            register_dob: 'Date de naissance',
+            register_phone: 'Téléphone',
+            register_country: 'Pays d\'origine',
+            register_password: 'Mot de passe',
+            register_confirm: 'Confirmer le mot de passe',
+            register_button: 'S\u0027inscrire',
+            register_close: 'Fermer',
+            register_fill_all: 'Veuillez remplir tous les champs.',
+            register_next: 'Suivant',
+            register_back: 'Retour',
+            register_gender: 'Genre',
+            register_gender_male: 'Masculin',
+            register_gender_female: 'Féminin',
+            register_gender_nonbinary: 'Non-binaire',
+            register_gender_prefer_not: 'Préfère ne pas dire',
+            register_gender_other: 'Autre',
+            register_mismatch: 'Les mots de passe ne correspondent pas.',
+            register_invalid_email: 'Veuillez entrer un email valide.',
+            register_invalid_phone: 'Veuillez entrer un numéro de téléphone valide.',
+            register_invalid_dob: 'Veuillez entrer une date de naissance valide (pas dans le futur et maximale 123 ans).',
+            register_invalid_code: 'Veuillez entrer le code de confirmation.',
+            register_resend_code: 'Renvoyer le code',
+            register_resend_wait: 'Renvoyer le code dans',
+            register_code_sent: 'Code envoyé.',
+            register_code: 'Code de confirmation',
             btn_book: 'Découvrir les tours',
             hero_title: 'Visite Guidée Gratuite',
             city_preposition: 'à',
@@ -135,6 +247,43 @@
             nav_help: 'AYUDA',
             profile_login: 'Iniciar sesión',
             profile_register: 'Registrarse',
+            login_title: 'Iniciar sesión',
+            login_email: 'Email',
+            login_password: 'Contraseña',
+            login_button: 'Entrar',
+            login_show: 'Mostrar contraseña',
+            login_hide: 'Ocultar contraseña',
+            login_forgot: '¿Olvidaste tu contraseña?',
+            login_close: 'Cerrar',
+            register_title: 'Registrarse',
+            register_first_name: 'Nombre',
+            register_last_name: 'Apellido',
+            register_email: 'Email',
+            register_dob: 'Fecha de nacimiento',
+            register_phone: 'Celular',
+            register_country: 'País de origen',
+            register_password: 'Contraseña',
+            register_confirm: 'Confirmar contraseña',
+            register_button: 'Registrarse',
+            register_close: 'Cerrar',
+            register_fill_all: 'Por favor rellena todos los campos.',
+            register_next: 'Siguiente',
+            register_back: 'Atrás',
+            register_gender: 'Género',
+            register_gender_male: 'Masculino',
+            register_gender_female: 'Femenino',
+            register_gender_nonbinary: 'No binario',
+            register_gender_prefer_not: 'Prefiero no decir',
+            register_gender_other: 'Otro',
+            register_mismatch: 'Las contraseñas no coinciden.',
+            register_invalid_email: 'Por favor, ingrese un email válido.',
+            register_invalid_phone: 'Por favor, ingrese un número de celular válido.',
+            register_invalid_dob: 'Por favor, ingrese una fecha de nacimiento válida (no futura y menor de 123 años).',
+            register_invalid_code: 'Por favor, ingrese el código de confirmación.',
+            register_resend_code: 'Reenviar código',
+            register_resend_wait: 'Reenviar código en',
+            register_code_sent: 'Código enviado.',
+            register_code: 'Código de confirmación',
             btn_book: 'Conocer Tours',
             hero_title: 'Tour a Pie Gratis',
             city_preposition: 'en',
@@ -176,6 +325,43 @@
             nav_help: 'AIUTO',
             profile_login: 'Accedi',
             profile_register: 'Registrati',
+            login_title: 'Accedi',
+            login_email: 'Email',
+            login_password: 'Password',
+            login_button: 'Accedi',
+            login_show: 'Mostra password',
+            login_hide: 'Nascondi password',
+            login_forgot: 'Hai dimenticato la password?',
+            login_close: 'Chiudi',
+            register_title: 'Registrati',
+            register_first_name: 'Nome',
+            register_last_name: 'Cognome',
+            register_email: 'Email',
+            register_dob: 'Data di nascita',
+            register_phone: 'Cellulare',
+            register_country: 'Paese di origine',
+            register_password: 'Password',
+            register_confirm: 'Conferma password',
+            register_button: 'Registrati',
+            register_close: 'Chiudi',
+            register_fill_all: 'Per favore completa tutti i campi.',
+            register_next: 'Avanti',
+            register_back: 'Indietro',
+            register_gender: 'Genere',
+            register_gender_male: 'Maschile',
+            register_gender_female: 'Femminile',
+            register_gender_nonbinary: 'Non binario',
+            register_gender_prefer_not: 'Preferisco non dire',
+            register_gender_other: 'Altro',
+            register_mismatch: 'Le password non corrispondono.',
+            register_invalid_email: 'Per favore inserisci un email valido.',
+            register_invalid_phone: 'Per favore inserisci un numero di cellulare valido.',
+            register_invalid_dob: 'Per favore inserisci una data di nascita valida (non futura e max 123 anni).',
+            register_invalid_code: 'Per favore inserisci il codice di conferma.',
+            register_resend_code: 'Reinvia codice',
+            register_resend_wait: 'Reinvia codice tra',
+            register_code_sent: 'Codice inviato.',
+            register_code: 'Codice di conferma',
             btn_book: 'Scopri i Tour',
             hero_title: 'Tour a Piedi Gratuito',
             city_preposition: 'a',
@@ -217,6 +403,43 @@
             nav_help: '帮助',
             profile_login: '登录',
             profile_register: '注册',
+            login_title: '登录',
+            login_email: '邮箱',
+            login_password: '密码',
+            login_button: '登录',
+            login_show: '显示密码',
+            login_hide: '隐藏密码',
+            login_forgot: '忘记密码？',
+            login_close: '关闭',
+            register_title: '注册',
+            register_first_name: '名字',
+            register_last_name: '姓氏',
+            register_email: '邮箱',
+            register_dob: '出生日期',
+            register_phone: '手机',
+            register_country: '原籍国家',
+            register_password: '密码',
+            register_confirm: '确认密码',
+            register_button: '注册',
+            register_close: '关闭',
+            register_fill_all: '请填写所有字段。',
+            register_next: '下一步',
+            register_back: '返回',
+            register_gender: '性别',
+            register_gender_male: '男性',
+            register_gender_female: '女性',
+            register_gender_nonbinary: '非二元',
+            register_gender_prefer_not: '不愿透露',
+            register_gender_other: '其他',
+            register_mismatch: '密码不匹配。',
+            register_invalid_email: '请输入有效的电子邮件地址。',
+            register_invalid_phone: '请输入有效的手机号码。',
+            register_invalid_dob: '请输入有效的出生日期（不能是将来日期，且不得超过123年）。',
+            register_invalid_code: '请输入确认代码。',
+            register_resend_code: '重新发送代码',
+            register_resend_wait: '在以下时间后重新发送代码',
+            register_code_sent: '代码已发送。',
+            register_code: '确认代码',
             btn_book: '查看路线',
             hero_title: '免费徒步游',
             city_preposition: '在',
@@ -402,6 +625,468 @@
         });
     };
 
+    const createLoginModal = () => {
+        if (document.querySelector('.login-modal-overlay')) return;
+
+        const strings = translations[getCurrentLang()] || translations.pt;
+        const overlay = document.createElement('div');
+        overlay.className = 'login-modal-overlay';
+        overlay.innerHTML = `
+            <div class="login-modal" role="dialog" aria-modal="true" aria-label="${strings.login_title}">
+                <div class="login-modal__header">
+                    <h2 class="login-modal__title" data-i18n="login_title">${strings.login_title}</h2>
+                    <button type="button" class="login-modal__close" aria-label="${strings.login_close}">&times;</button>
+                </div>
+                <form class="login-modal__form">
+                    <div class="login-modal__field">
+                        <label for="loginEmail" data-i18n="login_email">${strings.login_email}</label>
+                        <input id="loginEmail" type="email" autocomplete="email" required />
+                    </div>
+                    <div class="login-modal__field login-modal__field--password">
+                        <label for="loginPassword" data-i18n="login_password">${strings.login_password}</label>
+                        <div class="login-modal__password-wrapper">
+                            <input id="loginPassword" type="password" autocomplete="current-password" required />
+                            <button type="button" class="login-modal__toggle-password" aria-label="${strings.login_show}">
+                                <i class="fa fa-eye" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="login-modal__actions">
+                        <button type="submit" class="login-modal__submit" data-i18n="login_button">${strings.login_button}</button>
+                        <button type="button" class="login-modal__forgot" data-i18n="login_forgot">${strings.login_forgot}</button>
+                    </div>
+                </form>
+            </div>
+        `;
+
+        const closeModal = () => {
+            overlay.classList.remove('open');
+            document.body.classList.remove('modal-open');
+        };
+
+        const openModal = () => {
+            overlay.classList.add('open');
+            document.body.classList.add('modal-open');
+            const firstInput = overlay.querySelector('input');
+            if (firstInput) firstInput.focus();
+        };
+
+        overlay.addEventListener('click', (event) => {
+            if (event.target === overlay) {
+                closeModal();
+            }
+        });
+
+        overlay.querySelector('.login-modal__close')?.addEventListener('click', closeModal);
+        overlay.querySelector('.login-modal__forgot')?.addEventListener('click', () => {
+            alert(strings.login_forgot);
+        });
+
+        overlay.querySelector('.login-modal__form')?.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const email = overlay.querySelector('#loginEmail')?.value?.trim();
+            const password = overlay.querySelector('#loginPassword')?.value || '';
+            const isAdmin = email === 'admin@test' && password === 'admin@Teste';
+
+            if (isAdmin) {
+                window.location.href = 'html/Gerenciamento.html';
+                return;
+            }
+
+            alert(strings.login_button);
+            closeModal();
+        });
+
+        const togglePassword = overlay.querySelector('.login-modal__toggle-password');
+        const passwordInput = overlay.querySelector('#loginPassword');
+        if (togglePassword && passwordInput) {
+            const updateToggle = () => {
+                const isPassword = passwordInput.type === 'password';
+                passwordInput.type = isPassword ? 'text' : 'password';
+                togglePassword.setAttribute('aria-label', isPassword ? strings.login_hide : strings.login_show);
+                const icon = togglePassword.querySelector('i');
+                if (icon) {
+                    icon.className = isPassword ? 'fa fa-eye-slash' : 'fa fa-eye';
+                }
+            };
+
+            togglePassword.addEventListener('click', updateToggle);
+        }
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && overlay.classList.contains('open')) {
+                closeModal();
+            }
+        });
+
+        document.body.appendChild(overlay);
+    };
+
+    const createRegisterModal = () => {
+        if (document.querySelector('.register-modal-overlay')) return;
+
+        const strings = translations[getCurrentLang()] || translations.pt;
+        const overlay = document.createElement('div');
+        overlay.className = 'register-modal-overlay';
+        overlay.innerHTML = `
+            <div class="login-modal" role="dialog" aria-modal="true" aria-label="${strings.register_title}">
+                <div class="login-modal__header">
+                    <h2 class="login-modal__title" data-i18n="register_title">${strings.register_title}</h2>
+                    <button type="button" class="login-modal__close" aria-label="${strings.register_close}">&times;</button>
+                </div>
+                <form class="login-modal__form">
+                    <div class="register-step register-step--1 active">
+                        <div class="login-modal__field">
+                            <label for="registerFirstName" data-i18n="register_first_name">${strings.register_first_name}</label>
+                            <input id="registerFirstName" type="text" autocomplete="given-name" required />
+                        </div>
+                        <div class="login-modal__field">
+                            <label for="registerLastName" data-i18n="register_last_name">${strings.register_last_name}</label>
+                            <input id="registerLastName" type="text" autocomplete="family-name" required />
+                        </div>
+                        <div class="login-modal__field">
+                            <label for="registerEmail" data-i18n="register_email">${strings.register_email}</label>
+                            <input id="registerEmail" type="email" autocomplete="email" required />
+                        </div>
+                        <div class="login-modal__field">
+                            <label for="registerDob" data-i18n="register_dob">${strings.register_dob}</label>
+                            <input id="registerDob" type="date" required />
+                        </div>
+                        <div class="login-modal__field">
+                            <label for="registerPhone" data-i18n="register_phone">${strings.register_phone}</label>
+                            <input id="registerPhone" type="tel" inputmode="numeric" pattern="[0-9]*" autocomplete="tel" required />
+                        </div>
+                        <div class="login-modal__field">
+                            <label for="registerCountry" data-i18n="register_country">${strings.register_country}</label>
+                            <input id="registerCountry" type="text" list="countryList" autocomplete="country" required />
+                            <datalist id="countryList"></datalist>
+                        </div>
+                        <div class="login-modal__field">
+                            <label for="registerGender" data-i18n="register_gender">${strings.register_gender}</label>
+                            <select id="registerGender" required>
+                                <option value="" selected disabled>—</option>
+                                <option value="male" data-i18n="register_gender_male">${strings.register_gender_male}</option>
+                                <option value="female" data-i18n="register_gender_female">${strings.register_gender_female}</option>
+                                <option value="nonbinary" data-i18n="register_gender_nonbinary">${strings.register_gender_nonbinary}</option>
+                                <option value="prefer_not" data-i18n="register_gender_prefer_not">${strings.register_gender_prefer_not}</option>
+                                <option value="other" data-i18n="register_gender_other">${strings.register_gender_other}</option>
+                            </select>
+                        </div>
+                        <div class="login-modal__actions">
+                            <button type="button" class="login-modal__next" data-i18n="register_next">${strings.register_next}</button>
+                        </div>
+                    </div>
+                    <div class="register-step register-step--2">
+                        <div class="login-modal__field">
+                            <label for="registerCode" data-i18n="register_code">${strings.register_code}</label>
+                            <input id="registerCode" type="text" autocomplete="one-time-code" required />
+                        </div>
+                        <div class="login-modal__resend">
+                            <button type="button" class="register-resend-button" disabled data-i18n="register_resend_code">
+                                ${strings.register_resend_code}
+                            </button>
+                        </div>
+                        <div class="login-modal__field login-modal__field--password">
+                            <label for="registerPassword" data-i18n="register_password">${strings.register_password}</label>
+                            <div class="login-modal__password-wrapper">
+                                <input id="registerPassword" type="password" autocomplete="new-password" required />
+                                <button type="button" class="login-modal__toggle-password" aria-label="${strings.login_show}">
+                                    <i class="fa fa-eye" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="login-modal__field login-modal__field--password">
+                            <label for="registerConfirm" data-i18n="register_confirm">${strings.register_confirm}</label>
+                            <div class="login-modal__password-wrapper">
+                                <input id="registerConfirm" type="password" autocomplete="new-password" required />
+                                <button type="button" class="login-modal__toggle-password" aria-label="${strings.login_show}">
+                                    <i class="fa fa-eye" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="login-modal__actions login-modal__actions--row">
+                            <button type="button" class="login-modal__back" data-i18n="register_back">${strings.register_back}</button>
+                            <button type="submit" class="login-modal__submit" data-i18n="register_button">${strings.register_button}</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        `;
+
+        const closeModal = () => {
+            overlay.classList.remove('open');
+            document.body.classList.remove('modal-open');
+            stopResendCountdown();
+        };
+
+        const openModal = () => {
+            overlay.classList.add('open');
+            document.body.classList.add('modal-open');
+            showStep(1);
+            const firstInput = overlay.querySelector('input');
+            if (firstInput) firstInput.focus();
+        };
+
+        overlay.addEventListener('click', (event) => {
+            if (event.target === overlay) {
+                closeModal();
+            }
+        });
+
+        overlay.querySelector('.login-modal__close')?.addEventListener('click', closeModal);
+
+        const step1 = overlay.querySelector('.register-step--1');
+        const step2 = overlay.querySelector('.register-step--2');
+        const nextBtn = overlay.querySelector('.login-modal__next');
+        const backBtn = overlay.querySelector('.login-modal__back');
+        const form = overlay.querySelector('.login-modal__form');
+
+        let resendInterval = null;
+        let remainingSeconds = 0;
+
+        const resendButton = () => overlay.querySelector('.register-resend-button');
+
+        const updateResendButton = (seconds) => {
+            const button = resendButton();
+            if (!button) return;
+            if (seconds > 0) {
+                button.disabled = true;
+                button.textContent = `${strings.register_resend_wait} ${seconds}s`;
+            } else {
+                button.disabled = false;
+                button.textContent = strings.register_resend_code;
+            }
+        };
+
+        const startResendCountdown = (addSeconds = 60) => {
+            remainingSeconds = Math.max(0, remainingSeconds) + addSeconds;
+            updateResendButton(remainingSeconds);
+            if (resendInterval) return;
+
+            resendInterval = setInterval(() => {
+                if (remainingSeconds <= 0) {
+                    clearInterval(resendInterval);
+                    resendInterval = null;
+                    updateResendButton(0);
+                    return;
+                }
+                remainingSeconds -= 1;
+                updateResendButton(remainingSeconds);
+            }, 1000);
+        };
+
+        const stopResendCountdown = () => {
+            if (resendInterval) {
+                clearInterval(resendInterval);
+                resendInterval = null;
+            }
+            remainingSeconds = 0;
+            updateResendButton(0);
+        };
+
+        const showStep = (step) => {
+            if (step1) step1.classList.toggle('active', step === 1);
+            if (step2) step2.classList.toggle('active', step === 2);
+
+            if (step === 2) {
+                startResendCountdown();
+                const codeInput = overlay.querySelector('#registerCode');
+                if (codeInput) codeInput.focus();
+            } else {
+                stopResendCountdown();
+            }
+        };
+
+        nextBtn?.addEventListener('click', () => {
+            const firstName = overlay.querySelector('#registerFirstName');
+            const lastName = overlay.querySelector('#registerLastName');
+            const email = overlay.querySelector('#registerEmail');
+            const dob = overlay.querySelector('#registerDob');
+            const phone = overlay.querySelector('#registerPhone');
+            const country = overlay.querySelector('#registerCountry');
+            const gender = overlay.querySelector('#registerGender');
+
+            const isValidEmail = (value) => {
+                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+            };
+
+            const isValidPhone = (value) => {
+                return /^[0-9]{7,15}$/.test(value.replace(/\s+/g, ''));
+            };
+
+            if (!firstName?.value || !lastName?.value || !email?.value || !dob?.value || !phone?.value || !country?.value || !gender?.value) {
+                alert(strings.register_fill_all);
+                return;
+            }
+
+            if (!isValidEmail(email.value)) {
+                alert(strings.register_invalid_email);
+                return;
+            }
+
+            if (!isValidPhone(phone.value)) {
+                alert(strings.register_invalid_phone);
+                return;
+            }
+
+            const dobDate = new Date(dob.value);
+            const today = new Date();
+            const minDob = new Date();
+            minDob.setFullYear(today.getFullYear() - 123);
+
+            if (Number.isNaN(dobDate.getTime()) || dobDate > today || dobDate < minDob) {
+                alert(strings.register_invalid_dob);
+                return;
+            }
+
+            showStep(2);
+            startResendCountdown(60);
+        });
+
+        const resendBtn = overlay.querySelector('.register-resend-button');
+        resendBtn?.addEventListener('click', () => {
+            startResendCountdown(60);
+            alert(strings.register_code_sent);
+        });
+
+        backBtn?.addEventListener('click', () => {
+            showStep(1);
+        });
+
+        form?.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const code = overlay.querySelector('#registerCode');
+            const password = overlay.querySelector('#registerPassword');
+            const confirm = overlay.querySelector('#registerConfirm');
+
+            if (!code?.value) {
+                alert(strings.register_invalid_code);
+                return;
+            }
+
+            if (password && confirm && password.value !== confirm.value) {
+                alert(strings.register_mismatch);
+                return;
+            }
+
+            alert(strings.register_button);
+            closeModal();
+        });
+
+        const phoneInput = overlay.querySelector('#registerPhone');
+        if (phoneInput) {
+            phoneInput.addEventListener('input', () => {
+                phoneInput.value = phoneInput.value.replace(/[^0-9]/g, '');
+            });
+        }
+
+        const toggleButtons = overlay.querySelectorAll('.login-modal__toggle-password');
+        toggleButtons.forEach((toggleButton) => {
+            const passwordInput = toggleButton.closest('.login-modal__password-wrapper')?.querySelector('input');
+            if (!passwordInput) return;
+
+            const updateToggle = () => {
+                const isPassword = passwordInput.type === 'password';
+                passwordInput.type = isPassword ? 'text' : 'password';
+                toggleButton.setAttribute('aria-label', isPassword ? strings.login_hide : strings.login_show);
+                const icon = toggleButton.querySelector('i');
+                if (icon) {
+                    icon.className = isPassword ? 'fa fa-eye-slash' : 'fa fa-eye';
+                }
+            };
+
+            toggleButton.addEventListener('click', updateToggle);
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && overlay.classList.contains('open')) {
+                closeModal();
+            }
+        });
+
+        const countryList = [
+            'Afghanistan','Albania','Algeria','Andorra','Angola','Antigua and Barbuda','Argentina','Armenia','Australia','Austria','Azerbaijan',
+            'Bahamas','Bahrain','Bangladesh','Barbados','Belarus','Belgium','Belize','Benin','Bhutan','Bolivia','Bosnia and Herzegovina','Botswana','Brazil','Brunei','Bulgaria','Burkina Faso','Burundi',
+            'Cabo Verde','Cambodia','Cameroon','Canada','Central African Republic','Chad','Chile','China','Colombia','Comoros','Costa Rica','Croatia','Cuba','Cyprus','Czech Republic',
+            'Democratic Republic of the Congo','Denmark','Djibouti','Dominica','Dominican Republic','Ecuador','Egypt','El Salvador','Equatorial Guinea','Eritrea','Estonia','Eswatini','Ethiopia',
+            'Fiji','Finland','France','Gabon','Gambia','Georgia','Germany','Ghana','Greece','Grenada','Guatemala','Guinea','Guinea-Bissau','Guyana',
+            'Haiti','Honduras','Hungary','Iceland','India','Indonesia','Iran','Iraq','Ireland','Israel','Italy','Ivory Coast',
+            'Jamaica','Japan','Jordan','Kazakhstan','Kenya','Kiribati','Kosovo','Kuwait','Kyrgyzstan',
+            'Laos','Latvia','Lebanon','Lesotho','Liberia','Libya','Liechtenstein','Lithuania','Luxembourg',
+            'Madagascar','Malawi','Malaysia','Maldives','Mali','Malta','Marshall Islands','Mauritania','Mauritius','Mexico','Micronesia','Moldova','Monaco','Mongolia','Montenegro','Morocco','Mozambique','Myanmar',
+            'Namibia','Nauru','Nepal','Netherlands','New Zealand','Nicaragua','Niger','Nigeria','North Korea','North Macedonia','Norway',
+            'Oman','Pakistan','Palau','Panama','Papua New Guinea','Paraguay','Peru','Philippines','Poland','Portugal',
+            'Qatar','Romania','Russia','Rwanda',
+            'Saint Kitts and Nevis','Saint Lucia','Saint Vincent and the Grenadines','Samoa','San Marino','Sao Tome and Principe','Saudi Arabia','Senegal','Serbia','Seychelles','Sierra Leone','Singapore','Slovakia','Slovenia','Solomon Islands','Somalia','South Africa','South Korea','South Sudan','Spain','Sri Lanka','Sudan','Suriname','Sweden','Switzerland','Syria',
+            'Tajikistan','Tanzania','Thailand','Timor-Leste','Togo','Tonga','Trinidad and Tobago','Tunisia','Turkey','Turkmenistan','Tuvalu',
+            'Uganda','Ukraine','United Arab Emirates','United Kingdom','United States','Uruguay','Uzbekistan',
+            'Vanuatu','Vatican City','Venezuela','Vietnam',
+            'Yemen','Zambia','Zimbabwe'
+        ];
+
+        const datalist = overlay.querySelector('#countryList');
+        if (datalist) {
+            countryList.forEach(country => {
+                const option = document.createElement('option');
+                option.value = country;
+                datalist.appendChild(option);
+            });
+        }
+
+        document.body.appendChild(overlay);
+    };
+
+    const initRegisterModal = () => {
+        createRegisterModal();
+        const registerTriggers = document.querySelectorAll('[data-profile-action="register"]');
+        registerTriggers.forEach(trigger => {
+            trigger.addEventListener('click', (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                const overlay = document.querySelector('.register-modal-overlay');
+                if (!overlay) return;
+
+                const profileMenu = document.querySelector('.profile-menu');
+                const profileBtn = document.querySelector('.profile-btn');
+                if (profileMenu) profileMenu.classList.remove('open');
+                if (profileBtn) profileBtn.setAttribute('aria-expanded', 'false');
+
+                overlay.classList.add('open');
+                document.body.classList.add('modal-open');
+                const firstInput = overlay.querySelector('input');
+                if (firstInput) firstInput.focus();
+            });
+        });
+    };
+
+    const initLoginModal = () => {
+        createLoginModal();
+        const loginTriggers = document.querySelectorAll('[data-profile-action="login"]');
+        loginTriggers.forEach(trigger => {
+            trigger.addEventListener('click', (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                const overlay = document.querySelector('.login-modal-overlay');
+                if (!overlay) return;
+
+                const profileMenu = document.querySelector('.profile-menu');
+                const profileBtn = document.querySelector('.profile-btn');
+                if (profileMenu) {
+                    profileMenu.classList.remove('open');
+                }
+                if (profileBtn) {
+                    profileBtn.setAttribute('aria-expanded', 'false');
+                }
+
+                overlay.classList.add('open');
+                document.body.classList.add('modal-open');
+                const firstInput = overlay.querySelector('input');
+                if (firstInput) firstInput.focus();
+            });
+        });
+    };
+
     window.getCurrentLanguage = getCurrentLang;
 
     const footerInfo = {
@@ -426,6 +1111,76 @@
         const bodyKey = `footer_${key}`;
         body.innerHTML = strings[bodyKey] || '<p>Selecione uma opção para ver mais informações.</p>';
     };
+
+    const getReservations = () => {
+        try {
+            const saved = JSON.parse(localStorage.getItem('reservations') || '[]');
+            if (!Array.isArray(saved)) return [];
+            return saved.map(r => ({
+                tour: r.tour || '',
+                when: r.when || new Date().toISOString(),
+                url: r.url || '',
+                quantity: r.quantity || 1,
+                status: r.status || 'Pendente',
+                language: r.language || '',
+                guide: r.guide || '',
+                phone: r.phone || ''
+            }));
+        } catch {
+            return [];
+        }
+    };
+
+    const setReservations = (reservations) => {
+        try {
+            localStorage.setItem('reservations', JSON.stringify(reservations));
+        } catch {
+            // ignore
+        }
+    };
+
+    const addReservation = (reservation) => {
+        const all = getReservations();
+        const normalized = {
+            tour: reservation.tour || '',
+            when: reservation.when || new Date().toISOString(),
+            url: reservation.url || '',
+            quantity: reservation.quantity || 1,
+            status: reservation.status || 'Pendente',
+            language: reservation.language || '',
+            guide: reservation.guide || '',
+            phone: reservation.phone || ''
+        };
+        all.unshift(normalized);
+        setReservations(all);
+    };
+
+    // Expose reservation helpers so other scripts (eg. Gerenciamento) can access them
+    window.getReservations = getReservations;
+    window.setReservations = setReservations;
+    window.addReservation = addReservation;
+
+    const initReservationTracking = () => {
+        document.querySelectorAll('.rio-btn-reserve').forEach(button => {
+            button.addEventListener('click', () => {
+                const card = button.closest('.rio-tour-card');
+                const tourName = card?.querySelector('.rio-tour-name')?.textContent?.trim() || '';
+                const language = card?.querySelector('.fa-language')?.parentElement?.textContent?.replace(/\s*Idiomas?:\s*/i, '').trim() || '';
+                const guide = card?.querySelector('.fa-shirt')?.parentElement?.textContent?.trim() || '';
+                addReservation({
+                    tour: tourName,
+                    when: new Date().toISOString(),
+                    url: button.href || '',
+                    quantity: 1,
+                    status: 'Pendente',
+                    language,
+                    guide
+                });
+            });
+        });
+    };
+
+
 
     const initFooterInfo = () => {
         document.querySelectorAll('[data-footer-action]').forEach(link => {
@@ -455,6 +1210,9 @@
         initLanguageSelector();
         initHamburgerMenu();
         initSmoothAnchorScroll();
+        initLoginModal();
+        initRegisterModal();
+        initReservationTracking();
         initFooterInfo();
 
         // Trigger initial language event so pages can format text on load
