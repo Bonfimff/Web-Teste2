@@ -735,6 +735,18 @@
         ? window.getCurrentLanguage()
         : (document.documentElement.lang || 'pt').slice(0, 2);
     applyPageLanguage(initialLang);
+
+    const initMobileNav = () => {
+        const hamburger = document.getElementById('hamburger');
+        const nav = document.querySelector('.nav-left nav');
+        if (!hamburger || !nav) return;
+
+        hamburger.addEventListener('click', () => {
+            nav.classList.toggle('open');
+        });
+    };
+
+    initMobileNav();
 })();
 // script.js - shared logic for navigation, language switching and UI helpers
 (() => {
