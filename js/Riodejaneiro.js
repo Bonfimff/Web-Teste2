@@ -737,13 +737,7 @@
     applyPageLanguage(initialLang);
 
     const initMobileNav = () => {
-        const hamburger = document.getElementById('hamburger');
-        const nav = document.querySelector('.nav-left nav');
-        if (!hamburger || !nav) return;
-
-        hamburger.addEventListener('click', () => {
-            nav.classList.toggle('open');
-        });
+        // Legacy helper (kept for compatibility), actual toggle logic lives in initHamburgerMenu.
     };
 
     initMobileNav();
@@ -1358,7 +1352,19 @@
             if (navRight) navRight.classList.toggle('open', open);
         };
 
-        burger.addEventListener('click', toggle);
+        burger.addEventListener('click', (event) => {
+            event.stopPropagation();
+            toggle();
+        });
+
+        document.addEventListener('click', () => {
+            const open = burger.classList.contains('open');
+            if (open) {
+                burger.classList.remove('open');
+                if (navLeft) navLeft.classList.remove('open');
+                if (navRight) navRight.classList.remove('open');
+            }
+        });
     };
 
     const initSmoothAnchorScroll = () => {

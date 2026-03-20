@@ -1181,24 +1181,39 @@ header {
   display: none;
   position: absolute;
   left: 0;
-  top: 100%;
-  margin: 0.5rem 0 0;
-  padding: 0.5rem 0;
+  top: calc(100% + 0.35rem);
+  margin: 0;
+  padding: 0.35rem 0;
   list-style: none;
-  border-radius: 1rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  background: rgba(255, 255, 255, 0.5);
+  border-radius: 0.85rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   color: #0b3a66;
   min-width: 170px;
-  z-index: 20;
+  z-index: 2000;
   border: 1px solid rgba(11, 58, 102, 0.4);
+  max-height: 280px;
+  overflow-y: auto;
 }
 
 .lang-selector.open .lang-list {
   display: block;
 }
+
+.nav-left nav.open {
+  display: flex;
+  flex-direction: column;
+  width: min(260px, 80vw);
+  z-index: 2000;
+}
+
+.nav-left nav.open a {
+  display: block;
+  width: 100%;
+}
+
 
 .lang-selector .lang-list li {
   padding: 0.5rem 1rem;
