@@ -1364,6 +1364,42 @@ header {
   }
 }
 
+@media (max-width: 768px) {
+  /* Força a exibição do menu */
+  .nav-left nav.open {
+    display: flex !important;
+    flex-direction: column !important;
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 9999;
+    padding-top: 80px;
+    align-items: center;
+  }
+
+  .nav-left nav.open a {
+    color: #fff !important;
+  }
+
+  /* Força a exibição da lista de idiomas */
+  .lang-selector.open .lang-list, 
+  #langList.open {
+    display: block !important;
+    position: absolute !important;
+    background: white !important;
+    color: black !important;
+    z-index: 10000 !important;
+    top: 50px;
+    right: 0;
+    min-width: 150px;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.3);
+  }
+}
+
+
 @media (min-width: 900px) {
   .header-center {
     order: -1;

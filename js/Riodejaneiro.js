@@ -1321,16 +1321,20 @@
         updateLangSelectorButton(current);
         applyTranslations(current);
 
-        wrapper.addEventListener('click', (event) => {
-            const target = event.target.closest('li[data-lang]');
-            if (target) {
-                const lang = target.getAttribute('data-lang');
-                selectLanguage(lang);
-                wrapper.classList.remove('open');
-                return;
-            }
-
+        btn.addEventListener('click', (event) => {
+            event.stopPropagation();
             wrapper.classList.toggle('open');
+        });
+
+        list.addEventListener('click', (event) => {
+            event.stopPropagation();
+            const target = event.target.closest('li[data-lang]');
+            if (!target) return;
+
+            const lang = target.getAttribute('data-lang');
+            selectLanguage(lang);
+            // Mantém aberto até o clique fora para evitar fechamento imediato
+            // wrapper.classList.remove('open');
         });
 
         document.addEventListener('click', (event) => {
@@ -1341,28 +1345,20 @@
     };
 
     const initHamburgerMenu = () => {
-        const burger = document.querySelector('#hamburger');
-        const navLeft = document.querySelector('.nav-left nav');
-        const navRight = document.querySelector('#navRight');
-        if (!burger) return;
-
-        const toggle = () => {
-            const open = burger.classList.toggle('open');
-            if (navLeft) navLeft.classList.toggle('open', open);
-            if (navRight) navRight.classList.toggle('open', open);
-        };
+        const burger = document.querySelector('.hamburger');
+        const nav = document.querySelector('nav');
+        if (!burger || !nav) return;
 
         burger.addEventListener('click', (event) => {
             event.stopPropagation();
-            toggle();
+            burger.classList.toggle('open');
+            nav.classList.toggle('open');
         });
 
         document.addEventListener('click', () => {
-            const open = burger.classList.contains('open');
-            if (open) {
+            if (burger.classList.contains('open')) {
                 burger.classList.remove('open');
-                if (navLeft) navLeft.classList.remove('open');
-                if (navRight) navRight.classList.remove('open');
+                nav.classList.remove('open');
             }
         });
     };
