@@ -20,7 +20,7 @@
     background-position: center center !important;
     background-size: cover !important;
     background-attachment: fixed !important;
-    background-color: transparent !important; /* evita camada creme sobre a foto */
+    background-color: #02415a !important; /* cor por baixo da imagem */
     background-blend-mode: normal !important;
     color: #2c3e50;
 }
@@ -69,6 +69,125 @@
 .rio-page nav a.active {
     color: #f0e5c0;
     border-bottom-color: #f0e5c0;
+}
+
+.mobile-menu-container {
+    position: fixed;
+    top: 72px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1100;
+    width: min(92vw, 360px);
+    max-height: calc(100vh - 90px);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.35);
+    box-shadow: 0 16px 45px rgba(0, 0, 0, 0.22);
+    display: none;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.35);
+}
+
+.mobile-menu-container.open {
+    display: block;
+}
+
+.mobile-menu-panel {
+    position: relative;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    max-height: 100%;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 14px 30px rgba(0,0,0,0.24);
+    transform: translateY(-10px);
+    transition: transform 0.22s ease, opacity 0.22s ease;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+}
+
+.mobile-menu-container.open .mobile-menu-panel {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.mobile-menu-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.8rem 1rem;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+
+.mobile-menu-title {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #2c3e50;
+}
+
+.mobile-menu-back,
+.mobile-menu-close {
+    border: none;
+    background: transparent;
+    color: #2c3e50;
+    font-size: 1.1rem;
+    cursor: pointer;
+}
+
+.mobile-menu-content {
+    overflow-y: auto;
+    flex: 1;
+    padding: 0.75rem 0.85rem;
+    background: rgba(255,255,255,0.30);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border-radius: 0 0 16px 16px;
+}
+
+.mobile-menu-view {
+    display: none;
+}
+
+.mobile-menu-view.active {
+    display: block;
+}
+
+.mobile-menu-view a,
+.mobile-menu-launcher,
+.mobile-lang-list li {
+    display: block;
+    padding: 0.75rem 0.6rem;
+    border-radius: 8px;
+    color: #234160;
+    text-decoration: none;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+}
+
+.mobile-menu-view a:hover,
+.mobile-lang-list li:hover,
+.mobile-menu-launcher:hover {
+    background: rgba(194,178,128,0.2);
+}
+
+.mobile-lang-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.mobile-lang-list li {
+    cursor: pointer;
+}
+
+.rio-page header.menu-open + .mobile-menu-container {
+    display: block;
 }
 
 .rio-page .lang-btn {
@@ -144,11 +263,11 @@
     position: relative;
     min-height: 70vh;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     text-align: center;
     overflow: hidden;
-    padding-top: 70px;
+    padding-top: calc(60px + 0.5rem); /* garante que começa logo abaixo do header */
     /* herói mantém sua própria foto acima do fundo do corpo */
     background:
         url('https://tourbyfootcom.swipepages.media/2021/12/6154b435ca6c9c0010a3dead/cabe-alho-site.jpeg') center/cover no-repeat;
@@ -190,7 +309,7 @@
     inset: 0;
     background: linear-gradient(
         180deg,
-        rgba(12, 35, 64, 0.62) 0%,
+        rgba(12, 35, 64, 0.60) 0%,
         rgba(26, 82, 118, 0.38) 60%,
         rgba(12, 35, 64, 0.72) 100%
     );
@@ -202,8 +321,8 @@
     position: relative;
     z-index: 5;
     max-width: 800px;
-    padding: 2rem 2rem 4rem;
-    margin-top: -1rem;
+    padding: 0.3rem 2rem 2rem;
+    margin-top: 0;
     animation: heroIntro 0.9s ease-out forwards;
 }
 
@@ -215,7 +334,43 @@
     text-transform: uppercase;
     letter-spacing: 2px;
     line-height: 1.15;
-    margin-bottom: 0.5rem;
+    margin: 0.2rem 0 0.5rem;
+}
+
+#rioHeroDesc {
+    color: #ffffff !important;
+}
+
+@media (min-width: 1200px) {
+    .rio-hero-content {
+        padding-top: 1.6rem;
+        margin-top: 1.2rem;
+    }
+}
+
+.rio-hero-content .btn-book {
+    display: block;
+    width: min(180px, 75%);
+    margin: 0.5rem auto 0 auto;
+    padding: 0.5rem 1rem;
+    border: 2px solid #ffffff;
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.20);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 999px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 0.85rem;
+    transition: background 0.2s ease, transform 0.2s ease, color 0.2s ease;
+}
+
+.rio-hero-content .btn-book:hover,
+.rio-hero-content .btn-book:focus {
+    background: rgba(255, 255, 255, 0.42);
+    transform: translateY(-1px);
+    color: #a7834b;
 }
 
 .rio-city-highlight {
@@ -237,20 +392,7 @@
     margin-bottom: 1.2rem;
 }
 
-.rio-hero-desc {
-    font-size: clamp(1.05rem, 1.6vw, 1.3rem);
-    font-weight: 600;
-    color: rgba(255,255,255,0.92);
-    line-height: 1.6;
-    text-shadow: 0 1px 6px rgba(0,0,0,0.35);
-    max-width: 620px;
-    margin: 0 auto 2rem;
-    padding: 0.8rem 1.1rem;
-    border-radius: 18px;
-    background: rgba(0, 0, 0, 0.28);
-    box-shadow: 0 18px 35px rgba(0, 0, 0, 0.25);
-    letter-spacing: 0.02em;
-}
+
 
 /* ===================================================== */
 /* SEÇÃO DE AVISO (modal)                                */
@@ -616,6 +758,18 @@
         padding: 0.8rem 1.2rem;
     }
 
+    .rio-hero {
+        padding-top: calc(42px + 0.5rem); /* mais acima */
+    }
+
+    .rio-hero-content {
+        margin-top: -0.6rem;
+    }
+
+    .rio-section-title {
+        margin-top: 0.1rem;
+    }
+
     .rio-page header.menu-open nav {
         background: rgba(0, 0, 0, 0.8);
         backdrop-filter: blur(14px);
@@ -632,16 +786,16 @@
     }
 
     .rio-tours-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
     }
 
     .rio-hero {
         min-height: 55vh;
-        padding-top: 80px;
+        padding-top: calc(60px + 0.5rem);
     }
 
     .rio-hero-content {
-        padding: 2rem 1.2rem;
+        padding: 1rem 1rem 2rem;
     }
 
 }
@@ -755,6 +909,10 @@
     .rio-hero {
         min-height: 50vh;
         padding-top: 70px;
+    }
+
+    .rio-tours-grid {
+        grid-template-columns: 1fr;
     }
 
     .rio-hero-title {
@@ -1549,6 +1707,29 @@ header {
 .profile-item:hover {
   background: rgba(0, 0, 0, 0.06);
   color: #0b3a66 !important;
+}
+
+.mobile-profile-dropdown {
+  display: block !important;
+  position: static !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0;
+}
+
+.mobile-profile-dropdown .profile-item {
+  display: block;
+  color: #234160 !important;
+  padding: 0.75rem 0.6rem !important;
+  border-radius: 8px !important;
+  background: transparent !important;
+  text-decoration: none;
+}
+
+.mobile-profile-dropdown .profile-item:hover {
+  background: rgba(194,178,128,0.2) !important;
 }
 
 .footer-card-up {

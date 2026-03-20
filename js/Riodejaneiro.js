@@ -3,7 +3,7 @@
         pt: {
             hero_title: 'Tuor no<br><span class="rio-city-highlight">RIO DE JANEIRO</span>',
             hero_location: 'Rio de Janeiro - Brasil',
-            hero_desc: 'Seja bem-vindo à cidade Maravilhosa; o Rio dos amores e da beleza inconfundível te espera de braços abertos.',
+            hero_desc: 'Seja bem-vindo à Cidade Maravilhosa! O Rio dos amores e da beleza inconfundível te espera de braços abertos.',
             hero_button: 'Conhecer Tours',
             notice_title: 'Informações Importantes',
             notice_lines: [
@@ -24,7 +24,6 @@
                     details: [
                         
                         '<i class="fa fa-language"></i> <strong>Idiomas:</strong> Português, Inglês e Espanhol',
-                        '<i class="fa fa-tag"></i> <strong>Valor:</strong> R$ 120,00 por pessoa',
                         '<i class="fa fa-map-marker-alt"></i> <strong>Encontro:</strong> Praça Cinelândia, em frente ao Theatro Municipal',
                         '<i class="fa fa-shirt"></i> <strong>Identificação:</strong> Guias com camisetas verdes'
                     ],
@@ -35,7 +34,6 @@
                     name: 'Santa Teresa & Experiência Gastronômica Carioca',
                     details: [
                         '<i class="fa fa-language"></i> <strong>Idiomas:</strong> Português, Inglês e Espanhol',
-                        '<i class="fa fa-tag"></i> <strong>Valor:</strong> R$ 120,00 por pessoa',
                         '<i class="fa fa-map-marker-alt"></i> <strong>Encontro:</strong> Largo dos Guimarães, em frente ao Cine Santa Teresa',
                         '<i class="fa fa-shirt"></i> <strong>Identificação:</strong> Guias com camisetas verdes'
                     ],
@@ -46,7 +44,6 @@
                     name: 'Pedra do Sal: Samba e Herança Afro-brasileira',
                     details: [
                         '<i class="fa fa-language"></i> <strong>Idiomas:</strong> Português, Inglês e Espanhol',
-                        '<i class="fa fa-tag"></i> <strong>Valor:</strong> R$ 120,00 por pessoa',
                         '<i class="fa fa-map-marker-alt"></i> <strong>Encontro:</strong> Museu de Arte do Rio (MAR) - Praça Mauá, 5 - Centro',
                         '<i class="fa fa-shirt"></i> <strong>Identificação:</strong> Guias com camisetas verdes'
                     ],
@@ -57,7 +54,6 @@
                     name: 'Pedra do Sal + Experiência de Carnaval',
                     details: [
                         '<i class="fa fa-language"></i> <strong>Idiomas:</strong> Português, Inglês e Espanhol',
-                        '<i class="fa fa-tag"></i> <strong>Valor:</strong> R$ 120,00 por pessoa',
                         '<i class="fa fa-map-marker-alt"></i> <strong>Encontro:</strong> Museu de Arte do Rio (MAR) - Praça Mauá, 5 - Centro',
                         '<i class="fa fa-shirt"></i> <strong>Identificação:</strong> Guias com camisetas verdes'
                     ],
@@ -68,7 +64,6 @@
                     name: 'Copacabana e Ipanema',
                     details: [
                         '<i class="fa fa-language"></i> <strong>Idiomas:</strong> Português, Inglês e Espanhol',
-                        '<i class="fa fa-tag"></i> <strong>Valor:</strong> R$ 120,00 por pessoa',
                         '<i class="fa fa-map-marker-alt"></i> <strong>Encontro:</strong> Praça General Osório, em frente à estação de metrô',
                         '<i class="fa fa-shirt"></i> <strong>Identificação:</strong> Guias com camisetas verdes'
                     ],
@@ -86,7 +81,7 @@
         en: {
             hero_title: 'Tour in<br><span class="rio-city-highlight">RIO DE JANEIRO</span>',
             hero_location: 'Rio de Janeiro - Brazil',
-            hero_desc: 'Welcome to the Marvelous City; Rio of love and unmistakable beauty awaits you with open arms.',
+            hero_desc: 'Welcome to the Marvelous City! Rio, a city of love and unmistakable beauty, welcomes you with open arms.',
             hero_button: 'See Tours',
             notice_title: 'Important Information',
             notice_lines: [
@@ -106,7 +101,6 @@
                     name: 'Centro Histórico e Lapa',
                     details: [
                         '<i class="fa fa-language"></i> <strong>Languages:</strong> Portuguese, English and Spanish',
-                        '<i class="fa fa-tag"></i> <strong>Valor:</strong> R$ 120,00 por pessoa',
                         '<i class="fa fa-map-marker-alt"></i> <strong>Meeting:</strong> Cinelandia Square, in front of Theatro Municipal',
                         '<i class="fa fa-shirt"></i> <strong>Identification:</strong> Guides wearing green shirts'
                     ],
@@ -117,7 +111,6 @@
                     name: 'Santa Teresa & Carioca Gastronomy Experience',
                     details: [
                         '<i class="fa fa-language"></i> <strong>Languages:</strong> Portuguese, English and Spanish',
-                        '<i class="fa fa-tag"></i> <strong>Valor:</strong> R$ 120,00 por pessoa',
                         '<i class="fa fa-map-marker-alt"></i> <strong>Meeting:</strong> Largo dos Guimaraes, in front of Cine Santa Teresa',
                         '<i class="fa fa-shirt"></i> <strong>Identification:</strong> Guides wearing green shirts'
                     ],
@@ -128,7 +121,6 @@
                     name: 'Pedra do Sal: Samba and Afro-Brazilian Heritage',
                     details: [
                         '<i class="fa fa-language"></i> <strong>Languages:</strong> Portuguese, English and Spanish',
-                        '<i class="fa fa-tag"></i> <strong>Valor:</strong> R$ 120,00 por pessoa',
                         '<i class="fa fa-map-marker-alt"></i> <strong>Meeting:</strong> Museum of Art of Rio (MAR) - Praca Maua, 5 - Downtown',
                         '<i class="fa fa-shirt"></i> <strong>Identification:</strong> Guides wearing green shirts'
                     ],
@@ -139,7 +131,6 @@
                     name: 'Pedra do Sal + Carnival Experience',
                     details: [
                         '<i class="fa fa-language"></i> <strong>Languages:</strong> Portuguese, English and Spanish',
-                        '<i class="fa fa-tag"></i> <strong>Valor:</strong> R$ 120,00 por pessoa',
                         '<i class="fa fa-map-marker-alt"></i> <strong>Meeting:</strong> Museum of Art of Rio (MAR) - Praca Maua, 5 - Downtown',
                         '<i class="fa fa-shirt"></i> <strong>Identification:</strong> Guides wearing green shirts'
                     ],
@@ -151,7 +142,6 @@
 
                     details: [
                         '<i class="fa fa-language"></i> <strong>Languages:</strong> Portuguese, English and Spanish',
-                        '<i class="fa fa-tag"></i> <strong>Valor:</strong> R$ 120,00 por pessoa',
                         '<i class="fa fa-map-marker-alt"></i> <strong>Meeting:</strong> General Osorio Square, in front of the metro station',
                         '<i class="fa fa-shirt"></i> <strong>Identification:</strong> Guides wearing green shirts'
                     ],
@@ -171,7 +161,7 @@
     pageTranslations.fr = {
         hero_title: 'Tour à<br><span class="rio-city-highlight">RIO DE JANEIRO</span>',
         hero_location: 'Rio de Janeiro - Brésil',
-        hero_desc: 'Bienvenue dans la Ville Merveilleuse ; le Rio des amours et de la beauté incomparable vous attend à bras ouverts.',
+        hero_desc: 'Bienvenue dans la Ville Merveilleuse ! Rio, ville d’amour et de beauté incomparable, vous accueille à bras ouverts.',
         hero_button: 'Voir les tours',
         notice_title: 'Informations importantes',
         notice_lines: [
@@ -191,7 +181,6 @@
                 name: 'Centro Histórico e Lapa',
                 details: [
                     '<i class="fa fa-language"></i> <strong>Langues :</strong> Portugais, anglais et espagnol',
-                    '<i class="fa fa-tag"></i> <strong>Valor:</strong> R$ 120,00 por pessoa',
                     '<i class="fa fa-map-marker-alt"></i> <strong>Rendez-vous :</strong> Place Cinelândia, devant le Theatro Municipal',
                     '<i class="fa fa-shirt"></i> <strong>Identification :</strong> Guides avec t-shirts verts'
                 ],
@@ -202,7 +191,6 @@
                 name: 'Santa Teresa & Expérience Gastronomique Carioca',
                 details: [
                     '<i class="fa fa-language"></i> <strong>Langues :</strong> Portugais, anglais et espagnol',
-                    '<i class="fa fa-tag"></i> <strong>Valor:</strong> R$ 120,00 por pessoa',
                     '<i class="fa fa-map-marker-alt"></i> <strong>Rendez-vous :</strong> Largo dos Guimarães, devant le Cine Santa Teresa',
                     '<i class="fa fa-shirt"></i> <strong>Identification :</strong> Guides avec t-shirts verts'
                 ],
@@ -213,7 +201,6 @@
                 name: 'Pedra do Sal : Samba et héritage afro-brésilien',
                 details: [
                     '<i class="fa fa-language"></i> <strong>Langues :</strong> Portugais, anglais et espagnol',
-                    '<i class="fa fa-tag"></i> <strong>Valor:</strong> R$ 120,00 por pessoa',
                     '<i class="fa fa-map-marker-alt"></i> <strong>Rendez-vous :</strong> Place Cinelândia, devant le Theatro Municipal',
                     '<i class="fa fa-shirt"></i> <strong>Identification :</strong> Guides avec t-shirts verts'
                 ],
@@ -224,7 +211,6 @@
                 name: 'Pedra do Sal + Expérience Carnaval',
                 details: [
                     '<i class="fa fa-language"></i> <strong>Langues :</strong> Portugais, anglais et espagnol',
-                    '<i class="fa fa-tag"></i> <strong>Valor:</strong> R$ 120,00 por pessoa',
                     '<i class="fa fa-map-marker-alt"></i> <strong>Rendez-vous :</strong> Place Cinelândia, devant le Theatro Municipal',
                     '<i class="fa fa-shirt"></i> <strong>Identification :</strong> Guides avec t-shirts verts'
                 ],
@@ -235,7 +221,6 @@
                 name: 'Copacabana et Ipanema',
                 details: [
                     '<i class="fa fa-language"></i> <strong>Langues :</strong> Portugais, anglais et espagnol',
-                    '<i class="fa fa-tag"></i> <strong>Valor:</strong> R$ 120,00 por pessoa',
                     '<i class="fa fa-map-marker-alt"></i> <strong>Rendez-vous :</strong> Place General Osório, devant la station de métro',
                     '<i class="fa fa-shirt"></i> <strong>Identification :</strong> Guides avec t-shirts verts'
                 ],
@@ -254,7 +239,7 @@
     pageTranslations.es = {
         hero_title: 'Tour en<br><span class="rio-city-highlight">RIO DE JANEIRO</span>',
         hero_location: 'Rio de Janeiro - Brasil',
-        hero_desc: 'Bienvenido a la Ciudad Maravillosa; el Río de los amores y la belleza inconfundible te espera con los brazos abiertos.',
+        hero_desc: '¡Bienvenido a la Ciudad Maravillosa! Río, ciudad de amores y de belleza inconfundible, te recibe con los brazos abiertos.',
         hero_button: 'Ver tours',
         notice_title: 'Información importante',
         notice_lines: [
@@ -294,7 +279,6 @@
                 name: 'Pedra do Sal: Samba y herencia afrobrasileña',
                 details: [
                     '<i class="fa fa-language"></i> <strong>Idiomas:</strong> Portugués, inglés y español',
-                    '<i class="fa fa-tag"></i> <strong>Valor:</strong> R$ 120,00 por pessoa',
                     '<i class="fa fa-map-marker-alt"></i> <strong>Encuentro:</strong> Museo de Arte de Río (MAR) - Praça Mauá, 5 - Centro',
                     '<i class="fa fa-shirt"></i> <strong>Identificación:</strong> Guías con camisetas verdes'
                 ],
@@ -305,7 +289,6 @@
                 name: 'Pedra do Sal + Experiencia de Carnaval',
                 details: [
                     '<i class="fa fa-language"></i> <strong>Idiomas:</strong> Portugués, inglés y español',
-                    '<i class="fa fa-tag"></i> <strong>Valor:</strong> R$ 120,00 por pessoa',
                     '<i class="fa fa-map-marker-alt"></i> <strong>Encuentro:</strong> Museo de Arte de Río (MAR) - Praça Mauá, 5 - Centro',
                     '<i class="fa fa-shirt"></i> <strong>Identificación:</strong> Guías con camisetas verdes'
                 ],
@@ -334,7 +317,7 @@
     pageTranslations.it = {
         hero_title: 'Tour a<br><span class="rio-city-highlight">RIO DE JANEIRO</span>',
         hero_location: 'Rio de Janeiro - Brasile',
-        hero_desc: 'Benvenuto nella Città Meravigliosa; la Rio degli amori e della bellezza inconfondibile ti aspetta a braccia aperte.',
+        hero_desc: 'Benvenuto nella Città Meravigliosa! Rio, città dell’amore e dalla bellezza inconfondibile, ti accoglie a braccia aperte.',
         hero_button: 'Vedi tour',
         notice_title: 'Informazioni importanti',
         notice_lines: [
@@ -374,7 +357,6 @@
                 name: 'Pedra do Sal: Samba e patrimonio afro-brasiliano',
                 details: [
                     '<i class="fa fa-language"></i> <strong>Lingue:</strong> Portoghese, inglese e spagnolo',
-                    '<i class="fa fa-tag"></i> <strong>Valor:</strong> R$ 120,00 por pessoa',
                     '<i class="fa fa-map-marker-alt"></i> <strong>Incontro:</strong> Museo d\'Arte di Rio (MAR) - Praça Mauá, 5 - Centro',
                     '<i class="fa fa-shirt"></i> <strong>Identificazione:</strong> Guide con magliette verdi'
                 ],
@@ -385,7 +367,6 @@
                 name: 'Pedra do Sal + Esperienza di Carnevale',
                 details: [
                     '<i class="fa fa-language"></i> <strong>Lingue:</strong> Portoghese, inglese e spagnolo',
-                    '<i class="fa fa-tag"></i> <strong>Valor:</strong> R$ 120,00 por pessoa',
                     '<i class="fa fa-map-marker-alt"></i> <strong>Incontro:</strong> Museo d\'Arte di Rio (MAR) - Praça Mauá, 5 - Centro',
                     '<i class="fa fa-shirt"></i> <strong>Identificazione:</strong> Guide con magliette verdi'
                 ],
@@ -414,7 +395,7 @@
     pageTranslations.zh = {
         hero_title: '里约之旅<br><span class="rio-city-highlight">RIO DE JANEIRO</span>',
         hero_location: '里约热内卢 - 巴西',
-        hero_desc: '欢迎来到奇妙之城；充满爱与独特之美的里约张开双臂等待您的到来。',
+        hero_desc: '欢迎来到这座奇妙之城！里约，这座充满爱与独特之美的城市，正张开双臂欢迎你。',
         hero_button: '查看旅游',
         notice_title: '重要信息',
         notice_lines: [
@@ -504,7 +485,7 @@
         const heroLocation = document.querySelector('.rio-hero-location');
         if (heroLocation) heroLocation.textContent = t.hero_location;
 
-        const heroDesc = document.querySelector('.rio-hero-desc');
+        const heroDesc = document.querySelector('#rioHeroDesc');
         if (heroDesc) heroDesc.textContent = t.hero_desc;
 
         const heroButton = document.querySelector('.rio-hero-content .btn-book');
@@ -560,7 +541,6 @@
 
             const parsed = {
                 idiomas: '',
-                valor: '',
                 encontro: '',
                 identificacao: ''
             };
@@ -574,11 +554,6 @@
                 line = line.replace(/<strong>.*?Lingue?:.*?<\/strong>/i, `<strong>${labels.idiomas}:</strong>`);
                 line = line.replace(/<strong>.*?语言.*?<\/strong>/i, `<strong>${labels.idiomas}:</strong>`);
 
-                line = line.replace(/<strong>.*?Valor.*?<\/strong>/i, `<strong>${labels.valor}:</strong>`);
-                line = line.replace(/<strong>.*?Value.*?<\/strong>/i, `<strong>${labels.valor}:</strong>`);
-                line = line.replace(/<strong>.*?Valeur.*?<\/strong>/i, `<strong>${labels.valor}:</strong>`);
-                line = line.replace(/<strong>.*?Valore.*?<\/strong>/i, `<strong>${labels.valor}:</strong>`);
-                line = line.replace(/<strong>.*?价格.*?<\/strong>/i, `<strong>${labels.valor}:</strong>`);
 
                 line = line.replace(/<strong>.*?Encontro.*?<\/strong>/i, `<strong>${labels.encontro}:</strong>`);
                 line = line.replace(/<strong>.*?Meeting.*?<\/strong>/i, `<strong>${labels.encontro}:</strong>`);
@@ -594,7 +569,6 @@
                 line = line.replace(/<strong>.*?识别.*?<\/strong>/i, `<strong>${labels.identificacao}:</strong>`);
 
                 if (/Idiomas|Languages|Langues|Lingue|语言/i.test(line)) parsed.idiomas = line;
-                if (/Valor|Value|Valeur|Valore|价格/i.test(line)) parsed.valor = line;
                 if (/Encontro|Meeting|Rendez-vous|Encuentro|Incontro|集合/i.test(line)) parsed.encontro = line;
                 if (/Identificação|Identification|Identificación|Identificazione|识别/i.test(line)) parsed.identificacao = line;
             });
@@ -604,12 +578,11 @@
 
                 const defaultDetails = {
                     idiomas: `<i class="fa fa-language"></i> <strong>${labels.idiomas}:</strong> Português, Inglês e Espanhol`,
-                    valor: `<i class="fa fa-tag"></i> <strong>${labels.valor}:</strong> R$ 120,00 por pessoa`,
                     encontro: `<i class="fa fa-map-marker-alt"></i> <strong>${labels.encontro}:</strong> ${lang === 'es' ? 'No informado' : lang === 'fr' ? 'Non renseigné' : lang === 'it' ? 'Non indicato' : lang === 'zh' ? '未指定' : 'Não informado'}`,
                     identificacao: `<i class="fa fa-shirt"></i> <strong>${labels.identificacao}:</strong> ${lang === 'es' ? 'Guías con camisetas verdes' : lang === 'fr' ? 'Guides avec t-shirts verts' : lang === 'it' ? 'Guide con magliette verdi' : lang === 'zh' ? '穿绿色T恤的导游' : 'Guias com camisetas verdes'}`
                 };
 
-                ['idiomas', 'valor', 'encontro', 'identificacao'].forEach(key => {
+                ['idiomas', 'encontro', 'identificacao'].forEach(key => {
                     const value = parsed[key] || defaultDetails[key];
                     const li = document.createElement('li');
                     li.innerHTML = value;
@@ -699,6 +672,12 @@
 
         button.addEventListener('click', (event) => {
             event.stopPropagation();
+
+            if (window.matchMedia('(max-width: 900px)').matches) {
+                toggleMobileMenu('user');
+                return;
+            }
+
             const isOpen = menu.classList.toggle('open');
             button.setAttribute('aria-expanded', String(isOpen));
         });
@@ -798,7 +777,7 @@
             hero_title: 'Tour',
             city_preposition: 'no',
             city_rio: 'Rio de Janeiro',
-            hero_desc_rio: 'Seja bem-vindo à cidade Maravilhosa; o Rio dos amores e da beleza inconfundível te espera de braços abertos.',
+            hero_desc_rio: 'Seja bem-vindo à Cidade Maravilhosa! O Rio dos amores e da beleza inconfundível te espera de braços abertos.',
             tours_section_title: 'Nossas Experiências',
             tours_free: 'Free Tours',
             tours_other: 'Outros Tours',
@@ -876,7 +855,7 @@
             hero_title: 'Tour',
             city_preposition: 'in',
             city_rio: 'Rio de Janeiro',
-            hero_desc_rio: 'Welcome to the Marvelous City; the Rio of loves and unmistakable beauty awaits you with open arms.',
+            hero_desc_rio: 'Welcome to the Marvelous City! Rio, a city of love and unmistakable beauty, welcomes you with open arms.',
             tours_section_title: 'Our Experiences',
             tours_other: 'Other Tours',
             tours_paid: 'Paid Tours',
@@ -954,7 +933,7 @@
             hero_title: 'Tour',
             city_preposition: 'à',
             city_rio: 'Rio de Janeiro',
-            hero_desc_rio: 'Bienvenue dans la Ville Merveilleuse ; le Rio des amours et de la beauté inoubliable vous attend à bras ouverts.',
+            hero_desc_rio: 'Bienvenue dans la Ville Merveilleuse ! Rio, ville d’amour et de beauté incomparable, vous accueille à bras ouverts.',
             tours_section_title: 'Nos Expériences',
             tours_other: 'Autres Tours',
             tours_paid: 'Tours Payants',
@@ -1032,7 +1011,7 @@
             hero_title: 'Tour',
             city_preposition: 'en',
             city_rio: 'Río de Janeiro',
-            hero_desc_rio: 'Bienvenido a la Ciudad Maravillosa; el Río de los amores y de la belleza inconfundible te espera con los brazos abiertos.',
+            hero_desc_rio: '¡Bienvenido a la Ciudad Maravillosa! Río, ciudad de amores y de belleza inconfundible, te recibe con los brazos abiertos.',
             tours_section_title: 'Nuestras Experiencias',
             tours_free: 'Tours Gratis',
             tours_other: 'Otros Tours',
@@ -1111,7 +1090,7 @@
             hero_title: 'Tour',
             city_preposition: 'a',
             city_rio: 'Rio de Janeiro',
-            hero_desc_rio: 'Benvenuto nella città meravigliosa; il Rio degli amori e della bellezza inconfondibile ti aspetta a braccia aperte.',
+            hero_desc_rio: 'Benvenuto nella Città Meravigliosa! Rio, città dell’amore e dalla bellezza inconfondibile, ti accoglie a braccia aperte.',
             tours_section_title: 'Le Nostre Esperienze',
             tours_free: 'Tour Gratuiti',
             tours_other: 'Altri Tour',
@@ -1190,7 +1169,7 @@
             hero_title: 'Tour',
             city_preposition: '在',
             city_rio: '里约热内卢',
-            hero_desc_rio: '欢迎来到神奇之城；爱情之河与无与伦比的美景正张开双臂等你。',
+            hero_desc_rio: '欢迎来到这座奇妙之城！里约，这座充满爱与独特之美的城市，正张开双臂欢迎你。',
             tours_section_title: '我们的体验',
             tours_free: '免费游',
             tours_other: '其他游',
@@ -1323,6 +1302,12 @@
 
         btn.addEventListener('click', (event) => {
             event.stopPropagation();
+
+            if (window.matchMedia('(max-width: 900px)').matches) {
+                toggleMobileMenu('lang');
+                return;
+            }
+
             wrapper.classList.toggle('open');
         });
 
@@ -1333,8 +1318,10 @@
 
             const lang = target.getAttribute('data-lang');
             selectLanguage(lang);
-            // Mantém aberto até o clique fora para evitar fechamento imediato
-            // wrapper.classList.remove('open');
+            wrapper.classList.remove('open');
+            if (window.matchMedia('(max-width: 900px)').matches) {
+                closeMobileMenu();
+            }
         });
 
         document.addEventListener('click', (event) => {
@@ -1344,6 +1331,158 @@
         });
     };
 
+    const mobileMenuState = {
+        open: false,
+        view: 'main'
+    };
+
+    const getMobileMenuContainer = () => document.getElementById('mobileMenuContainer');
+
+    const updateMobileMenuView = () => {
+        const container = getMobileMenuContainer();
+        if (!container) return;
+
+        const title = container.querySelector('#mobileMenuTitle');
+        const back = container.querySelector('#mobileMenuBack');
+        const views = container.querySelectorAll('.mobile-menu-view');
+
+        views.forEach((viewEl) => {
+            viewEl.classList.toggle('active', viewEl.dataset.view === mobileMenuState.view);
+        });
+
+        if (title) {
+            title.textContent = mobileMenuState.view === 'lang' ? 'Idiomas' : 'Menu';
+        }
+
+        if (back) {
+            back.style.visibility = mobileMenuState.view === 'main' ? 'hidden' : 'visible';
+        }
+
+        container.setAttribute('aria-hidden', mobileMenuState.open ? 'false' : 'true');
+        if (mobileMenuState.open) {
+            container.classList.add('open');
+        } else {
+            container.classList.remove('open');
+        }
+    };
+
+    const closeMobileMenu = () => {
+        mobileMenuState.open = false;
+        mobileMenuState.view = 'main';
+        const burger = document.querySelector('.hamburger');
+        if (burger) burger.classList.remove('open');
+        updateMobileMenuView();
+    };
+
+    const toggleMobileMenu = (view = 'main') => {
+        mobileMenuState.view = view;
+        mobileMenuState.open = true;
+        updateMobileMenuView();
+    };
+
+    const initMobileMenuContent = () => {
+        const container = getMobileMenuContainer();
+        const nav = document.querySelector('nav');
+        const langList = document.querySelector('#langList');
+        const profileDropdown = document.querySelector('.profile-dropdown');
+        const mainView = container?.querySelector('.mobile-menu-main');
+        const langView = container?.querySelector('.mobile-menu-lang');
+        const userView = container?.querySelector('.mobile-menu-user');
+
+        if (!container || !mainView || !langView || !userView || !nav || !langList || !profileDropdown) return;
+
+        mainView.innerHTML = nav.innerHTML;
+
+        const accountEntry = document.createElement('button');
+        accountEntry.type = 'button';
+        accountEntry.className = 'mobile-menu-launcher';
+        accountEntry.textContent = 'Conta';
+        accountEntry.addEventListener('click', (event) => {
+            event.stopPropagation();
+            toggleMobileMenu('user');
+        });
+        mainView.insertBefore(accountEntry, mainView.firstChild);
+
+        mainView.querySelectorAll('a').forEach((link) => {
+            link.addEventListener('click', () => {
+                closeMobileMenu();
+            });
+        });
+
+        const cloneLang = langList.cloneNode(true);
+        cloneLang.id = 'mobileLangList';
+        cloneLang.classList.add('mobile-lang-list');
+        cloneLang.querySelectorAll('li[data-lang]').forEach((item) => {
+            item.addEventListener('click', (event) => {
+                const lang = item.getAttribute('data-lang');
+                if (lang) {
+                    selectLanguage(lang);
+                    closeMobileMenu();
+                }
+            });
+        });
+
+        langView.innerHTML = '';
+        const langWrapper = document.createElement('div');
+        langWrapper.className = 'mobile-menu-lang-content';
+        langWrapper.appendChild(cloneLang);
+        langView.appendChild(langWrapper);
+
+        userView.innerHTML = '';
+        const userBlock = document.createElement('div');
+        userBlock.className = 'mobile-profile-dropdown';
+        userBlock.innerHTML = profileDropdown.innerHTML;
+        userView.appendChild(userBlock);
+
+        userBlock.querySelectorAll('.profile-item').forEach((item) => {
+            item.addEventListener('click', (event) => {
+                event.preventDefault();
+                const action = item.getAttribute('data-profile-action');
+                if (action === 'login') {
+                    closeMobileMenu();
+                    const loginLink = document.querySelector('[data-profile-action="login"]');
+                    if (loginLink) loginLink.click();
+                } else if (action === 'register') {
+                    closeMobileMenu();
+                    const registerLink = document.querySelector('[data-profile-action="register"]');
+                    if (registerLink) registerLink.click();
+                }
+            });
+        });
+
+        const backButton = container.querySelector('#mobileMenuBack');
+        const closeButton = container.querySelector('#mobileMenuClose');
+
+        if (backButton) {
+            backButton.addEventListener('click', (event) => {
+                event.stopPropagation();
+                mobileMenuState.view = 'main';
+                updateMobileMenuView();
+            });
+        }
+
+        if (closeButton) {
+            closeButton.addEventListener('click', (event) => {
+                event.stopPropagation();
+                closeMobileMenu();
+            });
+        }
+
+        container.addEventListener('click', (event) => {
+            if (event.target === container) {
+                closeMobileMenu();
+            }
+        });
+
+        document.addEventListener('click', (event) => {
+            if (mobileMenuState.open && !container.contains(event.target) && !document.querySelector('.hamburger').contains(event.target)) {
+                closeMobileMenu();
+            }
+        });
+
+        updateMobileMenuView();
+    };
+
     const initHamburgerMenu = () => {
         const burger = document.querySelector('.hamburger');
         const nav = document.querySelector('nav');
@@ -1351,11 +1490,27 @@
 
         burger.addEventListener('click', (event) => {
             event.stopPropagation();
+
+            if (window.matchMedia('(max-width: 900px)').matches) {
+                toggleMobileMenu('main');
+                burger.classList.add('open');
+                nav.classList.remove('open');
+                return;
+            }
+
             burger.classList.toggle('open');
             nav.classList.toggle('open');
         });
 
-        document.addEventListener('click', () => {
+        document.addEventListener('click', (event) => {
+            if (window.matchMedia('(max-width: 900px)').matches) {
+                const container = getMobileMenuContainer();
+                if (mobileMenuState.open && container && !container.contains(event.target) && !burger.contains(event.target)) {
+                    closeMobileMenu();
+                }
+                return;
+            }
+
             if (burger.classList.contains('open')) {
                 burger.classList.remove('open');
                 nav.classList.remove('open');
@@ -1843,6 +1998,8 @@
     };
 
     window.getCurrentLanguage = getCurrentLang;
+    window.toggleMobileMenu = toggleMobileMenu;
+    window.closeMobileMenu = closeMobileMenu;
 
     const footerInfo = {
         sobre: '<p>A Rio by Foot Free Walking Tour é uma empresa especializada em passeios guiados a pé, oferecendo experiências culturais autênticas no Rio de Janeiro e em outras cidades do Brasil. Com anos de atuação no turismo, a empresa se destaca pela excelência dos seus guias e pela forma envolvente de apresentar a história, a cultura e as curiosidades de cada destino.</p><p>Reconhecida por viajantes do mundo inteiro, a empresa já recebeu o prêmio Tripadvisor Travellers’ Choice Awards, concedido às experiências que estão entre as 10% melhores atrações avaliadas na plataforma Tripadvisor. Esse reconhecimento reforça o compromisso da equipe em oferecer passeios de alta qualidade e experiências memoráveis para visitantes de diferentes partes do mundo.</p>',
@@ -1966,6 +2123,7 @@
 
         initLanguageSelector();
         initHamburgerMenu();
+        initMobileMenuContent();
         initSmoothAnchorScroll();
         initLoginModal();
         initRegisterModal();

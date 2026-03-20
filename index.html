@@ -55,12 +55,27 @@
            
         </header>
 
+        <div class="mobile-menu-container" id="mobileMenuContainer" aria-hidden="true">
+            <div class="mobile-menu-panel">
+                <div class="mobile-menu-header">
+                    <button class="mobile-menu-back" id="mobileMenuBack" type="button" aria-label="Voltar">←</button>
+                    <span class="mobile-menu-title" id="mobileMenuTitle">Menu</span>
+                    <button class="mobile-menu-close" id="mobileMenuClose" type="button" aria-label="Fechar">×</button>
+                </div>
+                <div class="mobile-menu-content">
+                    <div class="mobile-menu-view mobile-menu-main" data-view="main"></div>
+                    <div class="mobile-menu-view mobile-menu-lang" data-view="lang"></div>
+                    <div class="mobile-menu-view mobile-menu-user" data-view="user"></div>
+                </div>
+            </div>
+        </div>
+
         <!-- HERO RIO -->
         <section class="rio-hero">
             <div class="rio-hero-overlay"></div>
             <div class="rio-hero-content">
                 <h1 class="rio-hero-title">Tuor no<br><span class="rio-city-highlight">RIO DE JANEIRO</span></h1>
-                <p class="rio-hero-desc" data-i18n="hero_desc_rio">Seja bem vindo à cidade Maravilhosa; o Rio dos amores e da beleza inconfundível te espera de braços abertos.</p>
+                <span id="rioHeroDesc" data-i18n="hero_desc_rio" class="hero-desc-text">Seja bem vindo à cidade Maravilhosa; o Rio dos amores e da beleza inconfundível te espera de braços abertos.</span>
                 <a href="#tours" class="btn-book" data-i18n="btn_book">Conhecer Tours</a>
             </div>
         </section>
