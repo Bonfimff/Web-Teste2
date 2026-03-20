@@ -1369,13 +1369,13 @@ header {
   .nav-left nav.open {
     display: flex !important;
     flex-direction: column !important;
-    position: fixed !important;
+    position: absolute !important;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
     background: rgba(0, 0, 0, 0.95);
-    z-index: 9999;
+    z-index: 10000 !important;
     padding-top: 80px;
     align-items: center;
   }
