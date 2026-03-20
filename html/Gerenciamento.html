@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="../css/style.css">
+
     <link rel="stylesheet" href="../css/Gerenciamento.css">
 </head>
 <body>
@@ -70,12 +71,21 @@
                         </select>
                     </label>
                     <label style="display:flex; flex-direction:column; font-size:0.85rem;">
+                        Modalidade
+                        <select id="filterModality" style="padding:0.5rem; border-radius:8px; border:1px solid rgba(0,0,0,0.15);">
+                            <option value="all">Todos</option>
+                            <option value="free">Free</option>
+                            <option value="privado">Privado</option>
+                        </select>
+                    </label>
+                    <label style="display:flex; flex-direction:column; font-size:0.85rem;">
                         Status
                         <select id="filterStatus" style="padding:0.5rem; border-radius:8px; border:1px solid rgba(0,0,0,0.15);">
                             <option value="all">Todos</option>
                             <option value="Pendente">Pendente</option>
                             <option value="Confirmado">Confirmado</option>
                             <option value="Cancelado">Cancelado</option>
+                            <option value="Finalizado">Finalizado</option>
                         </select>
                     </label>
                     <button id="addReservation" class="btn-book" style="height:fit-content; border-radius:999px;">Adicionar reserva</button>
@@ -88,6 +98,7 @@
                         <tr>
                             <th>Tour</th>
                             <th>Idioma</th>
+                            <th>Modalidade</th>
                             <th>Guia</th>
                             <th>Data</th>
                             <th>Hora</th>
@@ -129,12 +140,19 @@
                           <option value="">Selecione um idioma</option>
                       </select>
                   </label>
+                  <label>
+                      Modalidade
+                      <select id="modalModality">
+                          <option value="free">Free</option>
+                          <option value="privado">Privado</option>
+                      </select>
+                  </label>
                   <label class="phone-field">
                       Celular
                       <div class="phone-input-wrapper">
                         <input type="tel" id="modalPhone" placeholder="(00) 00000-0000" />
                         <button type="button" class="whatsapp-link" aria-label="Abrir WhatsApp">
-                          <i class="fa fa-whatsapp"></i>
+                          <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
                         </button>
                       </div>
                   </label>
@@ -151,8 +169,7 @@
                       <select id="modalStatus">
                           <option value="Pendente">Pendente</option>
                           <option value="Confirmado">Confirmado</option>
-                          <option value="Cancelado">Cancelado</option>
-                      </select>
+                          <option value="Cancelado">Cancelado</option>                            <option value="Finalizado">Finalizado</option>                      </select>
                   </label>
                   <div class="modal-actions">
                       <button type="button" id="modalDelete" class="btn-book btn-danger">Excluir</button>
@@ -175,7 +192,7 @@
         </div>
     </div>
 
-    <script src="../js/script.js"></script>
+    <script src="../js/Riodejaneiro.js"></script>
     <script src="../js/Gerenciamento.js"></script>
 </body>
 </html>

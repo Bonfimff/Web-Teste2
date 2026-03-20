@@ -14,6 +14,7 @@ const initReservationManagement = () => {
   const modalDate = document.getElementById('modalDate');
   const modalTime = document.getElementById('modalTime');
   const modalLanguage = document.getElementById('modalLanguage');
+  const modalModality = document.getElementById('modalModality');
   const modalPhone = document.getElementById('modalPhone');
   const modalGuide = document.getElementById('modalGuide');
   const modalQuantity = document.getElementById('modalQuantity');
@@ -48,7 +49,8 @@ const initReservationManagement = () => {
     const to = filterTo?.value ? new Date(filterTo.value) : null;
     const status = filterStatus?.value || 'all';
     const tour = filterTour?.value || 'all';
-    return { from, to, status, tour };
+    const modality = filterModality?.value || 'all';
+    return { from, to, status, tour, modality };
   };
 
   // Default filter start date to today
@@ -57,6 +59,17 @@ const initReservationManagement = () => {
     filterFrom.value = today.toISOString().slice(0, 10);
   }
 
+  // Default filter end date to 2 months from today
+  if (filterTo && !filterTo.value) {
+    const twoMonths = new Date();
+    twoMonths.setMonth(twoMonths.getMonth() + 2);
+    filterTo.value = twoMonths.toISOString().slice(0, 10);
+  }
+
+  // Ensure default filter options are set
+  if (filterStatus) filterStatus.value = 'all';
+  if (filterTour) filterTour.value = 'all';
+  if (filterModality) filterModality.value = 'all';
 
   let activeEditIndex = null;
   let isAdding = false;
@@ -159,6 +172,7 @@ const initReservationManagement = () => {
     modalTime.value = when.toTimeString().slice(0, 5);
 
     modalLanguage.value = reservation.language || '';
+    modalModality.value = reservation.modality || 'free';
     modalPhone.value = reservation.phone || '';
     modalGuide.value = reservation.guide || '';
     modalQuantity.value = reservation.quantity || 1;
@@ -180,8 +194,7 @@ const initReservationManagement = () => {
 
     populateModalOptions();
 
-    modalTour.value = '';
-    const today = new Date();
+    modalTour.value = '';    modalModality.value = 'free';    const today = new Date();
     modalDate.value = today.toISOString().slice(0, 10);
     modalTime.value = '10:00';
 
@@ -205,6 +218,7 @@ const initReservationManagement = () => {
       tour: modalTour.value.trim(),
       when: when.toISOString(),
       language: modalLanguage.value.trim(),
+      modality: modalModality?.value || 'free',
       phone: modalPhone?.value.trim() || '',
       guide: modalGuide.value.trim(),
       quantity: Number(modalQuantity.value) || 1,
@@ -280,7 +294,7 @@ const initReservationManagement = () => {
   }
 
   const applyFilters = (items) => {
-    const { from, to, status, tour } = getFilters();
+    const { from, to, status, tour, modality } = getFilters();
     return items.filter(({ r }) => {
       const date = new Date(r.when);
       if (from && date < from) return false;
@@ -291,6 +305,7 @@ const initReservationManagement = () => {
       }
       if (status && status !== 'all' && r.status !== status) return false;
       if (tour && tour !== 'all' && r.tour !== tour) return false;
+      if (modality && modality !== 'all' && (r.modality || 'free') !== modality) return false;
       return true;
     });
   };
@@ -317,16 +332,33 @@ const initReservationManagement = () => {
 
   const render = () => {
     const reservations = getReservations();
-    populateTourFilter(reservations);
 
-    const itemsWithIndex = reservations.map((r, index) => ({ r, index }));
+    // Default window: from today to one day after the last reservation date
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    const lastDate = reservations
+      .map(r => new Date(r.when))
+      .filter(d => !Number.isNaN(d.getTime()))
+      .sort((a, b) => b - a)[0];
+    const maxDate = lastDate ? new Date(lastDate.getTime() + 24 * 60 * 60 * 1000) : new Date(now.getTime() + 24 * 60 * 60 * 1000);
+
+    const defaultWindowReservations = reservations.filter(r => {
+      const date = new Date(r.when);
+      if (Number.isNaN(date.getTime())) return false;
+      date.setHours(0, 0, 0, 0);
+      return date >= now && date <= maxDate;
+    });
+
+    populateTourFilter(defaultWindowReservations);
+
+    const itemsWithIndex = defaultWindowReservations.map((r, index) => ({ r, index }));
     const filteredItems = applyFilters(itemsWithIndex);
 
     tableBody.innerHTML = '';
     renderQuickStats(reservations);
 
     if (!filteredItems.length) {
-      tableBody.innerHTML = '<tr><td colspan="7">Nenhuma reserva encontrada.</td></tr>';
+      tableBody.innerHTML = '<tr><td colspan="8">Nenhuma reserva encontrada.</td></tr>';
       return;
     }
 
@@ -336,18 +368,34 @@ const initReservationManagement = () => {
       const dateObj = new Date(r.when);
       const date = dateObj.toLocaleDateString();
       const time = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const statusValue = (r.status || 'Pendente');
+      let statusStyle = '';
+      switch (statusValue) {
+        case 'Cancelado':
+          statusStyle = 'color: #6b7280;';
+          break;
+        case 'Pendente':
+          statusStyle = 'color: #f59e0b;';
+          break;
+        case 'Confirmado':
+          statusStyle = 'color: #facc15;';
+          break;
+        case 'Finalizado':
+          statusStyle = 'color: #16a34a;';
+          break;
+        default:
+          statusStyle = 'color: #374151;';
+      }
+
       row.innerHTML = `
         <td data-label="Tour">${r.tour}</td>
         <td data-label="Idioma">${r.language || '-'}</td>
+        <td data-label="Modalidade">${r.modality === 'privado' ? 'Privado' : 'Free'}</td>
         <td data-label="Guia">${r.guide || '-'}</td>
         <td data-label="Data">${date}</td>
         <td data-label="Hora">${time}</td>
-        <td data-label="Pessoas">
-          <button class="btn-book" data-action="decrease" data-index="${index}">-</button>
-          <span style="margin:0 0.5rem;">${r.quantity || 1}</span>
-          <button class="btn-book" data-action="increase" data-index="${index}">+</button>
-        </td>
-        <td data-label="Status">${r.status || 'Pendente'}</td>
+        <td data-label="Pessoas">${r.quantity || 1}</td>
+        <td data-label="Status" style="${statusStyle} font-weight: 700;">${statusValue}</td>
       `;
       tableBody.appendChild(row);
 
@@ -460,6 +508,7 @@ const initReservationManagement = () => {
         </div>
         <div id="nextTourDetails" class="next-tour-details hidden">
           <div><span class="next-tour-label">Pessoas:</span> <span class="next-tour-value">${totalPeople}</span></div>
+          <div><span class="next-tour-label">Modalidade:</span> <span class="next-tour-value">${next.modality === 'privado' ? 'Privado' : next.modality === 'free' ? 'Free' : (next.modality || 'Free')}</span></div>
           <div><span class="next-tour-label">Guia:</span> <span class="next-tour-value">${next.guide || '-'}</span></div>
           <div><span class="next-tour-label">Idioma:</span> <span class="next-tour-value">${next.language || '-'}</span></div>
         </div>
@@ -477,7 +526,7 @@ const initReservationManagement = () => {
   };
 
   const attachFilters = () => {
-    [filterFrom, filterTo, filterStatus, filterTour].forEach(el => {
+    [filterFrom, filterTo, filterStatus, filterTour, filterModality].forEach(el => {
       if (!el) return;
       el.addEventListener('change', render);
     });
@@ -497,6 +546,9 @@ const initReservationManagement = () => {
   }
 
   attachFilters();
+
+  // Render the table immediately after initialization
+  render();
 };
 
 window.addEventListener('DOMContentLoaded', () => {
