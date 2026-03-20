@@ -766,6 +766,10 @@
         margin-top: -0.6rem;
     }
 
+    .rio-hero-content .btn-book {
+        margin-top: 1rem; /* botão um pouco mais para baixo no mobile */
+    }
+
     .rio-section-title {
         margin-top: 0.1rem;
     }
