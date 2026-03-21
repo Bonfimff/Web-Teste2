@@ -313,6 +313,12 @@
                         moveTrack(current);
                     }
 
+                    function prevSlide() {
+                        const previous = (current - 1 + slides.length) % slides.length;
+                        changeSlide(previous);
+                        scheduleNext();
+                    }
+
                     function nextSlide() {
                         const next = (current + 1) % slides.length;
                         changeSlide(next);
@@ -331,6 +337,59 @@
                         if (interval) clearTimeout(interval);
                         scheduleNext();
                     }
+
+                    let touchStartX = null;
+                    let touchStartTime = null;
+
+                    slider.addEventListener('touchstart', (event) => {
+                        if (event.touches.length !== 1) return;
+                        touchStartX = event.touches[0].clientX;
+                        touchStartTime = Date.now();
+                    });
+
+                    slider.addEventListener('touchend', (event) => {
+                        if (touchStartX === null) return;
+                        const touchEndX = event.changedTouches[0].clientX;
+                        const diffX = touchEndX - touchStartX;
+                        const elapsed = Date.now() - touchStartTime;
+                        const minSwipeDistance = 40;
+                        const maxSwipeTime = 700;
+
+                        touchStartX = null;
+                        touchStartTime = null;
+
+                        if (Math.abs(diffX) >= minSwipeDistance && elapsed <= maxSwipeTime) {
+                            if (diffX > 0) {
+                                prevSlide();
+                            } else {
+                                nextSlide();
+                            }
+                            resetInterval();
+                        }
+                    });
+
+                    slider.addEventListener('mousedown', (event) => {
+                        touchStartX = event.clientX;
+                        touchStartTime = Date.now();
+                    });
+
+                    slider.addEventListener('mouseup', (event) => {
+                        if (touchStartX === null) return;
+                        const diffX = event.clientX - touchStartX;
+                        const elapsed = Date.now() - touchStartTime;
+
+                        touchStartX = null;
+                        touchStartTime = null;
+
+                        if (Math.abs(diffX) >= 40 && elapsed <= 700) {
+                            if (diffX > 0) {
+                                prevSlide();
+                            } else {
+                                nextSlide();
+                            }
+                            resetInterval();
+                        }
+                    });
 
                     const initialDelay = 500 + Math.floor(Math.random() * 1200); // 0.5-1.7s para cada slider começar diff
                     interval = setTimeout(nextSlide, initialDelay);
