@@ -57,7 +57,7 @@ body {
 
 
 body {
-  background-image: url('../imagem/fundo rj.png');
+  background-image: url('../imagem/assets/fundo rj.png');
   background-repeat: no-repeat;
   background-position: center center;
   background-size: cover;
@@ -71,7 +71,7 @@ body {
 .rio-page,
 .gerenciamento-page,
 body {
-  background-image: url('../imagem/fundo rj.png') !important;
+  background-image: url('../imagem/assets/fundo rj.png') !important;
   background-repeat: no-repeat !important;
   background-position: center center !important;
   background-size: cover !important;

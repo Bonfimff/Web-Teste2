@@ -7,8 +7,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="theme-color" content="#02415a">
     <title> Tour no Rio de Janeiro</title>
-    <link rel="apple-touch-icon" href="imagem/Logo.png">
-    <link rel="icon" type="image/png" href="imagem/Logo.png">
+    <link rel="apple-touch-icon" href="imagem/assets/Logo.png">
+    <link rel="icon" type="image/png" href="imagem/assets/Logo.png">
     <link rel="manifest" href="manifest.json">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -95,7 +95,9 @@
                 <!-- CENTRO HISTÓRICO -->
                 <article class="rio-tour-card">
                     <div class="rio-tour-images">
-                        <img src="https://tourbyfootcom.swipepages.media/2021/12/6154b435ca6c9c0010a3dead/centro-historico-750.webp" alt="Centro Histórico e Lapa do Rio" loading="lazy">
+                        <div class="rio-tour-slider" data-folder="CentroHistorico" aria-label="Slideshow Centro Histórico">
+                            <img class="rio-tour-slide active" src="imagem/CentroHistorico/img1.webp" alt="Centro Histórico e Lapa do Rio" loading="lazy">
+                        </div>
                     </div>
                     <div class="rio-tour-info">
                         <h4 class="rio-tour-name">Centro Histórico e Lapa</h4>
@@ -115,7 +117,9 @@
                 <!-- SANTA TERESA -->
                 <article class="rio-tour-card">
                     <div class="rio-tour-images">
-                        <img src="https://tourbyfootcom.swipepages.media/2021/12/6154b435ca6c9c0010a3dead/bonde_santa_teresa_govrj-750.webp" alt="Santa Teresa & Experiência Gastronômica Carioca" loading="lazy">
+                        <div class="rio-tour-slider" data-folder="SantaTeresa" aria-label="Slideshow Santa Teresa">
+                            <img class="rio-tour-slide active" src="imagem/SantaTeresa/img1.webp" alt="Santa Teresa & Experiência Gastronômica Carioca" loading="lazy">
+                        </div>
                     </div>
                     <div class="rio-tour-info">
                         <h4 class="rio-tour-name">Santa Teresa & Experiência Gastronômica Carioca</h4>
@@ -135,7 +139,9 @@
                 <!-- PEDRA DO SAL -->
                 <article class="rio-tour-card">
                     <div class="rio-tour-images">
-                        <img src="https://tourbyfootcom.swipepages.media/2021/12/6154b435ca6c9c0010a3dead/pedra-do-sal-2-750.webp" alt="Pedra do Sal" loading="lazy">
+                        <div class="rio-tour-slider" data-folder="PedraDoSal" aria-label="Slideshow Pedra do Sal">
+                            <img class="rio-tour-slide active" src="imagem/PedraDoSal/img1.webp" alt="Pedra do Sal" loading="lazy">
+                        </div>
                     </div>
                     <div class="rio-tour-info">
                         <h4 class="rio-tour-name">Pedra do Sal: Samba e Herança Afrobrasileira</h4>
@@ -155,7 +161,9 @@
                 <!-- PEDRA DO SAL + EXPERIÊNCIA DE CARNAVAL -->
                 <article class="rio-tour-card">
                     <div class="rio-tour-images">
-                        <img src="https://tourbyfootcom.swipepages.media/2021/12/6154b435ca6c9c0010a3dead/pedra-do-sal-2-750.webp" alt="Pedra do Sal + Experiência de Carnaval" loading="lazy">
+                        <div class="rio-tour-slider" data-folder="PedraDoSalCarnaval" aria-label="Slideshow Pedra do Sal e Carnaval">
+                            <img class="rio-tour-slide active" src="imagem/PedraDoSalCarnaval/img1.webp" alt="Pedra do Sal + Experiência de Carnaval" loading="lazy">
+                        </div>
                     </div>
                     <div class="rio-tour-info">
                         <h4 class="rio-tour-name">Pedra do Sal + Experiência de Carnaval</h4>
@@ -175,7 +183,9 @@
                 <!-- COPACABANA E IPANEMA -->
                 <article class="rio-tour-card">
                     <div class="rio-tour-images">
-                        <img src="https://tourbyfootcom.swipepages.media/2022/5/6154b435ca6c9c0010a3dead/copacabana-750.webp" alt="Copacabana e Ipanema" loading="lazy">
+                        <div class="rio-tour-slider" data-folder="CopacabanaIpanema" aria-label="Slideshow Copacabana e Ipanema">
+                            <img class="rio-tour-slide active" src="imagem/CopacabanaIpanema/img1.webp" alt="Copacabana e Ipanema" loading="lazy">
+                        </div>
                     </div>
                     <div class="rio-tour-info">
                         <h4 class="rio-tour-name">Copacabana e Ipanema</h4>
@@ -235,5 +245,104 @@
     </div>
     <script src="js/script.js"></script>
     <script src="js/Riodejaneiro.js"></script>
+    <script>
+        (function () {
+            const folderImages = {
+                CentroHistorico: 6,
+                SantaTeresa: 5,
+                PedraDoSal: 5,
+                PedraDoSalCarnaval: 5,
+                CopacabanaIpanema: 2
+            };
+
+            function startTourSliders() {
+                const sliders = document.querySelectorAll('.rio-tour-slider');
+
+                sliders.forEach((slider) => {
+                    const folder = slider.dataset.folder;
+                    const total = folderImages[folder];
+                    if (!total) {
+                        console.warn('Pasta de imagens não configurada para', folder);
+                        return;
+                    }
+
+                    slider.innerHTML = '';
+
+                    const track = document.createElement('div');
+                    track.className = 'rio-tour-slider-track';
+                    slider.appendChild(track);
+
+                    const dotsContainer = document.createElement('div');
+                    dotsContainer.className = 'rio-tour-slider-dots';
+                    slider.appendChild(dotsContainer);
+
+                    for (let i = 1; i <= total; i++) {
+                        const img = document.createElement('img');
+                        img.className = 'rio-tour-slide';
+                        img.src = `imagem/${folder}/img${i}.webp`;
+                        img.alt = `${folder} - imagem ${i}`;
+                        img.loading = 'lazy';
+                        track.appendChild(img);
+
+                        const dot = document.createElement('button');
+                        dot.type = 'button';
+                        dot.className = 'rio-tour-dot' + (i === 1 ? ' active' : '');
+                        dot.setAttribute('aria-label', `Ver imagem ${i} de ${total}`);
+                        dot.addEventListener('click', () => {
+                            changeSlide(i - 1);
+                            resetInterval();
+                        });
+
+                        dotsContainer.appendChild(dot);
+                    }
+
+                    let current = 0;
+                    const slides = track.querySelectorAll('img');
+                    const dots = dotsContainer.querySelectorAll('.rio-tour-dot');
+                    let interval = null;
+
+                    function moveTrack(index) {
+                        track.style.transform = `translateX(-${index * 100}%)`;
+                    }
+
+                    function changeSlide(index) {
+                        if (index === current) return;
+                        dots[current].classList.remove('active');
+                        current = index;
+                        dots[current].classList.add('active');
+                        moveTrack(current);
+                    }
+
+                    function nextSlide() {
+                        const next = (current + 1) % slides.length;
+                        changeSlide(next);
+                        scheduleNext();
+                    }
+
+                    function scheduleNext() {
+                        const base = 6500;
+                        const jitter = Math.floor(Math.random() * 2000); // 0-1999ms (6.5-8.5s)
+                        const delay = base + jitter;
+                        if (interval) clearTimeout(interval);
+                        interval = setTimeout(nextSlide, delay);
+                    }
+
+                    function resetInterval() {
+                        if (interval) clearTimeout(interval);
+                        scheduleNext();
+                    }
+
+                    const initialDelay = 500 + Math.floor(Math.random() * 1200); // 0.5-1.7s para cada slider começar diff
+                    interval = setTimeout(nextSlide, initialDelay);
+                });
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', startTourSliders);
+            } else {
+                startTourSliders();
+            }
+        })();
+    </script>
 </body>
 </html>

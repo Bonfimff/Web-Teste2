@@ -26,7 +26,7 @@
     height: 100%;
     z-index: -1;
     background-color: #02415a;
-    background-image: url('../imagem/fundo%20rj.png');
+    background-image: url('../imagem/assets/fundo%20rj.png');
     background-size: cover;
     background-position: center;
     will-change: transform;
@@ -286,7 +286,7 @@ body {
     padding-top: calc(60px + 0.5rem); /* garante que começa logo abaixo do header */
     /* herói mantém sua própria foto acima do fundo do corpo */
     background:
-        url('https://tourbyfootcom.swipepages.media/2021/12/6154b435ca6c9c0010a3dead/cabe-alho-site.jpeg') center/cover no-repeat;
+        url('../imagem/assets/painel.jpeg') center/cover no-repeat;
     /* aplicar máscara de transparência na base para fade ao fundo */
     -webkit-mask-image: none;
     mask-image: none;
@@ -592,6 +592,105 @@ body {
     width: 100%;
     aspect-ratio: 16 / 9;
     overflow: hidden;
+    position: relative;
+}
+
+.rio-tour-slider {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.rio-tour-slider-track {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    transform: translateX(0);
+    transition: transform 1s ease;
+}
+
+.rio-tour-slide {
+    flex: 0 0 100%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    opacity: 1;
+}
+
+.rio-tour-slider img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.rio-tour-slider-dots {
+    position: absolute;
+    bottom: 0.7rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 0.4rem;
+    z-index: 10;
+    pointer-events: auto;
+}
+
+.rio-tour-dot {
+    width: 11px;
+    height: 11px;
+    min-width: 11px;
+    min-height: 11px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.85);
+    border: 1px solid rgba(44,62,80,0.35);
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease;
+    box-sizing: border-box;
+    line-height: 1;
+}
+
+.rio-tour-dot.active {
+    background: rgba(255,255,255,1);
+    transform: scale(1.25);
+}
+
+.rio-tour-slider-dots {
+    position: absolute;
+    bottom: 0.7rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 0.4rem;
+    z-index: 10;
+    pointer-events: auto;
+}
+
+.rio-tour-dot {
+    width: 11px;
+    height: 11px;
+    min-width: 11px;
+    min-height: 11px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.85);
+    border: 1px solid rgba(44,62,80,0.35);
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease;
+    box-sizing: border-box;
+    line-height: 1;
+}
+
+.rio-tour-dot.active {
+    background: rgba(255,255,255,1);
+    transform: scale(1.25);
 }
 
 .rio-tour-images img {
@@ -940,6 +1039,19 @@ body {
     .rio-hero {
         min-height: 50vh;
         padding-top: 70px;
+    }
+
+    .rio-hero-content {
+        margin-top: 4rem;
+        padding: 1.4rem 1rem 2rem;
+    }
+
+    .rio-hero-title {
+        margin-bottom: 0.7rem;
+    }
+
+    .rio-hero-content .btn-book {
+        margin-top: 1rem;
     }
 
     .rio-tours-grid {

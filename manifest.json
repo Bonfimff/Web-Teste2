@@ -8,19 +8,19 @@
   "background_color": "#02415a",
   "icons": [
     {
-      "src": "imagem/Logo.png",
+      "src": "imagem/assets/Logo.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "imagem/Logo.png",
+      "src": "imagem/assets/Logo.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "imagem/Logo.png",
+      "src": "imagem/assets/Logo.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
