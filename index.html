@@ -241,6 +241,41 @@
                 </div>
             </div>
         </div>
+
+        <div id="reservationModal" class="reservation-modal-overlay hidden" role="dialog" aria-modal="true" aria-label="Formulário de reserva">
+            <div class="reservation-modal">
+                <h2>Reservar Tour</h2>
+                <form id="reservationForm">
+                    <label>Tour
+                        <input type="text" id="reservationTour" readonly>
+                    </label>
+                    <label>Nome
+                        <input type="text" id="reservationName" placeholder="Seu nome" required>
+                    </label>
+                    <label>Data da reserva
+                        <input type="date" id="reservationDate" required>
+                    </label>
+                    <label>Quantidade de pessoas
+                        <input type="number" id="reservationQuantity" min="1" value="1" required>
+                    </label>
+                    <label>Idioma
+                        <select id="reservationLanguage" required>
+                            <option value="">Selecione um idioma</option>
+                        </select>
+                    </label>
+                    <label>Celular/WhatsApp
+                        <input type="tel" id="reservationPhone" placeholder="(00) 00000-0000" required>
+                    </label>
+                    <label>Email
+                        <input type="email" id="reservationEmail" placeholder="seuemail@exemplo.com" required>
+                    </label>
+                    <div class="reservation-modal-actions">
+                        <button type="button" id="reservationCancel" class="btn-book">Cancelar</button>
+                        <button type="submit" class="btn-book">Confirmar Reserva</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div> 
     </div>
     <script src="js/script.js"></script>

@@ -2075,23 +2075,131 @@
     window.addReservation = addReservation;
 
     const initReservationTracking = () => {
+        const reservationModal = document.getElementById('reservationModal');
+        const reservationForm = document.getElementById('reservationForm');
+        const reservationTour = document.getElementById('reservationTour');
+        const reservationName = document.getElementById('reservationName');
+        const reservationDate = document.getElementById('reservationDate');
+        const reservationQuantity = document.getElementById('reservationQuantity');
+        const reservationLanguage = document.getElementById('reservationLanguage');
+        const reservationPhone = document.getElementById('reservationPhone');
+        const reservationEmail = document.getElementById('reservationEmail');
+        const reservationCancel = document.getElementById('reservationCancel');
+
+        const closeReservationModal = () => {
+            if (!reservationModal) return;
+            reservationModal.classList.add('hidden');
+        };
+
+        const openReservationModal = (tourName, languageText) => {
+            if (!reservationModal) return;
+            reservationTour.value = tourName;
+            reservationName.value = '';
+            reservationDate.value = '';
+            reservationQuantity.value = 1;
+            reservationPhone.value = '';
+
+            const langs = (languageText || '').split(/[,;]+|\s+e\s+/i)
+                .map(s => s.trim())
+                .filter(Boolean)
+                .filter((v, i, arr) => arr.indexOf(v) === i);
+
+            if (reservationLanguage) {
+                reservationLanguage.innerHTML = '<option value="">Selecione um idioma</option>';
+                langs.forEach(lang => {
+                    const option = document.createElement('option');
+                    option.value = lang;
+                    option.textContent = lang;
+                    reservationLanguage.appendChild(option);
+                });
+
+                if (langs.length === 1) {
+                    reservationLanguage.value = langs[0];
+                }
+            }
+
+            reservationModal.classList.remove('hidden');
+        };
+
         document.querySelectorAll('.rio-btn-reserve').forEach(button => {
-            button.addEventListener('click', () => {
+            button.addEventListener('click', (event) => {
+                event.preventDefault();
                 const card = button.closest('.rio-tour-card');
                 const tourName = card?.querySelector('.rio-tour-name')?.textContent?.trim() || '';
-                const language = card?.querySelector('.fa-language')?.parentElement?.textContent?.replace(/\s*Idiomas?:\s*/i, '').trim() || '';
-                const guide = card?.querySelector('.fa-shirt')?.parentElement?.textContent?.trim() || '';
-                addReservation({
-                    tour: tourName,
-                    when: new Date().toISOString(),
-                    url: button.href || '',
-                    quantity: 1,
-                    status: 'Pendente',
-                    language,
-                    guide
-                });
+                const languageText = card?.querySelector('.fa-language')?.parentElement?.textContent?.replace(/\s*Idiomas?:\s*/i, '').trim() || '';
+                openReservationModal(tourName, languageText);
             });
         });
+
+        if (reservationCancel) {
+            reservationCancel.addEventListener('click', (event) => {
+                event.preventDefault();
+                closeReservationModal();
+            });
+        }
+
+        if (reservationPhone) {
+            reservationPhone.addEventListener('input', (event) => {
+                const value = event.target.value;
+                const filtered = value.replace(/[^0-9()+\-\s]/g, '');
+                if (filtered !== value) {
+                    event.target.value = filtered;
+                }
+            });
+        }
+
+        if (reservationForm) {
+            reservationForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+
+                const tour = reservationTour.value.trim();
+                const name = reservationName.value.trim();
+                const date = reservationDate.value;
+                const quantity = Number(reservationQuantity.value) || 1;
+                const language = reservationLanguage.value;
+                const phone = reservationPhone.value.trim();
+                const email = reservationEmail.value.trim();
+
+                if (!tour || !name || !date || !quantity || !language || !phone || !email) {
+                    alert('Preencha todos os campos obrigatórios para concluir a reserva.');
+                    return;
+                }
+
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    alert('Por favor, insira um email válido.');
+                    return;
+                }
+
+                if (date.trim() === '') {
+                    alert('Escolha uma data de reserva.');
+                    return;
+                }
+
+                const phoneRegex = /^[0-9()+\-\s]+$/;
+                if (!phoneRegex.test(phone)) {
+                    alert('O campo celular só permite números, +, -, ( ) e espaços.');
+                    return;
+                }
+
+                const dateTime = new Date(`${date}T12:00:00`);
+                addReservation({
+                    tour,
+                    when: dateTime.toISOString(),
+                    url: '',
+                    quantity,
+                    status: 'Pendente',
+                    language,
+                    modality: 'free',
+                    guide: name,
+                    phone,
+                    email
+                });
+
+                alert('Reserva adicionada com sucesso!');
+                closeReservationModal();
+            });
+        }
     };
 
 
