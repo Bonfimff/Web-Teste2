@@ -2054,7 +2054,42 @@
                     window.location.href = 'html/Gerenciamento.html';
                 } catch (error) {
                     console.error('Erro na conexão:', error);
-                    alert('O servidor de autenticação está offline. Verifique o terminal da VPS.');
+
+                    const whatsUrl = 'https://wa.me/5521970018590';
+                    const mailUrl = 'mailto:riobyfoottour@gmail.com';
+
+                    const existing = document.getElementById('auth-support-alert');
+                    if (existing) {
+                        existing.remove();
+                    }
+
+                    const alertBox = document.createElement('div');
+                    alertBox.id = 'auth-support-alert';
+                    alertBox.style.position = 'fixed';
+                    alertBox.style.top = '16px';
+                    alertBox.style.right = '16px';
+                    alertBox.style.zIndex = '9999';
+                    alertBox.style.background = '#fff';
+                    alertBox.style.color = '#000';
+                    alertBox.style.border = '1px solid #ccc';
+                    alertBox.style.borderRadius = '8px';
+                    alertBox.style.padding = '12px 14px';
+                    alertBox.style.maxWidth = '320px';
+                    alertBox.style.boxShadow = '0 2px 8px rgba(0,0,0,0.25)';
+                    alertBox.innerHTML = `
+                        <strong>Sentimos muito, o servidor está temporariamente inacessível.</strong>
+                        <p>Entre em contato com o nosso suporte via:</p>
+                        <p><a href="${whatsUrl}" target="_blank" rel="noopener">WhatsApp</a> ou <a href="${mailUrl}" target="_blank" rel="noopener">Email</a>.</p>
+                        <button id="auth-support-alert-close" style="margin-top:8px;padding:4px 8px;border:none;background:#007bff;color:#fff;border-radius:4px;cursor:pointer;">Fechar</button>
+                    `;
+
+                    document.body.appendChild(alertBox);
+                    const closeBtn = document.getElementById('auth-support-alert-close');
+                    if (closeBtn) {
+                        closeBtn.addEventListener('click', () => {
+                            alertBox.remove();
+                        });
+                    }
                 }
             });
         }
