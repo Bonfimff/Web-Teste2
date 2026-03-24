@@ -398,6 +398,7 @@ div[style*="overflow-x:auto"] {
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   color: #fff;
+  overflow: visible; /* permite dropdown flutuante */
 }
 
 .gerenciamento-nav {
@@ -423,6 +424,91 @@ div[style*="overflow-x:auto"] {
   background: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+  z-index: 2000;
+}
+
+.profile-menu {
+  position: relative;
+  margin-left: auto;
+  z-index: 30;
+}
+
+.profile-btn {
+  border: none;
+  background: transparent;
+  color: #ffffff;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.3rem;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: none;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.profile-btn i {
+  font-size: 1.4rem;
+  color: #ffffff;
+  line-height: 1;
+}
+
+.profile-btn:hover {
+  opacity: 0.8;
+}
+
+.profile-dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  margin-top: 0.4rem;
+  right: 0;
+  min-width: 220px;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 14px;
+  box-shadow: 0 18px 30px rgba(0, 0, 0, 0.15);
+  padding: 0.6rem 0;
+  z-index: 2000;
+  left: auto;
+  overflow: visible;
+}
+
+.gerenciamento-header .profile-menu {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.gerenciamento-header .profile-menu.open .profile-dropdown,
+.profile-menu.open .profile-dropdown {
+  display: block;
+}
+
+@media (min-width: 900px) {
+  .profile-dropdown {
+    right: 1.25rem; /* mantém alinhado ao lado direito do header */
+  }
+
+  .profile-dropdown {
+    left: auto;
+  }
+}
+.profile-item {
+  display: block;
+  padding: 0.65rem 1rem;
+  color: #0b3a66 !important;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.profile-item:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: #0b3a66 !important;
 }
 
 .gerenciamento-header .nav-link {

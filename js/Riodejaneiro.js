@@ -1547,7 +1547,7 @@
                     <h2 class="login-modal__title" data-i18n="login_title">${strings.login_title}</h2>
                     <button type="button" class="login-modal__close" aria-label="${strings.login_close}">&times;</button>
                 </div>
-                <form class="login-modal__form">
+                <form id="loginForm" class="login-modal__form">
                     <div class="login-modal__field">
                         <label for="loginEmail" data-i18n="login_email">${strings.login_email}</label>
                         <input id="loginEmail" type="email" autocomplete="email" required />
@@ -1577,8 +1577,23 @@
         const openModal = () => {
             overlay.classList.add('open');
             document.body.classList.add('modal-open');
-            const firstInput = overlay.querySelector('input');
-            if (firstInput) firstInput.focus();
+
+            const emailInput = overlay.querySelector('#loginEmail');
+            const passwordInput = overlay.querySelector('#loginPassword');
+            const savedEmail = localStorage.getItem('userEmail');
+
+            if (savedEmail && emailInput) {
+                emailInput.value = savedEmail;
+            }
+
+            if (savedEmail && passwordInput) {
+                passwordInput.focus();
+            } else if (emailInput) {
+                emailInput.focus();
+            } else {
+                const firstInput = overlay.querySelector('input');
+                if (firstInput) firstInput.focus();
+            }
         };
 
         overlay.addEventListener('click', (event) => {
@@ -1590,21 +1605,6 @@
         overlay.querySelector('.login-modal__close')?.addEventListener('click', closeModal);
         overlay.querySelector('.login-modal__forgot')?.addEventListener('click', () => {
             alert(strings.login_forgot);
-        });
-
-        overlay.querySelector('.login-modal__form')?.addEventListener('submit', (event) => {
-            event.preventDefault();
-            const email = overlay.querySelector('#loginEmail')?.value?.trim();
-            const password = overlay.querySelector('#loginPassword')?.value || '';
-            const isAdmin = email === 'admin@test' && password === 'admin@Teste';
-
-            if (isAdmin) {
-                window.location.href = 'html/Gerenciamento.html';
-                return;
-            }
-
-            alert(strings.login_button);
-            closeModal();
         });
 
         const togglePassword = overlay.querySelector('.login-modal__toggle-password');
@@ -1991,10 +1991,71 @@
 
                 overlay.classList.add('open');
                 document.body.classList.add('modal-open');
-                const firstInput = overlay.querySelector('input');
-                if (firstInput) firstInput.focus();
+
+                const emailInput = overlay.querySelector('#loginEmail');
+                const passwordInput = overlay.querySelector('#loginPassword');
+                const savedEmail = localStorage.getItem('userEmail');
+
+                if (savedEmail && emailInput) {
+                    emailInput.value = savedEmail;
+                }
+
+                if (savedEmail && passwordInput) {
+                    passwordInput.focus();
+                } else if (emailInput) {
+                    emailInput.focus();
+                } else {
+                    const firstInput = overlay.querySelector('input');
+                    if (firstInput) firstInput.focus();
+                }
             });
         });
+
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm) {
+            loginForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+
+                const email = document.getElementById('loginEmail')?.value?.trim();
+                const password = document.getElementById('loginPassword')?.value || '';
+
+                if (!email || !password) {
+                    alert('Por favor, preencha email e senha.');
+                    return;
+                }
+
+                try {
+                    const response = await fetch('http://187.77.247.116:5000/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ username: email, password })
+                    });
+
+                    const data = await response.json().catch(() => ({}));
+
+                    if (!response.ok || !data.success) {
+                        const message = data.message || `Falha ao conectar (status ${response.status})`;
+                        alert('Erro: ' + message);
+                        return;
+                    }
+
+                    const role = data.role || 'user';
+                    localStorage.setItem('userRole', role);
+                    localStorage.setItem('userEmail', email);
+                    if (data.token) {
+                        localStorage.setItem('authToken', data.token);
+                    }
+
+                    alert('Bem-vindo! Acesso nível: ' + role);
+                    window.location.href = 'html/Gerenciamento.html';
+                } catch (error) {
+                    console.error('Erro na conexão:', error);
+                    alert('O servidor de autenticação está offline. Verifique o terminal da VPS.');
+                }
+            });
+        }
     };
 
     window.getCurrentLanguage = getCurrentLang;

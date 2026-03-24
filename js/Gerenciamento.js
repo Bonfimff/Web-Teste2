@@ -564,6 +564,38 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  const profileBtn = document.getElementById('profileBtn');
+  const profileMenu = document.querySelector('.profile-menu');
+  if (profileBtn && profileMenu) {
+    profileBtn.addEventListener('click', (event) => {
+      event.stopPropagation();
+      const isOpen = profileMenu.classList.toggle('open');
+      profileBtn.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!profileMenu.contains(event.target)) {
+        profileMenu.classList.remove('open');
+        profileBtn.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    profileMenu.querySelectorAll('.profile-item').forEach((item) => {
+      item.addEventListener('click', (event) => {
+        const action = item.getAttribute('data-profile-action');
+        if (action === 'account') {
+          event.preventDefault();
+          alert('Minha Conta (area de usuário)');
+        } else if (action === 'logout') {
+          event.preventDefault();
+          alert('Logout realizado');
+        }
+        profileMenu.classList.remove('open');
+        profileBtn.setAttribute('aria-expanded', 'false');
+      });
+    });
+  }
+
   // Parallax-ish background movement: make the background adjust gradually while scrolling
   // (keeps it centered while adding a subtle vertical shift).
   let scheduled = false;
