@@ -1,6 +1,4 @@
-// Gerenciamento de reservas (página Gerenciamento.html)
-// Depende de getReservations/setReservations definidos em script.js
-
+// version 1.0
 const initReservationManagement = () => {
   const tableBody = document.getElementById('reservationsBody');
   const clearBtn = document.getElementById('clearReservations');
