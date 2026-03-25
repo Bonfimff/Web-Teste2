@@ -481,26 +481,35 @@
         const url = path.startsWith('http') ? path : `${API_BASE_URL}${path.startsWith('/') ? '' : '/'}${path}`;
         const defaultOptions = {
             headers: {
-                'Content-Type': 'application/json'
+                // Não definir Content-Type por padrão para evitar preflight se possível
+                ...(options.headers || {})
             },
             ...options
         };
 
         try {
             const response = await fetch(url, defaultOptions);
-
-            const contentType = response.headers.get('Content-Type') || '';
-            const isJson = contentType.includes('application/json');
-            const payload = isJson ? await response.json() : await response.text();
+            const responseText = await response.text();
+            let payload;
+            try {
+                payload = responseText ? JSON.parse(responseText) : null;
+            } catch (_parseErr) {
+                payload = responseText;
+            }
 
             if (!response.ok) {
-                throw new Error(`API request failed ${response.status} ${response.statusText}: ${isJson ? JSON.stringify(payload) : payload}`);
+                console.error('apiFetch response error', {
+                    url,
+                    status: response.status,
+                    statusText: response.statusText,
+                    payload
+                });
+                throw new Error(`API request failed ${response.status} ${response.statusText}: ${responseText}`);
             }
 
             return payload;
         } catch (error) {
             if (error instanceof TypeError) {
-                // Erros típicos de CORS ou DNS falha de rede chegam como TypeError
                 console.error('apiFetch network issue (CORS/DNS/Offline):', {
                     url,
                     options: defaultOptions,
@@ -517,10 +526,18 @@
     const login = async (email, password) => {
         if (!email || !password) throw new Error('Email e senha são obrigatórios');
 
-        return apiFetch('/login', {
+        const params = new URLSearchParams({
+            username: email,
+            password
+        });
+
+        return apiFetch('https://api-tour.exksvol.com/login', {
             method: 'POST',
-            body: JSON.stringify({ email, password }),
-            credentials: 'same-origin' // temporário para teste (CORS/inter-domain)
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: params.toString()
+            // sem credentials para reduzir verificações extras CORS
         });
     };
 
