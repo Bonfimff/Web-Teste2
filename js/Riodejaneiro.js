@@ -474,63 +474,6 @@
 
     let currentFooterInfo = pageTranslations.pt.footer_info;
 
-    // API base URL (HTTPS via Certbot)
-    const API_BASE_URL = 'https://api-tour.exksvol.com';
-
-    const apiFetch = async (path, options = {}) => {
-        const url = path.startsWith('http') ? path : `${API_BASE_URL}${path.startsWith('/') ? '' : '/'}${path}`;
-        const defaultOptions = {
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            ...options
-        };
-
-        try {
-            const response = await fetch(url, defaultOptions);
-
-            const contentType = response.headers.get('Content-Type') || '';
-            const isJson = contentType.includes('application/json');
-            const payload = isJson ? await response.json() : await response.text();
-
-            if (!response.ok) {
-                throw new Error(`API request failed ${response.status} ${response.statusText}: ${isJson ? JSON.stringify(payload) : payload}`);
-            }
-
-            return payload;
-        } catch (error) {
-            console.error('apiFetch error', error);
-            throw error;
-        }
-    };
-
-    const login = async (email, password) => {
-        if (!email || !password) throw new Error('Email e senha são obrigatórios');
-
-        return apiFetch('/login', {
-            method: 'POST',
-            body: JSON.stringify({ email, password }),
-            credentials: 'include' // opcional, dependendo do backend
-        });
-    };
-
-    const carregarToursDoBanco = async () => {
-        try {
-            const tours = await apiFetch('/tours', {
-                method: 'GET'
-            });
-            console.log('Dados do banco:', tours);
-            // TODO: renderizar os tours na UI
-            return tours;
-        } catch (error) {
-            console.error('Erro ao conectar com a API:', error);
-            throw error;
-        }
-    };
-
-    // Exemplo de uso:
-    // carregarToursDoBanco().then(renderTours).catch(err => showError(err));
-
     const applyPageLanguage = (lang) => {
         const t = pageTranslations[lang] || pageTranslations.pt;
         currentFooterInfo = t.footer_info || currentFooterInfo;
