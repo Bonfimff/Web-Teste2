@@ -1,12 +1,6 @@
-/* ===================================================== */
-/* RIO DE JANEIRO — ESTILOS GLOBAIS & PÁGINA              */
-/* Todas as regras de estilo (antes em style.css) agora   */
-/* estão contidas neste arquivo.                           */
-/* ===================================================== */
+/* version 1.0 */
 
-/* ---------- OVERRIDE DO CONTAINER PRINCIPAL ----------- */
-/* imagem de fundo RJ fornecida pelo usuário deve ficar em /imagem/
-   usamos o arquivo existente 'fundo rj.png' (espacos escapados)*/
+
 .rio-page {
     width: 100%;
     min-height: 100vh;

@@ -2084,7 +2084,8 @@
                                 <div class="login-modal__body" style="padding:16px; color:#333; line-height:1.5;">
                                     <p>${bodyMessage}</p>
                                     <p>${actionMessage}</p>
-                                    <p><a href="${whatsUrl}" target="_blank" rel="noopener" style="color:#007bff; text-decoration:underline;">WhatsApp</a> ou <a href="${mailUrl}" target="_blank" rel="noopener" style="color:#007bff; text-decoration:underline;">Email</a>.</p>
+                                    <p><a href="${whatsUrl}" target="_blank" rel="noopener" style="color:#007bff; text-decoration:underline;">WhatsApp</a> ou <a href="${mailUrl}" id="auth-support-email-link" style="color:#007bff; text-decoration:underline;">Email</a>.</p>
+                                    <p style="margin-top:1rem;"><button id="auth-support-email-btn" style="padding:8px 12px;border:none;background:#007bff;color:#fff;border-radius:4px;cursor:pointer;">Abrir Email</button></p>
                                     ${!isOnline ? `<p style="margin-top:0.5rem; color:#a00; font-weight:bold;">Conecte-se à internet e tente novamente.</p>` : ''}
                                 </div>
                             </div>
@@ -2096,6 +2097,21 @@
                                 loginOverlay.style.display = 'none';
                                 loginOverlay.classList.remove('open');
                                 document.body.classList.remove('modal-open');
+                            });
+                        }
+
+                        const emailBtn = document.getElementById('auth-support-email-btn');
+                        if (emailBtn) {
+                            emailBtn.addEventListener('click', () => {
+                                window.location.href = mailUrl;
+                            });
+                        }
+
+                        const emailLink = document.getElementById('auth-support-email-link');
+                        if (emailLink) {
+                            emailLink.addEventListener('click', (event) => {
+                                event.preventDefault();
+                                window.location.href = mailUrl;
                             });
                         }
 
