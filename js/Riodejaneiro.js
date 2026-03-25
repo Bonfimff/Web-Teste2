@@ -1477,10 +1477,7 @@
         });
 
         document.addEventListener('click', (event) => {
-            const burger = document.querySelector('.hamburger');
-            const isBurgerClicked = burger && burger.contains(event.target);
-
-            if (mobileMenuState.open && !container.contains(event.target) && !isBurgerClicked) {
+            if (mobileMenuState.open && !container.contains(event.target) && !document.querySelector('.hamburger').contains(event.target)) {
                 closeMobileMenu();
             }
         });
@@ -1978,7 +1975,6 @@
     const initLoginModal = () => {
         createLoginModal();
         const loginTriggers = document.querySelectorAll('[data-profile-action="login"]');
-
         loginTriggers.forEach(trigger => {
             trigger.addEventListener('click', (event) => {
                 event.preventDefault();
@@ -2018,46 +2014,118 @@
         });
 
         const loginForm = document.getElementById('loginForm');
-        if (!loginForm) return;
+        if (loginForm) {
+            loginForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
 
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
+                const email = document.getElementById('loginEmail')?.value?.trim();
+                const password = document.getElementById('loginPassword')?.value || '';
 
-            const email = document.getElementById('loginEmail')?.value || document.getElementById('email')?.value;
-            const password = document.getElementById('loginPassword')?.value || document.getElementById('password')?.value;
-
-            if (!email || !password) {
-                alert('Por favor, preencha email e senha.');
-                return;
-            }
-
-            try {
-            const response = await fetch('https://api-tour.exksvol.com/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ email, password })
-            });
-
-            // O erro pode estar aqui: se o servidor não retornar um JSON válido,
-            // a linha abaixo quebra e cai no catch.
-            const data = await response.json();
-
-            if (response.ok && data.success) {
-                if (data.redirect) {
-                    window.location.href = data.redirect;
-                } else {
-                    window.location.href = 'html/Gerenciamento.html';
+                if (!email || !password) {
+                    alert('Por favor, preencha email e senha.');
+                    return;
                 }
-            } else {
-                alert(data.message || 'Credenciais inválidas');
-            }
-        } catch (error) {
-            console.error('Erro detalhado:', error);
-            alert('Não foi possível conectar ao servidor.');
+
+                try {
+                    const response = await fetch('http://187.77.247.116:5000/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ username: email, password })
+                    });
+
+                    const data = await response.json().catch(() => ({}));
+
+                    if (!response.ok || !data.success) {
+                        const message = data.message || `Falha ao conectar (status ${response.status})`;
+                        alert('Erro: ' + message);
+                        return;
+                    }
+
+                    const role = data.role || 'user';
+                    localStorage.setItem('userRole', role);
+                    localStorage.setItem('userEmail', email);
+                    if (data.token) {
+                        localStorage.setItem('authToken', data.token);
+                    }
+
+                    alert('Bem-vindo! Acesso nível: ' + role);
+                    window.location.href = '/html/Gerenciamento.html';
+                } catch (error) {
+                    console.error('Erro na conexão:', error);
+
+                    const isOnline = navigator.onLine;
+                    const loginOverlay = document.querySelector('.login-modal-overlay');
+                    const whatsUrl = 'https://wa.me/5521970018590';
+                    const mailUrl = 'mailto:riobyfoottour@gmail.com';
+
+                    if (loginOverlay) {
+                        loginOverlay.style.display = 'flex';
+                        loginOverlay.style.alignItems = 'center';
+                        loginOverlay.style.justifyContent = 'center';
+                        loginOverlay.classList.add('open');
+                        document.body.classList.add('modal-open');
+
+                        const bodyMessage = isOnline
+                            ? `Sentimos muito, o servidor está temporariamente inacessível.`
+                            : `Sem conexão com a internet. Verifique sua rede e tente novamente.`;
+
+                        const actionMessage = isOnline
+                            ? `Entre em contato com o nosso suporte via:`
+                            : `Quando estiver online, você poderá tentar novamente ou contatar suporte via:`;
+
+                        loginOverlay.innerHTML = `
+                            <div class="login-modal" role="alertdialog" aria-modal="true" aria-label="Suporte temporário">
+                                <div class="login-modal__header">
+                                    <h2 class="login-modal__title">Erro de conexão</h2>
+                                    <button type="button" class="login-modal__close" id="auth-support-overlay-close" aria-label="Fechar">&times;</button>
+                                </div>
+                                <div class="login-modal__body" style="padding:16px; color:#333; line-height:1.5;">
+                                    <p>${bodyMessage}</p>
+                                    <p>${actionMessage}</p>
+                                    <p><a href="${whatsUrl}" target="_blank" rel="noopener" style="color:#007bff; text-decoration:underline;">WhatsApp</a> ou <a href="${mailUrl}" id="auth-support-email-link" style="color:#007bff; text-decoration:underline;">Email</a>.</p>
+                                    <p style="margin-top:1rem;"><button id="auth-support-email-btn" style="padding:8px 12px;border:none;background:#007bff;color:#fff;border-radius:4px;cursor:pointer;">Abrir Email</button></p>
+                                    ${!isOnline ? `<p style="margin-top:0.5rem; color:#a00; font-weight:bold;">Conecte-se à internet e tente novamente.</p>` : ''}
+                                </div>
+                            </div>
+                        `;
+
+                        const closeOverlayBtn = document.getElementById('auth-support-overlay-close');
+                        if (closeOverlayBtn) {
+                            closeOverlayBtn.addEventListener('click', () => {
+                                loginOverlay.style.display = 'none';
+                                loginOverlay.classList.remove('open');
+                                document.body.classList.remove('modal-open');
+                            });
+                        }
+
+                        const emailBtn = document.getElementById('auth-support-email-btn');
+                        if (emailBtn) {
+                            emailBtn.addEventListener('click', () => {
+                                window.location.href = mailUrl;
+                            });
+                        }
+
+                        const emailLink = document.getElementById('auth-support-email-link');
+                        if (emailLink) {
+                            emailLink.addEventListener('click', (event) => {
+                                event.preventDefault();
+                                window.location.href = mailUrl;
+                            });
+                        }
+
+                        return;
+                    }
+
+                    if (!isOnline) {
+                        alert('Sem conexão com a internet. Verifique sua rede e tente novamente.');
+                    } else {
+                        alert(`Sentimos muito, o servidor está temporariamente inacessível. Entre em contato via WhatsApp: ${whatsUrl} ou Email: ${mailUrl}`);
+                    }
+                }
+            });
         }
-        });
     };
 
     window.getCurrentLanguage = getCurrentLang;
