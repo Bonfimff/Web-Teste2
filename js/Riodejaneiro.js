@@ -2051,7 +2051,7 @@
                     }
 
                     alert('Bem-vindo! Acesso nível: ' + role);
-                    window.location.href = '/html/Gerenciamento.html';
+                    window.location.href = 'html/Gerenciamento.html';
                 } catch (error) {
                     console.error('Erro na conexão:', error);
 
