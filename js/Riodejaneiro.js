@@ -499,7 +499,17 @@
 
             return payload;
         } catch (error) {
-            console.error('apiFetch error', error);
+            if (error instanceof TypeError) {
+                // Erros típicos de CORS ou DNS falha de rede chegam como TypeError
+                console.error('apiFetch network issue (CORS/DNS/Offline):', {
+                    url,
+                    options: defaultOptions,
+                    message: error.message,
+                    stack: error.stack
+                });
+            } else {
+                console.error('apiFetch error', error);
+            }
             throw error;
         }
     };
@@ -510,7 +520,7 @@
         return apiFetch('/login', {
             method: 'POST',
             body: JSON.stringify({ email, password }),
-            credentials: 'include' // opcional, dependendo do backend
+            credentials: 'same-origin' // temporário para teste (CORS/inter-domain)
         });
     };
 
@@ -2084,11 +2094,12 @@
                 }
 
                 try {
-                    const response = await fetch('http://187.77.247.116:5000/login', {
+                    const response = await fetch('https://api-tour.exksvol.com/login', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
+                        credentials: 'same-origin', // Teste CORS/coockie no Github Pages
                         body: JSON.stringify({ username: email, password })
                     });
 
