@@ -803,10 +803,24 @@ body::before {
   }
   
   /* Tabela em cards no mobile */
+  .rio-tour-table {
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  .rio-tour-table tr,
+  .rio-tour-table td,
+  .rio-tour-table th {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
   .rio-tour-table thead {
     display: none;
   }
-  
+
   .rio-tour-table tbody {
     display: block;
   }
