@@ -70,6 +70,9 @@ const carregarAgendamentosDoBanco = async () => {
       tableBodyElement.innerHTML = '<tr><td colspan="8" style="padding:0.75rem;">Nenhuma reserva encontrada.</td></tr>';
     }
 
+    // Exibir registros mais recentes primeiro (id maior primeiro)
+    filtered.sort((a, b) => (b.id || 0) - (a.id || 0));
+
     filtered.forEach(ag => {
       const row = document.createElement('tr');
       row.setAttribute('data-id', ag.id);
@@ -117,40 +120,117 @@ const carregarAgendamentosDoBanco = async () => {
     if (statConfirmed) statConfirmed.textContent = String(confirmed);
     if (statFinalized) statFinalized.textContent = String(finalized);
 
-    const nextTour = filtered
+    const now = new Date();
+    now.setSeconds(0, 0);
+
+    const parseDateTime = (ag) => {
+      if (!ag.data || !ag.hora) return null;
+      const [day, month, year] = ag.data.split('/').map(Number);
+      const [hour, minute] = ag.hora.split(':').map(Number);
+      if (!day || !month || !year || hour == null || minute == null) return null;
+      return new Date(year, month - 1, day, hour, minute, 0, 0);
+    };
+
+    const upcoming = filtered
       .map(ag => ({
         ...ag,
-        date: ag.data ? new Date(ag.data.split('/').reverse().join('-')) : null
+        dateTime: parseDateTime(ag)
       }))
-      .filter(ag => ag.date instanceof Date && !Number.isNaN(ag.date.getTime()) && ag.date >= new Date())
-      .sort((a, b) => a.date - b.date)[0];
+      .filter(ag =>
+        ag.dateTime instanceof Date &&
+        !Number.isNaN(ag.dateTime.getTime()) &&
+        ag.dateTime >= now &&
+        (ag.status || 'Pendente') === 'Confirmado'
+      )
+      .sort((a, b) => a.dateTime - b.dateTime);
+
+    const nextDateTime = upcoming.length > 0 ? upcoming[0].dateTime : null;
+    const allNextDateTime = nextDateTime
+      ? upcoming.filter(ag => ag.dateTime && ag.dateTime.getTime() === nextDateTime.getTime())
+      : [];
 
     if (statNext) {
-      statNext.textContent = nextTour ? `${nextTour.tour} ${nextTour.data} ${nextTour.hora}` : '-';
+      if (!nextDateTime) {
+        statNext.textContent = '-';
+      } else {
+        const dateStr = nextDateTime.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        const timeStr = nextDateTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        statNext.textContent = `${dateStr} ${timeStr} (${allNextDateTime.length} próximo${allNextDateTime.length !== 1 ? 's' : ''})`;
+      }
     }
 
-    const nextTourLanguage = document.getElementById('nextTourLanguage');
-    const nextTourPeople = document.getElementById('nextTourPeople');
-    const nextTourGuide = document.getElementById('nextTourGuide');
+    const grouped = {};
+    allNextDateTime.forEach(ag => {
+      const tour = (ag.tour || '').trim();
+      const idioma = (ag.idioma || '').trim();
+      const guia = (ag.guia || '').trim();
+      const key = `${tour}||${idioma}||${guia}`;
+      const qtd = Number(ag.qtd ?? ag.qtd_pessoas ?? 0) || 0;
+      if (!grouped[key]) {
+        grouped[key] = {
+          tour: tour || '-',
+          idioma: idioma || '-',
+          guia: guia || '-',
+          data: ag.data || '-',
+          hora: ag.hora || '-',
+          pessoas: qtd,
+          count: 1
+        };
+      } else {
+        grouped[key].pessoas += qtd;
+        grouped[key].count += 1;
+      }
+    });
 
-    if (nextTour) {
-      if (nextTourLanguage) nextTourLanguage.textContent = nextTour.idioma || 'Não informado';
-      if (nextTourPeople) nextTourPeople.textContent = nextTour.qtd != null ? String(nextTour.qtd) : (nextTour.qtd_pessoas != null ? String(nextTour.qtd_pessoas) : '-');
-      if (nextTourGuide) nextTourGuide.textContent = nextTour.guia || '-';
-    } else {
-      if (nextTourLanguage) nextTourLanguage.textContent = '-';
-      if (nextTourPeople) nextTourPeople.textContent = '-';
-      if (nextTourGuide) nextTourGuide.textContent = '-';
+    const nextTours = Object.values(grouped);
+
+    // statNext já foi atualizado acima com allNextDateTime.length, garantindo contagem total de reservas.
+    const nextTourDetails = document.getElementById('nextTourDetails');
+
+    if (nextTourDetails) {
+      nextTourDetails.classList.remove('open');
+      nextTourDetails.setAttribute('aria-hidden', 'true');
+
+      let tourListContainer = nextTourDetails.querySelector('.next-tour-entries');
+      if (!tourListContainer) {
+        tourListContainer = document.createElement('div');
+        tourListContainer.className = 'next-tour-entries';
+        tourListContainer.style.marginTop = '0.5rem';
+        nextTourDetails.appendChild(tourListContainer);
+      }
+
+      if (nextTours.length === 0) {
+        tourListContainer.innerHTML = '<div style="color:#6b7280;">Nenhum próximo tour confirmado.</div>';
+      } else {
+        const totalPeople = nextTours.reduce((sum, group) => sum + (group.pessoas || 0), 0);
+        const tourGuides = [...new Set(nextTours.map(group => group.guia || '-'))].join(', ');
+
+        tourListContainer.innerHTML = nextTours.map(group => {
+          return `
+            <div class="next-tour-entry" style="margin-bottom:0.4rem; border-bottom:1px solid rgba(0,0,0,0.08); padding-bottom:0.4rem;">
+              <div><strong>Tour:</strong> ${group.tour}</div>
+              <div><strong>Idioma:</strong> ${group.idioma}</div>
+              <div><strong>Guia:</strong> ${group.guia}</div>
+              <div><strong>Pessoas:</strong> ${group.pessoas}</div>
+            </div>`;
+        }).join('');
+
+      }
     }
 
     const nextToggle = document.getElementById('nextTourToggle');
     const nextDetails = document.getElementById('nextTourDetails');
+    if (nextDetails) {
+      nextDetails.classList.remove('open');
+      nextDetails.setAttribute('aria-hidden', 'true');
+    }
+
     if (nextToggle && nextDetails) {
       nextToggle.addEventListener('click', () => {
-        const open = nextDetails.style.display === 'block';
-        nextDetails.style.display = open ? 'none' : 'block';
-        nextToggle.setAttribute('aria-expanded', String(!open));
-        nextToggle.classList.toggle('open', !open);
+        const expanded = nextDetails.classList.toggle('open');
+        nextDetails.setAttribute('aria-hidden', String(!expanded));
+        nextToggle.setAttribute('aria-expanded', String(expanded));
+        nextToggle.classList.toggle('open', expanded);
       });
     }
 
@@ -275,7 +355,10 @@ const initReservationManagement = () => {
   }
 
   // Ensure delete confirmation is hidden until Delete is clicked
-  if (deleteConfirmation) deleteConfirmation.classList.add('hidden');
+  if (deleteConfirmation) {
+    deleteConfirmation.classList.add('hidden');
+    deleteConfirmation.style.display = 'none';
+  }
 
   const getFilters = () => {
     const from = filterFrom?.value ? new Date(filterFrom.value) : null;
@@ -396,6 +479,7 @@ const initReservationManagement = () => {
     pendingUpdateId = reservations[index]?.id || null;
     modal.querySelector('#modalTitle').textContent = 'Editar reserva';
     if (modalDelete) modalDelete.style.display = 'inline-block';
+    hideDeleteConfirmation();
 
     populateModalOptions();
 
@@ -428,6 +512,7 @@ const initReservationManagement = () => {
 
     modal.querySelector('#modalTitle').textContent = 'Adicionar reserva';
     if (modalDelete) modalDelete.style.display = 'none';
+    hideDeleteConfirmation();
 
     populateModalOptions();
 
@@ -585,14 +670,16 @@ const initReservationManagement = () => {
   const showDeleteConfirmation = () => {
     if (!deleteConfirmation || !modalDeleteConfirm || !deleteSlider) return;
     deleteConfirmation.classList.remove('hidden');
+    deleteConfirmation.style.display = 'block';
     deleteSlider.value = '0';
     deleteSliderLabel.textContent = 'Arraste até o final';
-    deleteModalConfirm.disabled = true;
+    modalDeleteConfirm.disabled = true;
   };
 
   const hideDeleteConfirmation = () => {
     if (!deleteConfirmation) return;
     deleteConfirmation.classList.add('hidden');
+    deleteConfirmation.style.display = 'none';
   };
 
   if (modal) {
@@ -825,41 +912,12 @@ const initReservationManagement = () => {
     if (nextEl) {
       if (!next) {
         nextEl.textContent = '-';
-        return;
-      }
+      } else {
+        const totalPeople = reservations
+          .filter(r => r.tour === next.tour && r.when === next.when)
+          .reduce((sum, r) => sum + (r.quantity || 0), 0);
 
-      // Total people for this same tour+datetime (all matching reservations)
-      const totalPeople = reservations
-        .filter(r => r.tour === next.tour && r.when === next.when)
-        .reduce((sum, r) => sum + (r.quantity || 0), 0);
-
-      nextEl.innerHTML = `
-        <div class="next-tour-summary">
-          <div class="next-tour-line">
-            <span class="next-tour-label">Tour:</span>
-            <span class="next-tour-value">${next.tour}</span>
-          </div>
-          <div class="next-tour-line">
-            <span class="next-tour-label">Data/Hora:</span>
-            <span class="next-tour-value">${next.date.toLocaleDateString()} ${next.date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-          </div>
-          <button type="button" id="nextTourMore" class="btn-book" style="margin-top:0.75rem;">Mais informações</button>
-        </div>
-        <div id="nextTourDetails" class="next-tour-details hidden">
-          <div><span class="next-tour-label">Pessoas:</span> <span class="next-tour-value">${totalPeople}</span></div>
-          <div><span class="next-tour-label">Modalidade:</span> <span class="next-tour-value">${next.modality === 'privado' ? 'Privado' : next.modality === 'free' ? 'Free' : (next.modality || 'Free')}</span></div>
-          <div><span class="next-tour-label">Guia:</span> <span class="next-tour-value">${next.guide || '-'}</span></div>
-          <div><span class="next-tour-label">Idioma:</span> <span class="next-tour-value">${next.language || '-'}</span></div>
-        </div>
-      `;
-
-      const moreBtn = nextEl.querySelector('#nextTourMore');
-      const details = nextEl.querySelector('#nextTourDetails');
-      if (moreBtn && details) {
-        moreBtn.addEventListener('click', () => {
-          details.classList.toggle('hidden');
-          moreBtn.textContent = details.classList.contains('hidden') ? 'Mais informações' : 'Menos informações';
-        });
+        nextEl.textContent = `${next.tour} - ${next.date.toLocaleDateString()} ${next.date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} (${totalPeople} pessoas)`;
       }
     }
   };
