@@ -1,4 +1,61 @@
 // version 1.0
+
+// ********************************************************************
+// função get_agendamentos (fetch do backend)
+// ********************************************************************
+const carregarAgendamentosDoBanco = async () => {
+  const tableBodyElement = document.getElementById('reservationsBody');
+  if (!tableBodyElement) return;
+
+  const userEmail = localStorage.getItem('userEmail');
+  if (!userEmail) {
+    alert('Sessão expirada. Por favor, faça login novamente.');
+    window.location.href = 'login.html';
+    return;
+  }
+
+  try {
+    const response = await fetch(`https://api-tour.exksvol.com/get_agendamentos?email=${encodeURIComponent(userEmail)}`);
+
+    if (response.status === 403) {
+      alert('Erro: Você não tem permissão de Administrador para ver esta página.');
+      return;
+    }
+
+    if (!response.ok) {
+      console.error('Erro ao buscar agendamentos', response.status);
+      return;
+    }
+
+    const agendamentos = await response.json();
+    tableBodyElement.innerHTML = '';
+
+    agendamentos.forEach(ag => {
+      const row = document.createElement('tr');
+      row.setAttribute('data-id', ag.id);
+
+      row.innerHTML = `
+        <td>${ag.tour}</td>
+        <td>${ag.data}</td>
+        <td>${ag.hora}</td>
+        <td>${ag.cliente}</td>
+        <td>${ag.qtd}</td>
+        <td><span class="status-badge ${ag.status.toLowerCase()}">${ag.status}</span></td>
+      `;
+
+      row.addEventListener('click', () => {
+        console.log('Editando agendamento:', ag.id);
+      });
+
+      tableBodyElement.appendChild(row);
+    });
+
+    console.log('Tabela atualizada com sucesso!');
+  } catch (error) {
+    console.error('Erro de conexão ao carregar tabela:', error);
+  }
+};
+
 const initReservationManagement = () => {
   const tableBody = document.getElementById('reservationsBody');
   const clearBtn = document.getElementById('clearReservations');
@@ -205,37 +262,87 @@ const initReservationManagement = () => {
     modal.classList.remove('hidden');
   };
 
-  const saveModal = () => {
-    const when = new Date(`${modalDate.value}T${modalTime.value}`);
-    if (Number.isNaN(when.getTime())) {
-      window.alert('Data/hora inválida.');
+  const saveModal = async () => {
+    const dateStr = modalDate.value;
+    const timeStr = modalTime.value;
+    if (!dateStr || !timeStr) {
+      window.alert('Por favor informe data e hora.');
       return;
     }
 
-    const reservationData = {
-      tour: modalTour.value.trim(),
-      when: when.toISOString(),
-      language: modalLanguage.value.trim(),
-      modality: modalModality?.value || 'free',
-      phone: modalPhone?.value.trim() || '',
-      guide: modalGuide.value.trim(),
-      quantity: Number(modalQuantity.value) || 1,
-      status: modalStatus.value || 'Pendente',
-      url: ''
-    };
-
-    const reservations = getReservations();
-
-    if (isAdding) {
-      reservations.unshift(reservationData);
-    } else {
-      if (activeEditIndex === null) return;
-      reservations[activeEditIndex] = reservationData;
+    const when = new Date(`${dateStr}T${timeStr}`);
+    if (Number.isNaN(when.getTime())) {
+      window.alert('Data/hora inválida. Use AAAA-MM-DD e HH:MM.');
+      return;
     }
 
-    setReservations(reservations);
-    closeModal();
-    render();
+    const novaReserva = {
+      tour: modalTour.value.trim(),
+      data: dateStr,
+      hora: timeStr,
+      idioma: modalLanguage.value.trim(),
+      modalidade: modalModality?.value || 'free',
+      guia: modalGuide.value.trim(),
+      quantas_pessoas: parseInt(modalQuantity.value, 10) || 0,
+      pessoas: '',
+      nome: 'Admin Manual',
+      celular: modalPhone.value.trim() || '',
+      email: 'contato@exksvol.com'
+    };
+
+    console.log('Enviando dados:', novaReserva);
+
+    try {
+      const response = await fetch('https://api-tour.exksvol.com/add_agendamento', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(novaReserva)
+      });
+
+      const result = await response.json().catch(() => ({ message: 'Resposta não JSON' }));
+
+      if (response.ok) {
+        alert('Reserva salva no banco de dados com sucesso!');
+
+        // Atualiza tabela do backend após inclusão
+        carregarAgendamentosDoBanco();
+
+        // Sincroniza localmente também (opcional)
+        const reservations = getReservations();
+        const reservationData = {
+          tour: novaReserva.tour,
+          when: when.toISOString(),
+          language: novaReserva.idioma,
+          modality: novaReserva.modalidade,
+          phone: novaReserva.celular,
+          guide: novaReserva.guia,
+          quantity: novaReserva.quantas_pessoas,
+          status: novaReserva.status,
+          url: ''
+        };
+
+        if (isAdding) {
+          reservations.unshift(reservationData);
+        } else {
+          if (activeEditIndex !== null) {
+            reservations[activeEditIndex] = reservationData;
+          }
+        }
+
+        setReservations(reservations);
+        closeModal();
+        render();
+        // Não forçar reload para a atualização instantânea já ser feita pelo carregarAgendamentosDoBanco
+      } else {
+        const message = result?.message || `Status ${response.status}`;
+        alert('Erro ao salvar: ' + message);
+      }
+    } catch (error) {
+      console.error('Erro na requisição:', error);
+      alert('Não foi possível conectar ao servidor. ' + (error.message || ''));       
+    }
   };
 
   const deleteModalReservation = () => {
@@ -552,6 +659,7 @@ const initReservationManagement = () => {
 window.addEventListener('DOMContentLoaded', () => {
   if (document.getElementById('reservationsBody')) {
     initReservationManagement();
+    carregarAgendamentosDoBanco();
   }
 
   const hamburger = document.getElementById('hamburger');
