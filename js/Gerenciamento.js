@@ -914,10 +914,14 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
     document.addEventListener('click', (event) => {
-      if (!profileMenu.contains(event.target)) {
+      if (!profileMenu.contains(event.target) && event.target !== profileBtn) {
         profileMenu.classList.remove('open');
         profileBtn.setAttribute('aria-expanded', 'false');
       }
+    });
+
+    profileMenu.addEventListener('click', (event) => {
+      event.stopPropagation();
     });
 
     profileMenu.querySelectorAll('.profile-item').forEach((item) => {
