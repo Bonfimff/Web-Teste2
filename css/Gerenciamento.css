@@ -793,7 +793,12 @@ body::before {
   }
   
   /* Tabela em cards no mobile */
-  .rio-tour-table thead {
+  .rio-tour-table {
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
     display: none;
   }
   
