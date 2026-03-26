@@ -1,11 +1,26 @@
 // version 1.0
 
+let pendingUpdateId = null; // id do agendamento que está entrando no modo editar
+
 // ********************************************************************
 // função get_agendamentos (fetch do backend)
 // ********************************************************************
 const carregarAgendamentosDoBanco = async () => {
   const tableBodyElement = document.getElementById('reservationsBody');
   if (!tableBodyElement) return;
+
+  // filtros aplicados na própria tabela de backend
+  const filterFrom = document.getElementById('filterFrom');
+  const filterTo = document.getElementById('filterTo');
+  const filterTour = document.getElementById('filterTour');
+  const filterStatus = document.getElementById('filterStatus');
+  const filterModality = document.getElementById('filterModality');
+
+  const fromDate = filterFrom?.value ? new Date(filterFrom.value) : null;
+  const toDate = filterTo?.value ? new Date(filterTo.value) : null;
+  const tourFilter = filterTour?.value || 'all';
+  const statusFilter = filterStatus?.value || 'all';
+  const modalityFilter = filterModality?.value || 'all';
 
   const userEmail = localStorage.getItem('userEmail');
   if (!userEmail) {
@@ -30,30 +45,192 @@ const carregarAgendamentosDoBanco = async () => {
     const agendamentos = await response.json();
     tableBodyElement.innerHTML = '';
 
-    agendamentos.forEach(ag => {
+    let filtered = agendamentos.filter(ag => {
+      let agDate = null;
+      if (ag.data) {
+        const parts = ag.data.split('/');
+        if (parts.length === 3) {
+          agDate = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+        }
+      }
+
+      if (fromDate && agDate && agDate < fromDate) return false;
+      if (toDate && agDate) {
+        const endOfDay = new Date(toDate);
+        endOfDay.setHours(23, 59, 59, 999);
+        if (agDate > endOfDay) return false;
+      }
+      if (statusFilter !== 'all' && (ag.status || 'Pendente') !== statusFilter) return false;
+      if (tourFilter !== 'all' && ag.tour !== tourFilter) return false;
+      if (modalityFilter !== 'all' && (ag.modalidade || 'free') !== modalityFilter) return false;
+      return true;
+    });
+
+    if (!filtered.length) {
+      tableBodyElement.innerHTML = '<tr><td colspan="8" style="padding:0.75rem;">Nenhuma reserva encontrada.</td></tr>';
+    }
+
+    filtered.forEach(ag => {
       const row = document.createElement('tr');
       row.setAttribute('data-id', ag.id);
 
+      const statusValue = (ag.status || 'Pendente').toString();
+      const statusClass = statusValue.toLowerCase();
+      const qtdValue = ag.qtd != null ? ag.qtd : (ag.qtd_pessoas != null ? ag.qtd_pessoas : '-');
+      const idiomaValue = ag.idioma || '-';
+      const modalidadeValue = ag.modalidade || 'free';
+      const guiaValue = ag.guia || '-';
+
       row.innerHTML = `
-        <td>${ag.tour}</td>
-        <td>${ag.data}</td>
-        <td>${ag.hora}</td>
-        <td>${ag.cliente}</td>
-        <td>${ag.qtd}</td>
-        <td><span class="status-badge ${ag.status.toLowerCase()}">${ag.status}</span></td>
+        <td data-label="Tour">${ag.tour}</td>
+        <td data-label="Idioma">${idiomaValue}</td>
+        <td data-label="Modalidade">${modalidadeValue}</td>
+        <td data-label="Guia">${guiaValue}</td>
+        <td data-label="Data">${ag.data}</td>
+        <td data-label="Hora">${ag.hora}</td>
+        <td data-label="Pessoas">${qtdValue}</td>
+        <td data-label="Status"><span class="status-badge ${statusClass}">${statusValue}</span></td>
       `;
 
       row.addEventListener('click', () => {
         console.log('Editando agendamento:', ag.id);
       });
 
+      row.addEventListener('dblclick', () => {
+        openEditModalFromBackend(ag);
+      });
+
       tableBodyElement.appendChild(row);
     });
+
+    // Atualiza os cards de status com base nos dados recebidos do backend
+    const pending = filtered.filter(ag => (ag.status || 'Pendente') === 'Pendente').length;
+    const confirmed = filtered.filter(ag => (ag.status || 'Pendente') === 'Confirmado').length;
+    const finalized = filtered.filter(ag => (ag.status || 'Pendente') === 'Finalizado').length;
+
+    const statPending = document.getElementById('statPending');
+    const statConfirmed = document.getElementById('statConfirmed');
+    const statFinalized = document.getElementById('statFinalized');
+    const statNext = document.getElementById('statNext');
+
+    if (statPending) statPending.textContent = String(pending);
+    if (statConfirmed) statConfirmed.textContent = String(confirmed);
+    if (statFinalized) statFinalized.textContent = String(finalized);
+
+    const nextTour = filtered
+      .map(ag => ({
+        ...ag,
+        date: ag.data ? new Date(ag.data.split('/').reverse().join('-')) : null
+      }))
+      .filter(ag => ag.date instanceof Date && !Number.isNaN(ag.date.getTime()) && ag.date >= new Date())
+      .sort((a, b) => a.date - b.date)[0];
+
+    if (statNext) {
+      statNext.textContent = nextTour ? `${nextTour.tour} ${nextTour.data} ${nextTour.hora}` : '-';
+    }
+
+    const nextTourLanguage = document.getElementById('nextTourLanguage');
+    const nextTourPeople = document.getElementById('nextTourPeople');
+    const nextTourGuide = document.getElementById('nextTourGuide');
+
+    if (nextTour) {
+      if (nextTourLanguage) nextTourLanguage.textContent = nextTour.idioma || 'Não informado';
+      if (nextTourPeople) nextTourPeople.textContent = nextTour.qtd != null ? String(nextTour.qtd) : (nextTour.qtd_pessoas != null ? String(nextTour.qtd_pessoas) : '-');
+      if (nextTourGuide) nextTourGuide.textContent = nextTour.guia || '-';
+    } else {
+      if (nextTourLanguage) nextTourLanguage.textContent = '-';
+      if (nextTourPeople) nextTourPeople.textContent = '-';
+      if (nextTourGuide) nextTourGuide.textContent = '-';
+    }
+
+    const nextToggle = document.getElementById('nextTourToggle');
+    const nextDetails = document.getElementById('nextTourDetails');
+    if (nextToggle && nextDetails) {
+      nextToggle.addEventListener('click', () => {
+        const open = nextDetails.style.display === 'block';
+        nextDetails.style.display = open ? 'none' : 'block';
+        nextToggle.setAttribute('aria-expanded', String(!open));
+        nextToggle.classList.toggle('open', !open);
+      });
+    }
 
     console.log('Tabela atualizada com sucesso!');
   } catch (error) {
     console.error('Erro de conexão ao carregar tabela:', error);
   }
+};
+
+const openEditModalFromBackend = (ag) => {
+  // Abre o modal de edição usando os dados retornados do backend
+  const modal = document.getElementById('reservationModal');
+  if (!modal) return;
+
+  const modalTour = document.getElementById('modalTour');
+  const modalDate = document.getElementById('modalDate');
+  const modalTime = document.getElementById('modalTime');
+  const modalLanguage = document.getElementById('modalLanguage');
+  const modalModality = document.getElementById('modalModality');
+  const modalPhone = document.getElementById('modalPhone');
+  const modalEmail = document.getElementById('modalEmail');
+  const modalName = document.getElementById('modalName');
+  const modalGuide = document.getElementById('modalGuide');
+  const modalQuantity = document.getElementById('modalQuantity');
+  const modalStatus = document.getElementById('modalStatus');
+  const modalDelete = document.getElementById('modalDelete');
+
+  if (modalTour) {
+    // carregar opções de tour (mesmo conjunto usado em openEditModal)
+    const localTours = getReservations().map(r => r.tour).filter(Boolean);
+    const baseTours = [
+      'Centro Histórico',
+      'Santa Teresa',
+      'Pedra do Sal: Samba e Herança Afrobrasileira',
+      'Copacabana e Ipanema',
+      'Favela Tour (Morro Dona Marta)',
+      'Tour das Praias',
+      'Tour Cultural do Centro'
+    ];
+    const tours = [...new Set([...baseTours, ...localTours, ag.tour].filter(Boolean))];
+
+    const selectedTour = ag.tour || '';
+    modalTour.innerHTML = '<option value="">Selecione um tour</option>' + tours.map(t => `\n        <option value="${t}"${t === selectedTour ? ' selected' : ''}>${t}</option>`).join('');
+    modalTour.value = selectedTour;
+  }
+
+  pendingUpdateId = ag.id || null;
+
+  if (modalDate && ag.data) {
+    const parts = ag.data.split('/');
+    if (parts.length === 3) {
+      modalDate.value = `${parts[2].padStart(2, '0')}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+    }
+  }
+  if (modalTime && ag.hora) modalTime.value = ag.hora;
+
+  // garantir idiomas padrões disponíveis na seleção e marcar idioma atual
+  if (modalLanguage) {
+    const baseLanguages = ['Português', 'Inglês', 'Espanhol'];
+    const otherLanguages = getReservations().flatMap(r => (r.language || '').split(/[,;]+/).map(l => l.trim()).filter(Boolean));
+    const languages = [...new Set([...baseLanguages, ...otherLanguages, ag.idioma].filter(Boolean))];
+    const selectedLanguage = ag.idioma || '';
+
+    modalLanguage.innerHTML = '<option value="">Selecione um idioma</option>' +
+      languages.map(l => `\n        <option value="${l}"${l === selectedLanguage ? ' selected' : ''}>${l}</option>`).join('');
+    modalLanguage.value = selectedLanguage;
+  }
+
+  if (modalModality) modalModality.value = ag.modalidade || 'free';
+  if (modalPhone) modalPhone.value = ag.celular || ag.cliente_celular || '';
+  if (modalEmail) modalEmail.value = ag.email || ag.cliente_email || '';
+  if (modalName) modalName.value = ag.nome || ag.cliente || ag.cliente_nome || '';
+  if (modalGuide) modalGuide.value = ag.guia || '';
+  if (modalQuantity) modalQuantity.value = ag.qtd || ag.qtd_pessoas || 1;
+  if (modalStatus) modalStatus.value = ag.status || 'Pendente';
+
+  const modalTitle = modal.querySelector('#modalTitle');
+  if (modalTitle) modalTitle.textContent = 'Editar reserva';
+  if (modalDelete) modalDelete.style.display = 'inline-block';
+  modal.classList.remove('hidden');
 };
 
 const initReservationManagement = () => {
@@ -71,6 +248,7 @@ const initReservationManagement = () => {
   const modalLanguage = document.getElementById('modalLanguage');
   const modalModality = document.getElementById('modalModality');
   const modalPhone = document.getElementById('modalPhone');
+  const modalEmail = document.getElementById('modalEmail');
   const modalGuide = document.getElementById('modalGuide');
   const modalQuantity = document.getElementById('modalQuantity');
   const modalStatus = document.getElementById('modalStatus');
@@ -215,6 +393,7 @@ const initReservationManagement = () => {
 
     isAdding = false;
     activeEditIndex = index;
+    pendingUpdateId = reservations[index]?.id || null;
     modal.querySelector('#modalTitle').textContent = 'Editar reserva';
     if (modalDelete) modalDelete.style.display = 'inline-block';
 
@@ -229,6 +408,8 @@ const initReservationManagement = () => {
     modalLanguage.value = reservation.language || '';
     modalModality.value = reservation.modality || 'free';
     modalPhone.value = reservation.phone || '';
+    modalEmail.value = reservation.email || '';
+    modalName.value = reservation.name || reservation.nome || '';
     modalGuide.value = reservation.guide || '';
     modalQuantity.value = reservation.quantity || 1;
     modalStatus.value = reservation.status || 'Pendente';
@@ -243,6 +424,7 @@ const initReservationManagement = () => {
 
     isAdding = true;
     activeEditIndex = null;
+    pendingUpdateId = null;
 
     modal.querySelector('#modalTitle').textContent = 'Adicionar reserva';
     if (modalDelete) modalDelete.style.display = 'none';
@@ -255,6 +437,8 @@ const initReservationManagement = () => {
 
     modalLanguage.value = '';
     modalPhone.value = '';
+    modalEmail.value = '';
+    modalName.value = '';
     modalGuide.value = '';
     modalQuantity.value = 1;
     modalStatus.value = 'Pendente';
@@ -285,16 +469,22 @@ const initReservationManagement = () => {
       guia: modalGuide.value.trim(),
       quantas_pessoas: parseInt(modalQuantity.value, 10) || 0,
       pessoas: '',
-      nome: 'Admin Manual',
+      nome: modalName?.value.trim() || 'Admin Manual',
       celular: modalPhone.value.trim() || '',
-      email: 'contato@exksvol.com'
+      email: modalEmail?.value.trim() || '',
+      status: modalStatus?.value || 'Pendente'
     };
 
     console.log('Enviando dados:', novaReserva);
 
+    const isEdit = Boolean(pendingUpdateId);
+    if (isEdit) {
+      novaReserva.id = pendingUpdateId;
+    }
+
     try {
-      const response = await fetch('https://api-tour.exksvol.com/add_agendamento', {
-        method: 'POST',
+      const response = await fetch(`https://api-tour.exksvol.com/${isEdit ? 'update_agendamento' : 'add_agendamento'}`, {
+        method: isEdit ? 'PUT' : 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
@@ -317,6 +507,8 @@ const initReservationManagement = () => {
           language: novaReserva.idioma,
           modality: novaReserva.modalidade,
           phone: novaReserva.celular,
+          email: novaReserva.email,
+          name: novaReserva.nome,
           guide: novaReserva.guia,
           quantity: novaReserva.quantas_pessoas,
           status: novaReserva.status,
@@ -331,6 +523,7 @@ const initReservationManagement = () => {
           }
         }
 
+        pendingUpdateId = null;
         setReservations(reservations);
         closeModal();
         render();
@@ -345,13 +538,48 @@ const initReservationManagement = () => {
     }
   };
 
-  const deleteModalReservation = () => {
-    if (activeEditIndex === null) return;
-    const reservations = getReservations();
-    reservations.splice(activeEditIndex, 1);
-    setReservations(reservations);
+  const deleteModalReservation = async () => {
+    if (!pendingUpdateId && activeEditIndex === null) return;
+
+    // Preferencialmente deletar do backend se houver id do registro
+    if (pendingUpdateId) {
+      try {
+        const response = await fetch('https://api-tour.exksvol.com/delete_agendamento', {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ id: pendingUpdateId })
+        });
+
+        if (!response.ok) {
+          const result = await response.json().catch(() => ({}));
+          const msg = result?.message || `Status ${response.status}`;
+          alert('Não foi possível excluir no servidor: ' + msg);
+          return;
+        }
+
+        alert('Agendamento removido com sucesso!');
+        pendingUpdateId = null;
+        activeEditIndex = null;
+
+        // Recarrega do backend para garantir consistência
+        carregarAgendamentosDoBanco();
+      } catch (error) {
+        console.error('Erro de exclusão:', error);
+        alert('Erro ao excluir no servidor: ' + (error.message || ''));        
+      }
+    } else {
+      // fallback local (sem id)
+      const reservations = getReservations();
+      reservations.splice(activeEditIndex, 1);
+      setReservations(reservations);
+      activeEditIndex = null;
+      render();
+    }
+
+    hideDeleteConfirmation();
     closeModal();
-    render();
   };
 
   const showDeleteConfirmation = () => {
@@ -571,7 +799,9 @@ const initReservationManagement = () => {
   };
 
   const renderQuickStats = (reservations) => {
-    const openCount = reservations.filter(r => r.status === 'Pendente').length;
+    const pendingCount = reservations.filter(r => r.status === 'Pendente').length;
+    const confirmedCount = reservations.filter(r => r.status === 'Confirmado').length;
+    const finalizedCount = reservations.filter(r => r.status === 'Finalizado').length;
 
     // Determine the next tour reservation (earliest future date)
     const futureReservations = reservations
@@ -584,9 +814,13 @@ const initReservationManagement = () => {
 
     const next = futureReservations[0];
 
-    const openEl = document.getElementById('statOpen');
+    const pendingEl = document.getElementById('statPending');
+    const confirmedEl = document.getElementById('statConfirmed');
+    const finalizedEl = document.getElementById('statFinalized');
     const nextEl = document.getElementById('statNext');
-    if (openEl) openEl.textContent = String(openCount);
+    if (pendingEl) pendingEl.textContent = String(pendingCount);
+    if (confirmedEl) confirmedEl.textContent = String(confirmedCount);
+    if (finalizedEl) finalizedEl.textContent = String(finalizedCount);
 
     if (nextEl) {
       if (!next) {
@@ -633,7 +867,7 @@ const initReservationManagement = () => {
   const attachFilters = () => {
     [filterFrom, filterTo, filterStatus, filterTour, filterModality].forEach(el => {
       if (!el) return;
-      el.addEventListener('change', render);
+      el.addEventListener('change', carregarAgendamentosDoBanco);
     });
 
     if (addReservationBtn) {
