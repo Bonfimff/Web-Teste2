@@ -8,9 +8,9 @@ html, body {
     min-height: 100vh;
     font-family: 'Montserrat', sans-serif;
     
-    /* Configuração da Imagem de Fundo */
-    background-image: linear-gradient(rgba(244, 247, 249, 0.8), rgba(244, 247, 249, 0.8)), 
-                      url('../img/147185.jpg');
+    /* REMOVIDO O LINEAR-GRADIENT: Apenas a imagem direta */
+    background-image: url('../img/147185.jpg');
+    
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
