@@ -282,18 +282,16 @@ body::before {
 .rio-tour-table,
 .modal-content,
 .delete-confirmation {
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
 }
 
 .blurry-card,
 .rio-notice-text {
-  background: transparent !important;
-  backdrop-filter: blur(0) !important;
-  -webkit-backdrop-filter: blur(0) !important;
-  border-radius: 0 !important;
-  border: none !important;
-  box-shadow: none !important;
   padding: 1.5rem;
 }
 
@@ -326,13 +324,13 @@ body::before {
 }
 
 .status-card {
-  background: transparent !important;
-  backdrop-filter: none !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(8px);
   padding: 1rem;
-  border-radius: 0;
+  border-radius: 16px;
   flex: 1;
   min-width: 100px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(11, 77, 139, 0.15);
   transition: transform 0.2s;
 }
 
@@ -357,10 +355,10 @@ body::before {
 }
 
 #nextTourCard {
-  background: transparent !important;
-  backdrop-filter: none !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(8px);
   padding: 1rem;
-  border-radius: 0;
+  border-radius: 16px;
   flex: 1;
   min-width: 0 !important;
   max-width: 100% !important;
@@ -493,11 +491,11 @@ body::before {
 .rio-tour-table {
   width: 100%;
   border-collapse: collapse;
-  background: transparent !important;
-  backdrop-filter: none !important;
-  border-radius: 0;
-  overflow: visible;
-  box-shadow: none;
+  background: rgba(255, 255, 255, 0.96) !important;
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.22);
 }
 
 .rio-tour-table th,
