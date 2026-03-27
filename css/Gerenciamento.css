@@ -1,22 +1,16 @@
 /* version 1.1 - Responsivo Completo */
 
 /* Estilo para a página de gerenciamento de reservas */
-html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    min-height: 100vh;
-    font-family: 'Montserrat', sans-serif;
-    
-    /* REMOVIDO O LINEAR-GRADIENT: Apenas a imagem direta */
-    background-image: url('../img/147185.jpg');
-    
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    background-repeat: no-repeat;
-    
-    color: #333;
+html, body, .rio-page, .gerenciamento-page {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  font-family: 'Montserrat', sans-serif;
+  background: url('../imagem/assets/fundo rj.png') center/cover fixed no-repeat;
+  background-color: rgba(12, 35, 64, 0.75);
+  color: #f2f5f8;
+  position: relative;
 }
 
 /* Formulário de reserva: labels cinza */
@@ -68,30 +62,6 @@ html, body {
   gap: 0.5rem;
 }
 
-body {
-  background-image: url('../imagem/assets/fundo rj.png');
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-size: cover;
-  background-attachment: fixed;
-  background-color: rgba(12, 35, 64, 0.75);
-  color: #fff;
-  position: relative;
-  min-height: 100vh;
-}
-
-.rio-page,
-.gerenciamento-page,
-body {
-  background-image: url('../imagem/assets/fundo rj.png') !important;
-  background-repeat: no-repeat !important;
-  background-position: center center !important;
-  background-size: cover !important;
-  background-attachment: fixed !important;
-  background-color: transparent !important;
-  background-blend-mode: normal !important;
-  color: #f2f5f8;
-}
 
 /* Header responsivo */
 .gerenciamento-header {
@@ -125,10 +95,29 @@ body {
   white-space: nowrap;
 }
 
+.profile-item--admin {
+  display: none !important;
+}
+
+.rio-notice {
+  padding-top: 2rem;
+}
+
 .gerenciamento-header .nav-link,
 .gerenciamento-header .profile-btn,
 .gerenciamento-header .lang-label {
   color: #fff;
+}
+
+#statPending,
+#statConfirmed,
+#statFinalized {
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+
+section + section {
+  margin-top: 2rem;
 }
 
 .gerenciamento-header .nav-link:hover {
@@ -282,16 +271,18 @@ body::before {
 .rio-tour-table,
 .modal-content,
 .delete-confirmation {
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  border-radius: 0 !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .blurry-card,
 .rio-notice-text {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
   padding: 1.5rem;
 }
 

@@ -8,14 +8,14 @@
     <title>Gerenciamento de Reservas</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="../css/style.css">
+   
 
     <link rel="stylesheet" href="../css/Gerenciamento.css">
 </head>
 <body>
     <header class="gerenciamento-header">
         <div class="nav-left">
-            <h1 style="margin: 0; font-size: 1.2rem; color: #fff;">Gerenciamento</h1>
+            <h1>Gerenciamento</h1>
             <button class="hamburger" id="hamburger" type="button" aria-label="Menu">
                 <span></span><span></span><span></span>
             </button>
@@ -35,68 +35,68 @@
                 <a href="#" class="profile-item" data-profile-action="register" data-i18n="profile_register">Cadastrar</a>
                 <a href="#" class="profile-item" data-profile-action="account">Minha Conta</a>
                 <a href="#" class="profile-item" data-profile-action="logout">Sair</a>
-                <a href="#" class="profile-item profile-item--admin" data-profile-action="manage" data-i18n="profile_manage" style="display:none;">Gerenciamento</a>
+                <a href="#" class="profile-item profile-item--admin" data-profile-action="manage" data-i18n="profile_manage">Gerenciamento</a>
             </div>
         </div>
     </header>
     <main class="main-container">
-        <section class="rio-notice" style="padding-top: 2rem;">
+        <section class="rio-notice">
             <div class="rio-notice-text blurry-card">
                 <h2 class="rio-notice-title">Gerenciamento de Reservas</h2>
-                <div class="gerenciamento-stats" style="display:flex; gap:1rem; flex-wrap:wrap; margin-top:1rem;">
-                    <div class="status-group" style="display:flex; gap:1rem; width:100%; flex-wrap:wrap;">
-                        <div class="status-card" style="padding:1rem; min-width:120px; flex:1;"> 
+                <div class="gerenciamento-stats">
+                    <div class="status-group">
+                        <div class="status-card"> 
                             <strong>Pendente</strong>
-                            <div id="statPending" style="font-size:1.4rem; font-weight:800;">0</div>
+                            <div id="statPending">0</div>
                         </div>
-                        <div class="status-card" style="padding:1rem; min-width:120px; flex:1;">
+                        <div class="status-card">
                             <strong>Confirmado</strong>
-                            <div id="statConfirmed" style="font-size:1.4rem; font-weight:800;">0</div>
+                            <div id="statConfirmed">0</div>
                         </div>
-                        <div class="status-card" style="padding:1rem; min-width:120px; flex:1;">
+                        <div class="status-card">
                             <strong>Finalizado</strong>
-                            <div id="statFinalized" style="font-size:1.4rem; font-weight:800;">0</div>
+                            <div id="statFinalized">0</div>
                         </div>
                     </div>
-                    <div id="nextTourCard" style="padding:1rem; min-width:220px;">
+                    <div id="nextTourCard">
                         <strong>Próximo tour</strong>
-                        <div id="statNext" style="font-size:1.2rem; font-weight:700;">-</div>
+                        <div id="statNext">-</div>
                         <button id="nextTourToggle" type="button" class="next-tour-toggle" aria-expanded="false">▾</button>
-                        <div id="nextTourDetails" class="next-tour-details-panel" style="margin-top:0.5rem; font-size:0.85rem; color:#374151;"></div>
+                        <div id="nextTourDetails" class="next-tour-details-panel"></div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section style="margin-top: 2rem;">
-            <div class="rio-notice-text" style="padding:1rem; margin-bottom:1rem;">
+        <section>
+            <div class="rio-notice-text">
                 <strong>Filtros</strong>
-                <div class="filtro-reservas-grid" style="margin-top:0.75rem;">
-                    <label style="display:flex; flex-direction:column; font-size:0.85rem;">
+                <div class="filtro-reservas-grid">
+                    <label>
                         Data inicial
-                        <input type="date" id="filterFrom" style="padding:0.5rem; border-radius:8px; border:1px solid rgba(0,0,0,0.15);" />
+                        <input type="date" id="filterFrom" />
                     </label>
-                    <label style="display:flex; flex-direction:column; font-size:0.85rem;">
+                    <label>
                         Data final
-                        <input type="date" id="filterTo" style="padding:0.5rem; border-radius:8px; border:1px solid rgba(0,0,0,0.15);" />
+                        <input type="date" id="filterTo" />
                     </label>
-                    <label style="display:flex; flex-direction:column; font-size:0.85rem;">
+                    <label>
                         Tour
-                        <select id="filterTour" style="padding:0.5rem; border-radius:8px; border:1px solid rgba(0,0,0,0.15);">
+                        <select id="filterTour">
                             <option value="all">Todos</option>
                         </select>
                     </label>
-                    <label style="display:flex; flex-direction:column; font-size:0.85rem;">
+                    <label>
                         Modalidade
-                        <select id="filterModality" style="padding:0.5rem; border-radius:8px; border:1px solid rgba(0,0,0,0.15);">
+                        <select id="filterModality">
                             <option value="all">Todos</option>
                             <option value="free">Free</option>
                             <option value="privado">Privado</option>
                         </select>
                     </label>
-                    <label style="display:flex; flex-direction:column; font-size:0.85rem;">
+                    <label>
                         Status
-                        <select id="filterStatus" style="padding:0.5rem; border-radius:8px; border:1px solid rgba(0,0,0,0.15);">
+                        <select id="filterStatus">
                             <option value="all">Todos</option>
                             <option value="Pendente">Pendente</option>
                             <option value="Confirmado">Confirmado</option>
@@ -104,11 +104,11 @@
                             <option value="Finalizado">Finalizado</option>
                         </select>
                     </label>
-                    <button id="addReservation" class="btn-book" style="height:fit-content; border-radius:999px;">Adicionar reserva</button>
+                    <button id="addReservation" class="btn-book">Adicionar reserva</button>
                 </div>
             </div>
 
-            <div style="overflow-x:auto;">
+            <div>
                 <table class="rio-tour-table">
                     <thead>
                             <tr>
@@ -123,7 +123,7 @@
                         </tr>
                     </thead>
                     <tbody id="reservationsBody">
-                        <tr><td colspan="7" style="padding:0.75rem;">Carregando reservas...</td></tr>
+                        <tr><td colspan="7">Carregando reservas...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -193,7 +193,8 @@
                       <select id="modalStatus">
                           <option value="Pendente">Pendente</option>
                           <option value="Confirmado">Confirmado</option>
-                          <option value="Cancelado">Cancelado</option>                            <option value="Finalizado">Finalizado</option>                      </select>
+                          <option value="Cancelado">Cancelado</option>                            
+                          <option value="Finalizado">Finalizado</option>                      </select>
                   </label>
                   <div class="modal-actions">
                       <button type="button" id="modalDelete" class="btn-book btn-danger">Excluir</button>
@@ -216,7 +217,7 @@
         </div>
     </div>
 
-    <script src="../js/Riodejaneiro.js"></script>
+    
     <script src="../js/Gerenciamento.js"></script>
 </body>
 </html>
