@@ -1,16 +1,22 @@
 /* version 1.1 - Responsivo Completo */
 
 /* Estilo para a página de gerenciamento de reservas */
-html, body, .rio-page, .gerenciamento-page {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  min-height: 100vh;
-  font-family: 'Montserrat', sans-serif;
-  background: url('../imagem/assets/fundo rj.png') center/cover fixed no-repeat;
-  background-color: rgba(12, 35, 64, 0.75);
-  color: #f2f5f8;
-  position: relative;
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100vh;
+    font-family: 'Montserrat', sans-serif;
+    
+    /* REMOVIDO O LINEAR-GRADIENT: Apenas a imagem direta */
+    background-image: url('../img/147185.jpg');
+    
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    
+    color: #333;
 }
 
 /* Formulário de reserva: labels cinza */
@@ -62,6 +68,30 @@ html, body, .rio-page, .gerenciamento-page {
   gap: 0.5rem;
 }
 
+body {
+  background-image: url('../imagem/assets/fundo rj.png');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  background-attachment: fixed;
+  background-color: rgba(12, 35, 64, 0.75);
+  color: #fff;
+  position: relative;
+  min-height: 100vh;
+}
+
+.rio-page,
+.gerenciamento-page,
+body {
+  background-image: url('../imagem/assets/fundo rj.png') !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  background-size: cover !important;
+  background-attachment: fixed !important;
+  background-color: transparent !important;
+  background-blend-mode: normal !important;
+  color: #f2f5f8;
+}
 
 /* Header responsivo */
 .gerenciamento-header {
@@ -95,29 +125,10 @@ html, body, .rio-page, .gerenciamento-page {
   white-space: nowrap;
 }
 
-.profile-item--admin {
-  display: none !important;
-}
-
-.rio-notice {
-  padding-top: 2rem;
-}
-
 .gerenciamento-header .nav-link,
 .gerenciamento-header .profile-btn,
 .gerenciamento-header .lang-label {
   color: #fff;
-}
-
-#statPending,
-#statConfirmed,
-#statFinalized {
-  font-size: 1.4rem;
-  font-weight: 800;
-}
-
-section + section {
-  margin-top: 2rem;
 }
 
 .gerenciamento-header .nav-link:hover {
