@@ -956,25 +956,254 @@ window.addEventListener('DOMContentLoaded', () => {
 
   const hamburger = document.getElementById('hamburger');
   const nav = document.getElementById('gerenciamentoNav');
+
+  let profileBtn = document.getElementById('profileBtn');
+  const profileMenu = document.querySelector('.profile-menu');
+  const langSelector = document.querySelector('#langSelector');
+  const langList = document.querySelector('#langList');
+
+  const mobileMenuState = { open: false, view: 'main' };
+  const getMobileMenuContainer = () => document.getElementById('mobileMenuContainer');
+
+  const updateMobileMenuView = () => {
+    const container = getMobileMenuContainer();
+    if (!container) return;
+
+    const title = container.querySelector('#mobileMenuTitle');
+    const back = container.querySelector('#mobileMenuBack');
+    const views = container.querySelectorAll('.mobile-menu-view');
+
+    views.forEach((viewEl) => {
+      viewEl.classList.toggle('active', viewEl.dataset.view === mobileMenuState.view);
+    });
+
+    if (title) {
+      title.textContent = mobileMenuState.view === 'lang' ? 'Idiomas' : 'Menu';
+    }
+
+    if (back) {
+      back.style.visibility = mobileMenuState.view === 'main' ? 'hidden' : 'visible';
+    }
+
+    container.setAttribute('aria-hidden', mobileMenuState.open ? 'false' : 'true');
+    if (mobileMenuState.open) {
+      container.classList.add('open');
+    } else {
+      container.classList.remove('open');
+    }
+  };
+
+  const openMobileMenu = () => {
+    const nav = document.getElementById('gerenciamentoNav');
+    const burger = document.getElementById('hamburger');
+    if (!nav || !burger) return;
+
+    mobileMenuState.open = true;
+    nav.classList.remove('open');
+    burger.classList.add('open');
+
+    updateMobileMenuView();
+  };
+
+  const closeMobileMenu = () => {
+    const burger = document.getElementById('hamburger');
+    if (!burger) return;
+
+    mobileMenuState.open = false;
+    mobileMenuState.view = 'main';
+    burger.classList.remove('open');
+
+    updateMobileMenuView();
+  };
+
+  const toggleMobileMenu = () => {
+    if (mobileMenuState.open) {
+      closeMobileMenu();
+    } else {
+      mobileMenuState.open = true;
+      updateMobileMenuView();
+    }
+  };
+
+  const initMobileMenuContent = () => {
+    const container = getMobileMenuContainer();
+    const nav = document.getElementById('gerenciamentoNav');
+    const profileDropdown = document.querySelector('.profile-dropdown');
+    const mainView = container?.querySelector('.mobile-menu-main');
+    const langView = container?.querySelector('.mobile-menu-lang');
+    const userView = container?.querySelector('.mobile-menu-user');
+
+    if (!container || !mainView || !langView || !userView || !nav) return;
+
+    mainView.innerHTML = nav.innerHTML;
+
+    const accountEntry = document.createElement('button');
+    accountEntry.type = 'button';
+    accountEntry.className = 'mobile-menu-launcher';
+    accountEntry.textContent = 'Conta';
+    accountEntry.addEventListener('click', (event) => {
+      event.stopPropagation();
+      mobileMenuState.view = 'user';
+      updateMobileMenuView();
+    });
+    mainView.insertBefore(accountEntry, mainView.firstChild);
+
+    mainView.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        closeMobileMenu();
+      });
+    });
+
+    if (langList) {
+      const cloneLang = langList.cloneNode(true);
+      cloneLang.id = 'mobileLangList';
+      cloneLang.classList.add('mobile-lang-list');
+      cloneLang.querySelectorAll('li[data-lang]').forEach((item) => {
+        item.addEventListener('click', (event) => {
+          const lang = item.getAttribute('data-lang');
+          if (lang) {
+            if (window.selectLanguage) {
+              window.selectLanguage(lang);
+            }
+            closeMobileMenu();
+          }
+        });
+      });
+
+      langView.innerHTML = '';
+      const langWrapper = document.createElement('div');
+      langWrapper.className = 'mobile-menu-lang-content';
+      langWrapper.appendChild(cloneLang);
+      langView.appendChild(langWrapper);
+    }
+
+    userView.innerHTML = '';
+    if (profileDropdown) {
+      const userBlock = document.createElement('div');
+      userBlock.className = 'mobile-profile-dropdown';
+      userBlock.innerHTML = profileDropdown.innerHTML;
+      userView.appendChild(userBlock);
+
+      userBlock.querySelectorAll('.profile-item').forEach((item) => {
+        item.addEventListener('click', (event) => {
+          event.preventDefault();
+          const action = item.getAttribute('data-profile-action');
+          if (action === 'login') {
+            closeMobileMenu();
+            const loginLink = document.querySelector('[data-profile-action="login"]');
+            if (loginLink) loginLink.click();
+          } else if (action === 'register') {
+            closeMobileMenu();
+            const registerLink = document.querySelector('[data-profile-action="register"]');
+            if (registerLink) registerLink.click();
+          }
+        });
+      });
+    }
+
+    const backButton = container.querySelector('#mobileMenuBack');
+    const closeButton = container.querySelector('#mobileMenuClose');
+
+    if (backButton) {
+      backButton.addEventListener('click', (event) => {
+        event.stopPropagation();
+        mobileMenuState.view = 'main';
+        updateMobileMenuView();
+      });
+    }
+
+    if (closeButton) {
+      closeButton.addEventListener('click', (event) => {
+        event.stopPropagation();
+        closeMobileMenu();
+      });
+    }
+
+    container.addEventListener('click', (event) => {
+      if (event.target === container) {
+        closeMobileMenu();
+      }
+    });
+
+    document.addEventListener('click', (event) => {
+      const burger = document.querySelector('.hamburger');
+      if (!mobileMenuState.open || !container || !burger) return;
+      if (container.contains(event.target) || burger.contains(event.target)) return;
+      closeMobileMenu();
+    });
+
+    updateMobileMenuView();
+  };
+
   if (hamburger && nav) {
-    hamburger.addEventListener('click', () => {
+    hamburger.addEventListener('click', (event) => {
+      event.stopPropagation();
+      if (window.matchMedia('(max-width: 900px)').matches) {
+        toggleMobileMenu();
+        return;
+      }
+
       nav.classList.toggle('open');
+      hamburger.classList.toggle('open');
     });
   }
 
-  const profileBtn = document.getElementById('profileBtn');
-  const profileMenu = document.querySelector('.profile-menu');
+  initMobileMenuContent();
+
   if (profileBtn && profileMenu) {
+    // Remove listeners que podem estar vindo de Riodejaneiro.js e podem conflitar
+    const newProfileBtn = profileBtn.cloneNode(true);
+    profileBtn.parentNode.replaceChild(newProfileBtn, profileBtn);
+    profileBtn = newProfileBtn;
+
+    let profileMenuHoverTimeout = null;
+
+    const isDesktopProfileMode = () => window.matchMedia('(min-width: 901px)').matches;
+
+    const openProfileMenu = () => {
+      profileMenu.classList.add('open');
+      profileBtn.setAttribute('aria-expanded', 'true');
+      const dropdown = profileMenu.querySelector('.profile-dropdown');
+      if (dropdown) {
+        dropdown.style.display = 'block';
+        dropdown.style.visibility = 'visible';
+        dropdown.style.opacity = '1';
+      }
+    };
+
+    const closeProfileMenu = () => {
+      profileMenu.classList.remove('open');
+      profileBtn.setAttribute('aria-expanded', 'false');
+      const dropdown = profileMenu.querySelector('.profile-dropdown');
+      if (dropdown) {
+        dropdown.style.display = 'none';
+        dropdown.style.visibility = 'hidden';
+        dropdown.style.opacity = '0';
+      }
+    };
+
     profileBtn.addEventListener('click', (event) => {
       event.stopPropagation();
-      const isOpen = profileMenu.classList.toggle('open');
-      profileBtn.setAttribute('aria-expanded', String(isOpen));
+      const isMobile = window.matchMedia('(max-width: 768px)').matches;
+      if (isMobile) {
+        closeProfileMenu();
+        mobileMenuState.open = true;
+        mobileMenuState.view = 'user';
+        updateMobileMenuView();
+        return;
+      }
+
+      // Desktop: controlar dropdown de perfil apenas por clique
+      if (profileMenu.classList.contains('open')) {
+        closeProfileMenu();
+      } else {
+        openProfileMenu();
+      }
     });
 
     document.addEventListener('click', (event) => {
       if (!profileMenu.contains(event.target) && event.target !== profileBtn) {
-        profileMenu.classList.remove('open');
-        profileBtn.setAttribute('aria-expanded', 'false');
+        closeProfileMenu();
       }
     });
 
@@ -992,8 +1221,7 @@ window.addEventListener('DOMContentLoaded', () => {
           event.preventDefault();
           alert('Logout realizado');
         }
-        profileMenu.classList.remove('open');
-        profileBtn.setAttribute('aria-expanded', 'false');
+        closeProfileMenu();
       });
     });
   }
