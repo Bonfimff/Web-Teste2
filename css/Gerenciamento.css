@@ -1038,8 +1038,11 @@ body {
   
   .profile-menu {
     position: absolute;
-    top: 1rem;
+    top: 50%;
     right: 1rem;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
   }
   
   .filtro-reservas-grid {

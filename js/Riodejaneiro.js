@@ -474,8 +474,10 @@
 
     let currentFooterInfo = pageTranslations.pt.footer_info;
 
-    // API base URL (HTTPS via Certbot)
-    const API_BASE_URL = 'https://api-tour.exksvol.com';
+    // API base URL (prioriza local para testes, remote para deploy)
+    const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+        ? 'http://127.0.0.1:5000'
+        : 'https://api-tour.exksvol.com';
 
     const apiFetch = async (path, options = {}) => {
         const url = path.startsWith('http') ? path : `${API_BASE_URL}${path.startsWith('/') ? '' : '/'}${path}`;
@@ -2365,18 +2367,21 @@
         }
 
         if (reservationForm) {
-            reservationForm.addEventListener('submit', (event) => {
+            reservationForm.addEventListener('submit', async (event) => {
                 event.preventDefault();
 
                 const tour = reservationTour.value.trim();
-                const name = reservationName.value.trim();
+                const clientName = reservationName.value.trim();
                 const date = reservationDate.value;
                 const quantity = Number(reservationQuantity.value) || 1;
                 const language = reservationLanguage.value;
                 const phone = reservationPhone.value.trim();
                 const email = reservationEmail.value.trim();
 
-                if (!tour || !name || !date || !quantity || !language || !phone || !email) {
+                const guideName = 'N/S';
+                const modality = 'Privado';
+
+                if (!tour || !clientName || !date || !quantity || !language || !phone || !email) {
                     alert('Preencha todos os campos obrigatórios para concluir a reserva.');
                     return;
                 }
@@ -2398,22 +2403,64 @@
                     return;
                 }
 
-                const dateTime = new Date(`${date}T12:00:00`);
-                addReservation({
-                    tour,
-                    when: dateTime.toISOString(),
-                    url: '',
-                    quantity,
-                    status: 'Pendente',
-                    language,
-                    modality: 'free',
-                    guide: name,
-                    phone,
-                    email
-                });
+                // Formato required para backend: data e hora em campos separados
+                const defaultTime = '12:00';
 
-                alert('Reserva adicionada com sucesso!');
-                closeReservationModal();
+                const payload = {
+                    tour,
+                    data: date,
+                    hora: defaultTime,
+                    idioma: language,
+                    modalidade: modality,
+                    guia: guideName,
+                    quantas_pessoas: quantity,
+                    pessoas: '',
+                    nome: clientName,
+                    celular: phone,
+                    email
+                };
+
+                const sendReservationToApi = async (url) => {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(`API falhou ${response.status}: ${errorText}`);
+                    }
+                    return await response.json();
+                };
+
+                const endpoints = [
+                    `${API_BASE_URL}/add_agendamento`,
+                    'http://127.0.0.1:5000/add_agendamento',
+                    'https://api-tour.exksvol.com/add_agendamento'
+                ];
+
+                let saved = false;
+                let firstError = null;
+
+                for (const endpoint of endpoints) {
+                    try {
+                        await sendReservationToApi(endpoint);
+                        alert(`Reserva adicionada com sucesso via ${endpoint}!`);
+                        closeReservationModal();
+                        saved = true;
+                        break;
+                    } catch (e) {
+                        console.warn(`Falha ao enviar para ${endpoint}:`, e);
+                        if (!firstError) firstError = e;
+                    }
+                }
+
+                if (!saved) {
+                    console.error('Todos endpoints falharam:', firstError);
+                    alert('Não foi possível enviar a reserva ao servidor. Por favor, tente novamente mais tarde.');
+                }
             });
         }
     };
