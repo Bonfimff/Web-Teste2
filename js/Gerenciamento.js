@@ -1226,8 +1226,18 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Background static: we disable scroll-based movement for consistent visual quality.
-  // Não usa parallax, mantém a imagem fixa como referência.
-  document.body.style.backgroundPosition = 'center center';
-  document.body.style.backgroundAttachment = 'fixed';
+  // Parallax - lógica copiada de Riodejaneiro.js (fundo fixo + movimento suave)
+  let scheduled = false;
+  const updateBackground = () => {
+    const shift = window.scrollY * 0.2;
+    document.body.style.backgroundPosition = `center calc(50% + ${shift}px)`;
+    scheduled = false;
+  };
+
+  window.addEventListener('scroll', () => {
+    if (scheduled) return;
+    scheduled = true;
+    window.requestAnimationFrame(updateBackground);
+  });
+
 });

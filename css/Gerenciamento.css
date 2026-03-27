@@ -1,7 +1,8 @@
 /* version 1.1 - Responsivo Completo */
 
 /* Estilo para a página de gerenciamento de reservas */
-html, body {
+html,
+body {
     margin: 0;
     padding: 0;
     width: 100%;
@@ -11,8 +12,21 @@ html, body {
     color: #fff;
 }
 
-body::before {
-    content: '';
+.rio-page,
+.gerenciamento-page {
+    width: 100%;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+    z-index: 0;
+    background: transparent !important;
+    color: #fff;
+}
+
+/* Lógica de fundo copiada de Riodejaneiro.css */
+.rio-page::before,
+.gerenciamento-page::before {
+    content: "";
     position: fixed;
     top: 0;
     left: 0;
@@ -24,14 +38,28 @@ body::before {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background-attachment: fixed;
-    will-change: auto;
+    will-change: transform;
 }
 
+html,
+body,
 .rio-page,
 .gerenciamento-page {
     background: transparent !important;
     color: #fff;
+}
+
+body {
+    overflow-x: hidden;
+}
+
+/* remove fundo fixo da página para lógica neutra */
+
+.main-container,
+.rio-page,
+.gerenciamento-page {
+    position: relative;
+    z-index: 1;
 }
 
 
@@ -387,16 +415,6 @@ body {
   width: 100%;
 }
 
-/* Overlay para contraste */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.35);
-  pointer-events: none;
-  z-index: -1;
-}
-
 /* Cards com efeito vidro */
 .blurry-card,
 .rio-notice-text,
@@ -661,20 +679,9 @@ body::before {
   letter-spacing: 0.05em;
 }
 
-/* Garantir imagem de fundo também em mobile */
 @media (max-width: 768px) {
   html, body, .rio-page, .gerenciamento-page {
-    background-image: url('../imagem/assets/fundo rj.png') !important;
-    background-repeat: no-repeat !important;
-    background-position: center center !important;
-    background-size: cover !important;
-    background-attachment: scroll !important;
-    background-color: transparent !important;
-    background-blend-mode: normal !important;
-  }
-
-  body::before {
-    background: rgba(0, 0, 0, 0.35);
+    background: transparent !important;
   }
 }
 
@@ -962,12 +969,7 @@ body::before {
 /* Tablet pequeno e mobile grande */
 @media (max-width: 768px) {
   html, body {
-    background: #f4f7f9 !important;
-    background-image: url('../imagem/assets/fundo rj.png') !important;
-    background-repeat: no-repeat !important;
-    background-position: center center !important;
-    background-size: cover !important;
-    background-attachment: scroll !important;
+    background: transparent !important;
     color: #0b3c6d !important;
   }
 
