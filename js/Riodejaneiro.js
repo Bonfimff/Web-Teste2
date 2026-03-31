@@ -798,10 +798,34 @@
 
     initAwardToast();
 
+    const updateProfileMenuUI = () => {
+        const menu = document.querySelector('.profile-menu');
+        const dropdown = menu?.querySelector('.profile-dropdown');
+        const userRole = localStorage.getItem('userRole');
+        const userName = localStorage.getItem('userName') || localStorage.getItem('userEmail') || '';
+
+        if (!dropdown) return;
+
+        if (userRole) {
+            dropdown.innerHTML = `
+                <div class="profile-user-info" style="padding:8px 12px; font-weight: 600; border-bottom: 1px solid #e0e0e0;">Olá, ${userName}</div>
+                <a href="#" class="profile-item" data-profile-action="logout">Sair</a>
+            `;
+        } else {
+            dropdown.innerHTML = `
+                <a href="#" class="profile-item" data-profile-action="login" data-i18n="profile_login">Entrar</a>
+                <a href="#" class="profile-item" data-profile-action="register" data-i18n="profile_register">Cadastrar</a>
+            `;
+        }
+    };
+
+
     const initProfileMenu = () => {
         const menu = document.querySelector('.profile-menu');
         const button = document.querySelector('.profile-btn');
         if (!menu || !button) return;
+
+        updateProfileMenuUI();
 
         button.addEventListener('click', (event) => {
             event.stopPropagation();
@@ -813,6 +837,33 @@
 
             const isOpen = menu.classList.toggle('open');
             button.setAttribute('aria-expanded', String(isOpen));
+        });
+
+        menu.addEventListener('click', (event) => {
+            const target = event.target.closest('.profile-item');
+            if (!target) return;
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            const action = target.getAttribute('data-profile-action');
+            if (action === 'logout') {
+                localStorage.removeItem('userRole');
+                localStorage.removeItem('userEmail');
+                localStorage.removeItem('userName');
+                localStorage.removeItem('authToken');
+
+                // Remove possíveis variáveis de UI internas (cache temporário, etc.)
+                // e força reload para limpar tudo da página.
+                menu.classList.remove('open');
+                button.setAttribute('aria-expanded', 'false');
+
+                alert('Logout efetuado com sucesso. A página será recarregada.');
+                window.location.reload();
+                return;
+            }
+
+            // keep existing behavior for login/register: click uses global init behavior
         });
 
         document.addEventListener('click', (event) => {
@@ -2282,7 +2333,11 @@
                     nome: overlay.querySelector('#registerFirstName')?.value.trim(),
                     sobrenome: overlay.querySelector('#registerLastName')?.value.trim(),
                     email: pendingRegisterEmail,
-                    senha: password?.value || ''
+                    senha: password?.value || '',
+                    data_nascimento: overlay.querySelector('#registerDob')?.value || '',
+                    celular: overlay.querySelector('#registerPhone')?.value.trim() || '',
+                    pais_origem: overlay.querySelector('#registerCountry')?.value.trim() || '',
+                    genero: overlay.querySelector('#registerGender')?.value.trim() || ''
                 };
 
                 const result = await registerUserApi(userData);
@@ -2458,14 +2513,27 @@
                     }
 
                     const role = data.role || 'user';
+                    const name = data.name || email;
                     localStorage.setItem('userRole', role);
                     localStorage.setItem('userEmail', email);
+                    localStorage.setItem('userName', name);
                     if (data.token) {
                         localStorage.setItem('authToken', data.token);
                     }
 
-                    alert('Bem-vindo! Acesso nível: ' + role);
-                    window.location.href = 'html/Gerenciamento.html';
+                    updateProfileMenuUI();
+
+                    if (role === 'admin' || role === 'super_admin') {
+                        alert('Bem-vindo, administrador! Acesso nível: ' + role);
+                        window.location.href = 'html/Gerenciamento.html';
+                    } else {
+                        alert('Bem-vindo, cliente! Acesso nível: ' + role + '. Sem acesso à área de gerenciamento.');
+                        const loginOverlay = document.querySelector('.login-modal-overlay');
+                        if (loginOverlay) {
+                            loginOverlay.classList.remove('open');
+                            document.body.classList.remove('modal-open');
+                        }
+                    }
                 } catch (error) {
                     console.error('Erro na conexão:', error);
 

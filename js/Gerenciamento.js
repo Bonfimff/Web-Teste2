@@ -953,6 +953,13 @@ const initReservationManagement = () => {
 };
 
 window.addEventListener('DOMContentLoaded', () => {
+  const role = localStorage.getItem('userRole');
+  if (!role || !['admin', 'super_admin'].includes(role)) {
+    alert('Acesso negado para este usuário. Você será redirecionado à página inicial.');
+    window.location.href = '/';
+    return;
+  }
+
   if (document.getElementById('reservationsBody')) {
     initReservationManagement();
     carregarAgendamentosDoBanco();
@@ -1217,14 +1224,26 @@ window.addEventListener('DOMContentLoaded', () => {
 
     profileMenu.querySelectorAll('.profile-item').forEach((item) => {
       item.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+
         const action = item.getAttribute('data-profile-action');
         if (action === 'account') {
-          event.preventDefault();
-          alert('Minha Conta (area de usuário)');
-        } else if (action === 'logout') {
-          event.preventDefault();
-          alert('Logout realizado');
+          alert('Minha Conta (área de usuário)');
+          closeProfileMenu();
+          return;
         }
+
+        if (action === 'logout') {
+          localStorage.removeItem('userRole');
+          localStorage.removeItem('userEmail');
+          localStorage.removeItem('userName');
+          localStorage.removeItem('authToken');
+          alert('Logout realizado. A página será recarregada.');
+          window.location.href = '../index.html';
+          return;
+        }
+
         closeProfileMenu();
       });
     });
