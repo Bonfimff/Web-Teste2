@@ -474,10 +474,49 @@
 
     let currentFooterInfo = pageTranslations.pt.footer_info;
 
-    // API base URL (prioriza local para testes, remote para deploy)
-    const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-        ? 'http://127.0.0.1:5000'
-        : 'https://api-tour.exksvol.com';
+    // 1. Definição única do endereço da API
+    const API_BASE_URL = 'https://api-tour.exksvol.com';
+
+    // Disponibiliza globalmente para outros scripts e IIFEs
+    window.API_BASE_URL = API_BASE_URL;
+
+    console.debug('API_BASE_URL configurado para:', API_BASE_URL);
+
+    // 2. Método padronizado para adicionar reserva
+    const adicionarReservaNoServidor = async (dadosReserva) => {
+        try {
+            const response = await fetch(`${API_BASE_URL}/add_agendamento`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dadosReserva)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                alert('Reserva confirmada com sucesso!');
+                if (typeof carregarAgendamentosDoBanco === 'function') {
+                    carregarAgendamentosDoBanco();
+                }
+            } else {
+                alert('Erro: ' + result.message);
+            }
+        } catch (error) {
+            console.error('Erro na requisição:', error);
+            alert('Ocorreu um erro de conexão com o servidor.');
+        }
+    };
+
+    // Exemplo de uso:
+    // const dados = {
+    //     email: localStorage.getItem('userEmail'),
+    //     tour: 'Rio de Janeiro',
+    //     data: '2026-05-10',
+    //     pessoas: 2
+    // };
+    // adicionarReservaNoServidor(dados);
 
     const apiFetch = async (path, options = {}) => {
         const url = path.startsWith('http') ? path : `${API_BASE_URL}${path.startsWith('/') ? '' : '/'}${path}`;
@@ -525,6 +564,9 @@
         }
     };
 
+    // Expor apiFetch globalmente para evitar erro "apiFetch is not defined" em outros módulos
+    window.apiFetch = apiFetch;
+
     const login = async (email, password) => {
         if (!email || !password) throw new Error('Email e senha são obrigatórios');
 
@@ -533,7 +575,7 @@
             password
         });
 
-        return apiFetch('https://api-tour.exksvol.com/login', {
+        return apiFetch('/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
@@ -699,7 +741,10 @@
 
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', (e) => {
-            const target = document.querySelector(anchor.getAttribute('href'));
+            const href = anchor.getAttribute('href');
+            if (!href || href === '#') return;
+
+            const target = document.querySelector(href);
             if (target) {
                 e.preventDefault();
                 target.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1614,7 +1659,10 @@
                     return;
                 }
 
-                const target = document.querySelector(anchor.getAttribute('href'));
+                const href = anchor.getAttribute('href');
+                if (!href || href === '#') return;
+
+                const target = document.querySelector(href);
                 if (target) {
                     e.preventDefault();
                     target.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1776,9 +1824,17 @@
                     </div>
                     <div class="register-step register-step--2">
                         <div class="login-modal__field">
-                            <label for="registerCode" data-i18n="register_code">${strings.register_code}</label>
-                            <input id="registerCode" type="text" autocomplete="one-time-code" required />
+                            <label data-i18n="register_code">${strings.register_code}</label>
+                            <div class="register-code-group">
+                                <input id="registerCode1" class="register-code-input" maxlength="1" inputmode="numeric" pattern="[0-9]*" required />
+                                <input id="registerCode2" class="register-code-input" maxlength="1" inputmode="numeric" pattern="[0-9]*" required />
+                                <input id="registerCode3" class="register-code-input" maxlength="1" inputmode="numeric" pattern="[0-9]*" required />
+                                <input id="registerCode4" class="register-code-input" maxlength="1" inputmode="numeric" pattern="[0-9]*" required />
+                                <input id="registerCode5" class="register-code-input" maxlength="1" inputmode="numeric" pattern="[0-9]*" required />
+                                <input id="registerCode6" class="register-code-input" maxlength="1" inputmode="numeric" pattern="[0-9]*" required />
+                            </div>
                         </div>
+                        <div class="register-code-status" style="height:1.2em;margin-bottom:0.5rem;"></div>
                         <div class="login-modal__resend">
                             <button type="button" class="register-resend-button" disabled data-i18n="register_resend_code">
                                 ${strings.register_resend_code}
@@ -1843,6 +1899,192 @@
         let remainingSeconds = 0;
 
         const resendButton = () => overlay.querySelector('.register-resend-button');
+        let pendingRegisterEmail = '';
+        let isCodeVerified = false;
+        let lastVerifiedCode = '';
+        const submitButton = overlay.querySelector('.login-modal__submit');
+
+        const updateSubmitButtonState = () => {
+            if (submitButton) {
+                submitButton.disabled = !isCodeVerified;
+            }
+        };
+
+        const sendConfirmationCodeApi = async (email) => {
+            try {
+            const fetchFn = typeof apiFetch !== 'undefined' ? apiFetch : window.apiFetch;
+            if (typeof fetchFn === 'undefined') {
+                throw new Error('apiFetch não encontrado.');
+            }
+
+            const apiBaseUrl = window.API_BASE_URL || 'http://127.0.0.1:5000';
+            const endpoint = `${apiBaseUrl}/solicitar_codigo`;
+            const payload = await fetchFn(endpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email })
+            });
+            return { ok: true, payload };
+        } catch (error) {
+            console.error('sendConfirmationCodeApi error:', error);
+            return {
+                ok: false,
+                payload: { message: error.message || 'Falha de rede ou CORS na requisição' }
+            };
+        }
+        };
+
+        const verifyConfirmationCodeApi = async (email, code) => {
+            const fetchFn = typeof apiFetch !== 'undefined' ? apiFetch : window.apiFetch;
+        if (typeof fetchFn === 'undefined') {
+            throw new Error('apiFetch não encontrado.');
+        }
+
+        const payload = await fetchFn('/verify_confirmation_code', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, code })
+            });
+            return { ok: true, payload };
+        };
+
+        const gatherRegisterCode = () => {
+            const codeInputs = overlay.querySelectorAll('.register-code-input');
+            const code = Array.from(codeInputs).map(input => input.value.trim()).join('');
+            return code;
+        };
+
+        const setCodeInputsState = (state) => {
+            const codeInputs = overlay.querySelectorAll('.register-code-input');
+            codeInputs.forEach(input => {
+                input.classList.remove('register-code-valid', 'register-code-invalid');
+                if (state === 'valid') input.classList.add('register-code-valid');
+                if (state === 'invalid') input.classList.add('register-code-invalid');
+            });
+
+            const statusTextEl = overlay.querySelector('.register-code-status');
+            if (statusTextEl) {
+                if (state === 'valid') {
+                    statusTextEl.textContent = 'Código válido';
+                    statusTextEl.style.color = '#28a745';
+                } else if (state === 'invalid') {
+                    statusTextEl.textContent = 'Código inválido, verifique e tente novamente';
+                    statusTextEl.style.color = '#dc3545';
+                } else {
+                    statusTextEl.textContent = '';
+                }
+            }
+        };
+
+        const fillCodeInputs = (text) => {
+            const digits = text.replace(/[^0-9]/g, '').slice(0, 6).split('');
+            const codeInputs = overlay.querySelectorAll('.register-code-input');
+            codeInputs.forEach((input, i) => {
+                input.value = digits[i] || '';
+            });
+            if (digits.length < codeInputs.length) {
+                codeInputs[digits.length].focus();
+            } else {
+                codeInputs[codeInputs.length - 1].focus();
+            }
+        };
+
+        const setupCodeInputs = () => {
+            const codeInputs = overlay.querySelectorAll('.register-code-input');
+            codeInputs.forEach((input, index) => {
+                input.addEventListener('input', async (event) => {
+                    let value = event.target.value.replace(/[^0-9]/g, '');
+
+                    if (value.length > 1) {
+                        fillCodeInputs(value);
+                        value = value[0];
+                    }
+
+                    event.target.value = value;
+
+                    if (value.length === 1 && index < codeInputs.length - 1) {
+                        codeInputs[index + 1].focus();
+                    }
+
+                    const code = gatherRegisterCode();
+                    if (/^[0-9]{6}$/.test(code) && pendingRegisterEmail) {
+                        try {
+                            const verify = await verifyConfirmationCodeApi(pendingRegisterEmail, code);
+                            if (verify.ok && verify.payload.success) {
+                                isCodeVerified = true;
+                                setCodeInputsState('valid');
+                            } else {
+                                isCodeVerified = false;
+                                setCodeInputsState('invalid');
+                            }
+                        } catch (_err) {
+                            isCodeVerified = false;
+                            setCodeInputsState('invalid');
+                        }
+                        updateSubmitButtonState();
+                    } else {
+                        isCodeVerified = false;
+                        setCodeInputsState('neutral');
+                        updateSubmitButtonState();
+                    }
+                });
+
+                input.addEventListener('keydown', (event) => {
+                    if (event.key === 'Backspace' && !event.target.value && index > 0) {
+                        codeInputs[index - 1].focus();
+                    }
+                });
+
+                input.addEventListener('paste', (event) => {
+                    event.preventDefault();
+                    const paste = (event.clipboardData || window.clipboardData).getData('text');
+                    if (!paste) return;
+
+                    fillCodeInputs(paste);
+
+                    const code = gatherRegisterCode();
+                    if (/^[0-9]{6}$/.test(code) && pendingRegisterEmail) {
+                        verifyConfirmationCodeApi(pendingRegisterEmail, code)
+                            .then(({ ok, payload }) => {
+                                isCodeVerified = ok && payload.success;
+                                if (isCodeVerified) setCodeInputsState('valid');
+                                else setCodeInputsState('invalid');
+                                updateSubmitButtonState();
+                            })
+                            .catch(() => {
+                                isCodeVerified = false;
+                                setCodeInputsState('invalid');
+                                updateSubmitButtonState();
+                            });
+                    } else {
+                        isCodeVerified = false;
+                        setCodeInputsState('neutral');
+                        updateSubmitButtonState();
+                    }
+                });
+            });
+        };
+
+
+        const registerUserApi = async (userData) => {
+            const fetchFn = typeof apiFetch !== 'undefined' ? apiFetch : window.apiFetch;
+        if (typeof fetchFn === 'undefined') {
+            throw new Error('apiFetch não encontrado.');
+        }
+
+        const payload = await fetchFn('/register_user', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(userData)
+            });
+            return { ok: true, payload };
+        };
 
         const updateResendButton = (seconds) => {
             const button = resendButton();
@@ -1887,18 +2129,22 @@
             if (step2) step2.classList.toggle('active', step === 2);
 
             if (step === 2) {
+                isCodeVerified = false;
+                updateSubmitButtonState();
                 startResendCountdown();
-                const codeInput = overlay.querySelector('#registerCode');
-                if (codeInput) codeInput.focus();
+                const firstCodeInput = overlay.querySelector('#registerCode1');
+                if (firstCodeInput) firstCodeInput.focus();
             } else {
                 stopResendCountdown();
             }
         };
 
+        setupCodeInputs();
+
         nextBtn?.addEventListener('click', () => {
             const firstName = overlay.querySelector('#registerFirstName');
             const lastName = overlay.querySelector('#registerLastName');
-            const email = overlay.querySelector('#registerEmail');
+            const email = overlay.querySelector('#registerEmail') || overlay.querySelector('#register-email');
             const dob = overlay.querySelector('#registerDob');
             const phone = overlay.querySelector('#registerPhone');
             const country = overlay.querySelector('#registerCountry');
@@ -1937,28 +2183,69 @@
                 return;
             }
 
+            isCodeVerified = false;
+            updateSubmitButtonState();
+
+            const emailValue = email.value.trim();
+
+            pendingRegisterEmail = emailValue;
             showStep(2);
             startResendCountdown(60);
+
+            // enviar async em background e não bloquear navegação
+            sendConfirmationCodeApi(emailValue)
+                .then(({ ok, payload }) => {
+                    if (!ok || !payload?.success) {
+                        console.warn('Falha no envio do código:', payload);
+                        return;
+                    }
+
+                    if (payload.code) {
+                        fillCodeInputs(payload.code);
+                        isCodeVerified = true;
+                        setCodeInputsState('valid');
+                        updateSubmitButtonState();
+                    }
+                })
+                .catch((err) => {
+                    console.error('Erro ao enviar código de confirmação:', err);
+                });
         });
 
         const resendBtn = overlay.querySelector('.register-resend-button');
         resendBtn?.addEventListener('click', () => {
-            startResendCountdown(60);
-            alert(strings.register_code_sent);
+            if (!pendingRegisterEmail) {
+                alert('E-mail não encontrado. Refaça o passo anterior.');
+                return;
+            }
+
+            sendConfirmationCodeApi(pendingRegisterEmail)
+                .then(({ ok, payload }) => {
+                    if (!ok) {
+                        alert(payload.message || 'Falha ao reenviar código.');
+                        return;
+                    }
+                    alert(strings.register_code_sent);
+                    startResendCountdown(60);
+                })
+                .catch((err) => {
+                    console.error('Erro ao reenviar código de confirmação:', err);
+                    alert('Erro ao reenviar código. Tente novamente.');
+                });
         });
 
         backBtn?.addEventListener('click', () => {
             showStep(1);
         });
 
-        form?.addEventListener('submit', (event) => {
+        form?.addEventListener('submit', async (event) => {
             event.preventDefault();
 
-            const code = overlay.querySelector('#registerCode');
+            const code = gatherRegisterCode();
             const password = overlay.querySelector('#registerPassword');
             const confirm = overlay.querySelector('#registerConfirm');
 
-            if (!code?.value) {
+            if (!/^[0-9]{6}$/.test(code)) {
                 alert(strings.register_invalid_code);
                 return;
             }
@@ -1968,8 +2255,48 @@
                 return;
             }
 
-            alert(strings.register_button);
-            closeModal();
+            if (!pendingRegisterEmail) {
+                alert('Email não confirmado. Volte ao primeiro passo.');
+                return;
+            }
+
+            if (!isCodeVerified) {
+                try {
+                    const verify = await verifyConfirmationCodeApi(pendingRegisterEmail, code);
+                    if (!verify.ok || !verify.payload?.success) {
+                        alert((verify.payload && verify.payload.message) || 'Código inválido.');
+                        return;
+                    }
+                    isCodeVerified = true;
+                    setCodeInputsState('valid');
+                    updateSubmitButtonState();
+                } catch (err) {
+                    console.error('Erro na verificação de código:', err);
+                    alert('Erro ao verificar o código. Tente novamente.');
+                    return;
+                }
+            }
+
+            try {
+                const userData = {
+                    nome: overlay.querySelector('#registerFirstName')?.value.trim(),
+                    sobrenome: overlay.querySelector('#registerLastName')?.value.trim(),
+                    email: pendingRegisterEmail,
+                    senha: password?.value || ''
+                };
+
+                const result = await registerUserApi(userData);
+                if (!result.ok) {
+                    alert(result.payload.message || 'Erro ao concluir cadastro.');
+                    return;
+                }
+
+                alert(result.payload.message || 'Cadastro concluído com sucesso!');
+                closeModal();
+            } catch (err) {
+                console.error('Erro no cadastro:', err);
+                alert('Erro ao concluir cadastro. Tente novamente.');
+            }
         });
 
         const phoneInput = overlay.querySelector('#registerPhone');
@@ -2113,7 +2440,7 @@
                 }
 
                 try {
-                    const response = await fetch('https://api-tour.exksvol.com/login', {
+                    const response = await fetch(`${API_BASE_URL}/login`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -2438,7 +2765,7 @@
                 const endpoints = [
                     `${API_BASE_URL}/add_agendamento`,
                     'http://127.0.0.1:5000/add_agendamento',
-                    'https://api-tour.exksvol.com/add_agendamento'
+                    'https://api.exksvol.com/add_agendamento'
                 ];
 
                 let saved = false;

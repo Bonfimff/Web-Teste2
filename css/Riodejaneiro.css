@@ -258,6 +258,46 @@ body {
 }
 
 .rio-page .btn-signup:hover {
+    /* existing styles preserved */
+}
+
+/* field code 6 inputs */
+.register-code-group {
+    display: flex;
+    gap: 0.4rem;
+    justify-content: center;
+    margin-top: 0.5rem;
+    margin-bottom: 0.9rem; /* espaçamento abaixo antes do botão reenviar */
+}
+
+.register-code-input {
+    width: 2rem;
+    height: 2rem;
+    font-size: 1.3rem;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 0.35rem;
+    background: #fff;
+    color: #333;
+}
+
+.register-code-input:focus {
+    outline: none;
+    border-color: #017cff;
+    box-shadow: 0 0 0 2px rgba(1, 124, 255, 0.2);
+}
+
+.register-code-valid {
+    border-color: #28a745 !important;
+    box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.2) !important;
+}
+
+.register-code-invalid {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.2) !important;
+}
+
+.rio-page .btn-signup:hover {
     background: rgba(255, 255, 255, 0.3);
 }
 

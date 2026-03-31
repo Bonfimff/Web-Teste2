@@ -1,5 +1,9 @@
 // version 1.0
 
+const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? 'http://127.0.0.1:5000'
+  : 'https://api.exksvol.com';
+
 let pendingUpdateId = null; // id do agendamento que está entrando no modo editar
 
 // ********************************************************************
@@ -30,7 +34,7 @@ const carregarAgendamentosDoBanco = async () => {
   }
 
   try {
-    const response = await fetch(`https://api-tour.exksvol.com/get_agendamentos?email=${encodeURIComponent(userEmail)}`);
+    const response = await fetch(`${API_BASE_URL}/get_agendamentos?email=${encodeURIComponent(userEmail)}`);
 
     if (response.status === 403) {
       alert('Erro: Você não tem permissão de Administrador para ver esta página.');
@@ -568,7 +572,7 @@ const initReservationManagement = () => {
     }
 
     try {
-      const response = await fetch(`https://api-tour.exksvol.com/${isEdit ? 'update_agendamento' : 'add_agendamento'}`, {
+      const response = await fetch(`${API_BASE_URL}/${isEdit ? 'update_agendamento' : 'add_agendamento'}`, {
         method: isEdit ? 'PUT' : 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -629,7 +633,7 @@ const initReservationManagement = () => {
     // Preferencialmente deletar do backend se houver id do registro
     if (pendingUpdateId) {
       try {
-        const response = await fetch('https://api-tour.exksvol.com/delete_agendamento', {
+        const response = await fetch(`${API_BASE_URL}/delete_agendamento`, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json'
