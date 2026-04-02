@@ -9,7 +9,6 @@
             hero_button: 'Conhecer Tours',
             notice_title: 'Informações Importantes',
             notice_lines: [
-                'Para participar de nosso Free Tour é necessário reservar sua vaga.',
                 'Seguimos todas as medidas sanitárias exigidas para este tipo de passeio.',
                 'Por favor estar atentos aos dias disponíveis no formulário de reserva.',
                 'Sua contribuição é a remuneração do guia, seja consciente.',
@@ -473,6 +472,174 @@
     };
 
     let currentFooterInfo = pageTranslations.pt.footer_info;
+    let rolePermissionsMap = {};
+
+    const DEFAULT_ROLE_PERMISSIONS = {
+        cliente_user: {
+            manageReservas: false,
+            manageContas: false,
+            managePerfis: false,
+            pages: ['Principal', 'Reservas'],
+            tabs: ['Principal', 'Reservas']
+        },
+        admin: {
+            manageReservas: true,
+            manageContas: true,
+            managePerfis: false,
+            manageSelfEdit: true,
+            manageOtherEdit: true,
+            manageConsultas: true,
+            loadAllReservas: true,
+            pages: ['Principal', 'Gerenciamento'],
+            tabs: ['Principal', 'Reservas', 'Gerenciamento', 'Financeiro', 'Contas', 'Minhas Reservas', 'Meus Dados', 'SOBRE', 'CONTATO', 'AJUDA']
+        },
+        super_admin: {
+            manageReservas: true,
+            manageContas: true,
+            managePerfis: true,
+            manageSelfEdit: true,
+            manageOtherEdit: true,
+            manageConsultas: true,
+            loadAllReservas: true,
+            pages: ['Principal', 'Gerenciamento'],
+            tabs: ['Principal', 'Reservas', 'Gerenciamento', 'Financeiro', 'Contas', 'Minhas Reservas', 'Meus Dados', 'SOBRE', 'CONTATO', 'AJUDA']
+        }
+    };
+
+    const normalizeRole = (role) => {
+        if (!role) return 'cliente_user';
+        const roleLower = role.toLowerCase();
+        if (roleLower === 'user') return 'cliente_user';
+        if (roleLower === 'cliente_user') return 'cliente_user';
+        if (roleLower === 'admin') return 'admin';
+        if (roleLower === 'super_admin') return 'super_admin';
+        return roleLower;
+    };
+
+    const getCurrentUserRole = () => normalizeRole(localStorage.getItem('userRole') || 'cliente_user');
+    const getCurrentUserEmail = () => (localStorage.getItem('userEmail') || '').toLowerCase();
+
+    const getCurrentRolePermissions = () => {
+        const currentRole = getCurrentUserRole();
+        if (rolePermissionsMap[currentRole]) {
+            return rolePermissionsMap[currentRole];
+        }
+        return DEFAULT_ROLE_PERMISSIONS[currentRole] || DEFAULT_ROLE_PERMISSIONS.cliente_user;
+    };
+
+    // Exporta globalmente os helpers já definidos.
+    window.normalizeRole = normalizeRole;
+    window.getCurrentUserRole = getCurrentUserRole;
+    window.getCurrentRolePermissions = getCurrentRolePermissions;
+
+    const canAccessManagement = () => {
+        const role = getCurrentUserRole();
+        if (role === 'super_admin') return true;
+        if (role === 'admin') {
+            const perms = getCurrentRolePermissions();
+            const tabs = Array.isArray(perms.tabs) ? perms.tabs : [];
+            const pages = Array.isArray(perms.pages) ? perms.pages : [];
+            return tabs.includes('Gerenciamento') || pages.includes('Gerenciamento');
+        }
+        return false;
+    };
+
+    const applyRoleBasedControls = () => {
+        const adminItems = document.querySelectorAll('.profile-item--admin, [data-admin-only]');
+        const allowed = canAccessManagement();
+        adminItems.forEach(item => {
+            item.style.display = allowed ? '' : 'none';
+        });
+
+        const perms = getCurrentRolePermissions();
+        const tabs = Array.isArray(perms.tabs) ? perms.tabs.map(tab => String(tab).toUpperCase()) : [];
+        const pages = Array.isArray(perms.pages) ? perms.pages : [];
+
+        const navMap = [
+            { selector: '[data-i18n="nav_about"]', name: 'SOBRE' },
+            { selector: '[data-i18n="nav_contact"]', name: 'CONTATO' },
+            { selector: '[data-i18n="nav_help"]', name: 'AJUDA' }
+        ];
+
+        navMap.forEach(({ selector, name }) => {
+            const el = document.querySelector(selector) || document.querySelector(`a[href*="${name.toLowerCase()}"]`);
+            if (el) {
+                el.style.display = tabs.includes(name) ? '' : 'none';
+            }
+        });
+
+        // Itens do menu de perfil seguem as tabs autorizadas
+        document.querySelectorAll('[data-profile-action="my-reservations"]').forEach(el => {
+            if (el) el.style.display = tabs.includes('MINHAS RESERVAS') ? '' : 'none';
+        });
+        document.querySelectorAll('[data-profile-action="my-data"]').forEach(el => {
+            if (el) el.style.display = tabs.includes('MEUS DADOS') ? '' : 'none';
+        });
+
+        // Permissões funcionais adicionais
+        if (!perms.managePerfis) {
+            document.querySelectorAll('.profile-item--admin').forEach(el => { if (el) el.style.display = 'none'; });
+        }
+
+        // Situação de páginas (principal / gerenciamento)
+        const isManagementPage = window.location.pathname.endsWith('/html/Gerenciamento.html') || window.location.pathname.endsWith('Gerenciamento.html');
+        if (isManagementPage && !allowed) {
+            window.location.href = window.location.origin + '/';
+        }
+
+        if (!pages.includes('Principal') && !isManagementPage) {
+            // se não tiver acesso à página principal, remove ações de tour (só para controle leve de UI)
+            document.querySelectorAll('.rio-btn-reserve, .btn-book').forEach(el => { if (el) el.style.display = 'none'; });
+        }
+
+        if (!pages.includes('Gerenciamento') && isManagementPage) {
+            window.location.href = window.location.origin + '/';
+        }
+    };
+
+    const loadRolePermissions = async () => {
+        const email = getCurrentUserEmail();
+        const userRole = getCurrentUserRole();
+
+        const canonicalRole = normalizeRole(userRole);
+        if (canonicalRole !== 'admin' && canonicalRole !== 'super_admin') {
+            let savedPermissions = null;
+            try {
+                const raw = localStorage.getItem('currentRolePermissions');
+                savedPermissions = raw ? JSON.parse(raw) : null;
+            } catch (_err) {
+                savedPermissions = null;
+            }
+
+            rolePermissionsMap = {
+                ...rolePermissionsMap,
+                [canonicalRole]: (savedPermissions && typeof savedPermissions === 'object')
+                    ? savedPermissions
+                    : (DEFAULT_ROLE_PERMISSIONS[canonicalRole] || DEFAULT_ROLE_PERMISSIONS.cliente_user)
+            };
+            applyRoleBasedControls();
+            return;
+        }
+
+        try {
+            const url = `${API_BASE_URL}/get_role_permissions?email=${encodeURIComponent(email)}`;
+            const response = await apiFetch(url, { method: 'GET' });
+
+            if (response && response.success && typeof response.permissions === 'object') {
+                rolePermissionsMap = response.permissions;
+            } else {
+                console.warn('loadRolePermissions: resposta inesperada', response);
+            }
+        } catch (error) {
+            console.warn('Falha ao carregar role permissions', error);
+        }
+
+        applyRoleBasedControls();
+    };
+
+    // Exporta controles após definição para evitar acesso antecipado (TDZ).
+    window.applyRoleBasedControls = applyRoleBasedControls;
+    window.loadRolePermissions = loadRolePermissions;
 
     // 1. Definição única do endereço da API
     const API_BASE_URL = 'https://api-tour.exksvol.com';
@@ -807,12 +974,16 @@
         if (!dropdown) return;
 
         if (userRole) {
+            const showManagement = canAccessManagement();
             dropdown.innerHTML = `
                 <div class="profile-user-info" style="padding:8px 12px; font-weight: 600; border-bottom: 1px solid #e0e0e0;">Olá, ${userName}</div>
+                ${showManagement ? '<a href="html/Gerenciamento.html" class="profile-item profile-item--admin">Gerenciamento da página</a>' : ''}
                 <a href="#" class="profile-item" data-profile-action="my-reservations">Minhas Reservas</a>
                 <a href="#" class="profile-item" data-profile-action="my-data">Meus Dados</a>
                 <a href="#" class="profile-item" data-profile-action="logout">Sair</a>
             `;
+
+            applyRoleBasedControls();
         } else {
             dropdown.innerHTML = `
                 <a href="#" class="profile-item" data-profile-action="login" data-i18n="profile_login">Entrar</a>
@@ -820,6 +991,9 @@
             `;
         }
     };
+
+    // Exposto para uso em callbacks no segundo IIFE.
+    window.updateProfileMenuUI = updateProfileMenuUI;
 
 
     const initProfileMenu = () => {
@@ -830,7 +1004,12 @@
         if (menu.dataset.profileMenuInitialized === 'true') return;
         menu.dataset.profileMenuInitialized = 'true';
 
-        updateProfileMenuUI();
+        loadRolePermissions().then(() => {
+            updateProfileMenuUI();
+        }).catch((error) => {
+            console.warn('Erro ao carregar permissões de role:', error);
+            updateProfileMenuUI();
+        });
 
         button.addEventListener('click', (event) => {
             event.stopPropagation();
@@ -865,6 +1044,7 @@
                 localStorage.removeItem('userEmail');
                 localStorage.removeItem('userName');
                 localStorage.removeItem('authToken');
+                localStorage.removeItem('currentRolePermissions');
 
                 // Remove possíveis variáveis de UI internas (cache temporário, etc.)
                 // e força reload para limpar tudo da página.
@@ -2806,7 +2986,9 @@
                         return;
                     }
 
-                    const role = data.role || 'user';
+                    const role = typeof window.normalizeRole === 'function'
+                        ? window.normalizeRole(data.role || 'user')
+                        : (String(data.role || 'cliente_user').toLowerCase() === 'user' ? 'cliente_user' : String(data.role || 'cliente_user').toLowerCase());
                     const name = data.name || email;
                     localStorage.setItem('userRole', role);
                     localStorage.setItem('userEmail', email);
@@ -2819,14 +3001,20 @@
                     if (data.token) {
                         localStorage.setItem('authToken', data.token);
                     }
+                    if (data.role_permissions && typeof data.role_permissions === 'object') {
+                        localStorage.setItem('currentRolePermissions', JSON.stringify(data.role_permissions));
+                    } else {
+                        localStorage.removeItem('currentRolePermissions');
+                    }
 
-                    const profileMenu = document.querySelector('.profile-menu');
-                    const profileDropdown = profileMenu?.querySelector('.profile-dropdown');
-                    if (profileDropdown) {
-                        profileDropdown.innerHTML = `
-                            <div class="profile-user-info" style="padding:8px 12px; font-weight: 600; border-bottom: 1px solid #e0e0e0;">Olá, ${name}</div>
-                            <a href="#" class="profile-item" data-profile-action="logout">Sair</a>
-                        `;
+                    if (typeof window.loadRolePermissions === 'function') {
+                        await window.loadRolePermissions();
+                    }
+                    if (typeof window.updateProfileMenuUI === 'function') {
+                        window.updateProfileMenuUI();
+                    }
+                    if (typeof window.applyRoleBasedControls === 'function') {
+                        window.applyRoleBasedControls();
                     }
 
                     if (role === 'admin' || role === 'super_admin') {
@@ -2987,10 +3175,56 @@
         setReservations(all);
     };
 
+    const getTours = () => {
+        try {
+            const saved = JSON.parse(localStorage.getItem('pageTours') || '[]');
+            return Array.isArray(saved) ? saved : [];
+        } catch {
+            return [];
+        }
+    };
+
+    const setTours = (tours) => {
+        try {
+            localStorage.setItem('pageTours', JSON.stringify(Array.isArray(tours) ? tours : []));
+        } catch {
+            // ignore
+        }
+    };
+
+    const syncToursFromIndex = () => {
+        const cards = document.querySelectorAll('.rio-tour-card');
+        const tours = Array.from(cards).map((card, idx) => {
+            const name = card.querySelector('.rio-tour-name')?.textContent?.trim() || '';
+            const idiomas = Array.from(card.querySelectorAll('.rio-tour-details li')).find(li => /Idiomas/i.test(li.textContent))?.textContent?.replace(/Idiomas?:/i, '').trim() || '';
+            const encontro = Array.from(card.querySelectorAll('.rio-tour-details li')).find(li => /Encontro/i.test(li.textContent))?.textContent?.replace(/Encontro:/i, '').trim() || '';
+            const identificacao = Array.from(card.querySelectorAll('.rio-tour-details li')).find(li => /Identificação/i.test(li.textContent))?.textContent?.replace(/Identificação:/i, '').trim() || '';
+            const mapUrl = card.querySelector('.rio-link-map')?.href || '';
+            const reserveUrl = card.querySelector('.rio-btn-reserve')?.href || '';
+            const folder = card.querySelector('.rio-tour-slider')?.dataset.folder || '';
+
+            return {
+                id: folder || `tour-${idx}`,
+                name,
+                languages: idiomas,
+                meeting: encontro,
+                identification: identificacao,
+                mapUrl,
+                reserveUrl
+            };
+        });
+
+        setTours(tours);
+        return tours;
+    };
+
     // Expose reservation helpers so other scripts (eg. Gerenciamento) can access them
     window.getReservations = getReservations;
     window.setReservations = setReservations;
     window.addReservation = addReservation;
+    window.getTours = getTours;
+    window.setTours = setTours;
+    window.syncToursFromIndex = syncToursFromIndex;
 
     const ensureGlobalNotification = () => {
         let overlay = document.getElementById('appNotificationOverlay');
@@ -3106,6 +3340,12 @@
     window.showAppNotification = showGlobalNotification;
 
     const openMyReservationsModal = async () => {
+        const tabs = (getCurrentRolePermissions()?.tabs || []).map(tab => String(tab).toUpperCase());
+        if (!tabs.includes('MINHAS RESERVAS')) {
+            showGlobalNotification('Seu perfil não tem permissão para acessar Minhas Reservas.', 'error');
+            return;
+        }
+
         let modal = document.getElementById('myReservationsModal');
         if (!modal) {
             modal = document.createElement('div');
@@ -3371,6 +3611,12 @@
     };
 
     const openUserDataModal = async () => {
+        const tabs = (getCurrentRolePermissions()?.tabs || []).map(tab => String(tab).toUpperCase());
+        if (!tabs.includes('MEUS DADOS')) {
+            showGlobalNotification('Seu perfil não tem permissão para acessar Meus Dados.', 'error');
+            return;
+        }
+
         let modal = document.getElementById('userDataModal');
         if (!modal) {
             modal = document.createElement('div');
@@ -3456,7 +3702,9 @@
                     localStorage.setItem('userPais', payload.pais_origem || '');
                     localStorage.setItem('userGenero', payload.genero || '');
                     showGlobalNotification('Dados atualizados com sucesso.', 'success');
-                    updateProfileMenuUI();
+                    if (typeof window.updateProfileMenuUI === 'function') {
+                        window.updateProfileMenuUI();
+                    }
                     close();
                 } else {
                     showGlobalNotification('Não foi possível atualizar seus dados.', 'error');
@@ -3516,7 +3764,9 @@
                     localStorage.setItem('userSobrenome', data.sobrenome || '');
                     localStorage.setItem('userPais', data.pais_origem || '');
                     localStorage.setItem('userGenero', data.genero || '');
-                    updateProfileMenuUI();
+                    if (typeof window.updateProfileMenuUI === 'function') {
+                        window.updateProfileMenuUI();
+                    }
                     break;
                 } catch (err) {
                     console.warn('Leitura de dados do usuário falhou em', endpoint, err);
@@ -3628,7 +3878,7 @@
                 const email = reservationEmail.value.trim();
 
                 const guideName = 'N/S';
-                const modality = 'Privado';
+                const modality = 'privado';
 
                 if (!tour || !clientName || !date || !quantity || !language || !phone || !email) {
                     showGlobalNotification('Preencha todos os campos obrigatórios para concluir a reserva.', 'error');
@@ -3767,6 +4017,11 @@
         initRegisterModal();
         initReservationTracking();
         initFooterInfo();
+
+        // Importa tours da homepage (index) para gerenciamento centralizado
+        if (typeof syncToursFromIndex === 'function') {
+            syncToursFromIndex();
+        }
 
         // Trigger initial language event so pages can format text on load
         dispatchLanguageChange(getCurrentLang());
