@@ -1,8 +1,54 @@
 // version 1.0
 
-const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-  ? 'http://127.0.0.1:5000'
-  : 'https://api.exksvol.com';
+const isLocalHost = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+
+// Em ambiente local, tenta API local primeiro e depois endpoints públicos.
+// Em produção, tenta os endpoints públicos e mantém localhost como fallback de debug.
+const API_ENDPOINTS = isLocalHost
+  ? [
+      'http://127.0.0.1:5000',
+      'http://localhost:5000',
+      'https://api-tour.exksvol.com',
+      'https://api.exksvol.com'
+    ]
+  : [
+      'https://api-tour.exksvol.com',
+      'https://api.exksvol.com',
+      'http://127.0.0.1:5000',
+      'http://localhost:5000'
+    ];
+
+const fetchWithApiFallback = async (path, options = {}) => {
+  let lastError = null;
+  let lastResponse = null;
+
+  for (const base of API_ENDPOINTS) {
+    try {
+      const response = await fetch(`${base}${path.startsWith('/') ? path : `/${path}`}`, options);
+      if (response.ok) {
+        return response;
+      }
+
+      lastResponse = response;
+      console.warn('Endpoint respondeu com erro HTTP, tentando próximo:', {
+        base,
+        status: response.status,
+        statusText: response.statusText,
+        path
+      });
+    } catch (error) {
+      lastError = error;
+      console.warn('Falha ao conectar endpoint:', base, error);
+    }
+  }
+
+  if (lastResponse) {
+    return lastResponse;
+  }
+
+  const attempted = API_ENDPOINTS.join(', ');
+  throw lastError || new Error(`Nenhum endpoint da API respondeu. Endpoints testados: ${attempted}`);
+};
 
 let pendingUpdateId = null; // id do agendamento que está entrando no modo editar
 
@@ -34,15 +80,23 @@ const carregarAgendamentosDoBanco = async () => {
   }
 
   try {
-    const response = await fetch(`${API_BASE_URL}/get_agendamentos?email=${encodeURIComponent(userEmail)}`);
+    const response = await fetchWithApiFallback(`/get_agendamentos?email=${encodeURIComponent(userEmail)}`);
 
     if (response.status === 403) {
       alert('Erro: Você não tem permissão de Administrador para ver esta página.');
+      tableBodyElement.innerHTML = '<tr><td colspan="8" style="padding:0.75rem;">Sem permissão para visualizar reservas.</td></tr>';
       return;
     }
 
     if (!response.ok) {
-      console.error('Erro ao buscar agendamentos', response.status);
+      const errorText = await response.text().catch(() => '');
+      console.error('Erro ao buscar agendamentos', {
+        status: response.status,
+        statusText: response.statusText,
+        detail: errorText
+      });
+      alert(`Falha ao carregar reservas (${response.status}).`);
+      tableBodyElement.innerHTML = '<tr><td colspan="8" style="padding:0.75rem;">Falha ao carregar reservas do banco de dados.</td></tr>';
       return;
     }
 
@@ -241,6 +295,8 @@ const carregarAgendamentosDoBanco = async () => {
     console.log('Tabela atualizada com sucesso!');
   } catch (error) {
     console.error('Erro de conexão ao carregar tabela:', error);
+    const detail = (error && error.message) ? ` Detalhe: ${error.message}` : '';
+    tableBodyElement.innerHTML = `<tr><td colspan="8" style="padding:0.75rem;">Erro de conexão com a API ao carregar reservas.${detail}</td></tr>`;
   }
 };
 
@@ -324,6 +380,7 @@ const initReservationManagement = () => {
   const filterTo = document.getElementById('filterTo');
   const filterTour = document.getElementById('filterTour');
   const filterStatus = document.getElementById('filterStatus');
+  const filterModality = document.getElementById('filterModality');
   const addReservationBtn = document.getElementById('addReservation');
   const modal = document.getElementById('reservationModal');
   const modalTour = document.getElementById('modalTour');
@@ -373,18 +430,8 @@ const initReservationManagement = () => {
     return { from, to, status, tour, modality };
   };
 
-  // Default filter start date to today
-  if (filterFrom && !filterFrom.value) {
-    const today = new Date();
-    filterFrom.value = today.toISOString().slice(0, 10);
-  }
-
-  // Default filter end date to 2 months from today
-  if (filterTo && !filterTo.value) {
-    const twoMonths = new Date();
-    twoMonths.setMonth(twoMonths.getMonth() + 2);
-    filterTo.value = twoMonths.toISOString().slice(0, 10);
-  }
+  // Não aplica filtro de data automático na abertura.
+  // O usuário define o período manualmente quando desejar.
 
   // Ensure default filter options are set
   if (filterStatus) filterStatus.value = 'all';
@@ -572,7 +619,7 @@ const initReservationManagement = () => {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/${isEdit ? 'update_agendamento' : 'add_agendamento'}`, {
+      const response = await fetchWithApiFallback(`/${isEdit ? 'update_agendamento' : 'add_agendamento'}`, {
         method: isEdit ? 'PUT' : 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -633,7 +680,7 @@ const initReservationManagement = () => {
     // Preferencialmente deletar do backend se houver id do registro
     if (pendingUpdateId) {
       try {
-        const response = await fetch(`${API_BASE_URL}/delete_agendamento`, {
+        const response = await fetchWithApiFallback('/delete_agendamento', {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json'
