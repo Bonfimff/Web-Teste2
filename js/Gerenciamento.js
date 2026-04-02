@@ -729,13 +729,18 @@ const carregarAgendamentosDoBanco = async () => {
         <td data-label="Status"><span class="status-badge ${statusClass}">${statusValue}</span></td>
       `;
 
-      row.addEventListener('click', () => {
-        console.log('Editando agendamento:', ag.id);
-      });
+      if (currentUserPermissions?.manageReservas) {
+        row.addEventListener('click', () => {
+          console.log('Editando agendamento:', ag.id);
+          openEditModalFromBackend(ag);
+        });
 
-      row.addEventListener('dblclick', () => {
-        openEditModalFromBackend(ag);
-      });
+        row.addEventListener('dblclick', () => {
+          openEditModalFromBackend(ag);
+        });
+      } else {
+        row.style.cursor = 'not-allowed';
+      }
 
       tableBodyElement.appendChild(row);
     });
@@ -824,6 +829,7 @@ const carregarAgendamentosDoBanco = async () => {
     if (nextTourDetails) {
       nextTourDetails.classList.remove('open');
       nextTourDetails.setAttribute('aria-hidden', 'true');
+      nextTourDetails.style.display = 'none';
 
       let tourListContainer = nextTourDetails.querySelector('.next-tour-entries');
       if (!tourListContainer) {
@@ -860,11 +866,14 @@ const carregarAgendamentosDoBanco = async () => {
     }
 
     if (nextToggle && nextDetails) {
+      nextToggle.onclick = null;
       nextToggle.addEventListener('click', () => {
         const expanded = nextDetails.classList.toggle('open');
         nextDetails.setAttribute('aria-hidden', String(!expanded));
         nextToggle.setAttribute('aria-expanded', String(expanded));
         nextToggle.classList.toggle('open', expanded);
+        nextDetails.style.display = expanded ? 'block' : 'none';
+        nextToggle.textContent = expanded ? '▴' : '▾';
       });
     }
 
@@ -1562,6 +1571,11 @@ const setupRolesControls = () => {
 
 
 const openEditModalFromBackend = (ag) => {
+  if (!currentUserPermissions?.manageReservas) {
+    console.warn('Permissão negada para editar reservas:', ag?.id);
+    return;
+  }
+
   // Abre o modal de edição usando os dados retornados do backend
   const modal = document.getElementById('reservationModal');
   if (!modal) return;
@@ -1857,6 +1871,7 @@ const initReservationManagement = () => {
       return;
     }
 
+    const currentUserEmail = localStorage.getItem('userEmail');
     const novaReserva = {
       tour: modalTour.value.trim(),
       data: dateStr,
@@ -1869,7 +1884,8 @@ const initReservationManagement = () => {
       nome: modalName?.value.trim() || 'Admin Manual',
       celular: modalPhone.value.trim() || '',
       email: modalEmail?.value.trim() || '',
-      status: modalStatus?.value || 'Pendente'
+      status: modalStatus?.value || 'Pendente',
+      admin_email: currentUserEmail || ''
     };
 
     console.log('Enviando dados:', novaReserva);
@@ -2263,13 +2279,14 @@ const initReservationManagement = () => {
 
 window.addEventListener('DOMContentLoaded', () => {
   const role = localStorage.getItem('userRole');
-  if (!role || !['admin', 'super_admin'].includes(role)) {
-    alert('Acesso negado para este usuário. Você será redirecionado à página inicial.');
+  currentUserPermissions = getEffectivePermissionsForRole(role);
+
+  if (!currentUserPermissions?.manageReservas) {
+    alert('Acesso negado: sua conta não possui permissão para gerenciar reservas.');
     window.location.href = '/';
     return;
   }
 
-  currentUserPermissions = getEffectivePermissionsForRole(role);
   applyAccessControls(currentUserPermissions);
 
   if (document.getElementById('reservationsBody')) {
