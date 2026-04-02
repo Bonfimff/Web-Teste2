@@ -496,7 +496,7 @@
             const result = await response.json();
 
             if (result.success) {
-                alert('Reserva confirmada com sucesso!');
+                alert('Reserva concluída com sucesso.');
                 if (typeof carregarAgendamentosDoBanco === 'function') {
                     carregarAgendamentosDoBanco();
                 }
@@ -809,6 +809,8 @@
         if (userRole) {
             dropdown.innerHTML = `
                 <div class="profile-user-info" style="padding:8px 12px; font-weight: 600; border-bottom: 1px solid #e0e0e0;">Olá, ${userName}</div>
+                <a href="#" class="profile-item" data-profile-action="my-reservations">Minhas Reservas</a>
+                <a href="#" class="profile-item" data-profile-action="my-data">Meus Dados</a>
                 <a href="#" class="profile-item" data-profile-action="logout">Sair</a>
             `;
         } else {
@@ -824,6 +826,9 @@
         const menu = document.querySelector('.profile-menu');
         const button = document.querySelector('.profile-btn');
         if (!menu || !button) return;
+
+        if (menu.dataset.profileMenuInitialized === 'true') return;
+        menu.dataset.profileMenuInitialized = 'true';
 
         updateProfileMenuUI();
 
@@ -847,7 +852,15 @@
             event.stopPropagation();
 
             const action = target.getAttribute('data-profile-action');
-            if (action === 'logout') {
+            if (action === 'my-data') {
+                menu.classList.remove('open');
+                button.setAttribute('aria-expanded', 'false');
+                openUserDataModal();
+            } else if (action === 'my-reservations') {
+                menu.classList.remove('open');
+                button.setAttribute('aria-expanded', 'false');
+                openMyReservationsModal();
+            } else if (action === 'logout') {
                 localStorage.removeItem('userRole');
                 localStorage.removeItem('userEmail');
                 localStorage.removeItem('userName');
@@ -858,18 +871,7 @@
                 menu.classList.remove('open');
                 button.setAttribute('aria-expanded', 'false');
 
-                alert('Logout efetuado com sucesso. A página será recarregada.');
                 window.location.reload();
-                return;
-            }
-
-            // keep existing behavior for login/register: click uses global init behavior
-        });
-
-        document.addEventListener('click', (event) => {
-            if (!menu.contains(event.target)) {
-                menu.classList.remove('open');
-                button.setAttribute('aria-expanded', 'false');
             }
         });
     };
@@ -1630,6 +1632,16 @@
                     closeMobileMenu();
                     const registerLink = document.querySelector('[data-profile-action="register"]');
                     if (registerLink) registerLink.click();
+                } else if (action === 'my-reservations') {
+                    closeMobileMenu();
+                    openMyReservationsModal();
+                } else if (action === 'my-data') {
+                    closeMobileMenu();
+                    openUserDataModal();
+                } else if (action === 'logout') {
+                    closeMobileMenu();
+                    const logoutLink = document.querySelector('.profile-dropdown [data-profile-action="logout"]');
+                    if (logoutLink) logoutLink.click();
                 }
             });
         });
@@ -1753,10 +1765,191 @@
                         <button type="button" class="login-modal__forgot" data-i18n="login_forgot">${strings.login_forgot}</button>
                     </div>
                 </form>
+                <form id="passwordResetForm" class="login-modal__form" style="display:none;">
+                    <div class="login-modal__field">
+                        <label for="resetEmail">Email</label>
+                        <input id="resetEmail" type="email" autocomplete="email" required />
+                    </div>
+                    <div class="login-modal__field">
+                        <label>Código de confirmação</label>
+                        <div class="register-code-group">
+                            <input id="resetCode1" class="register-code-input reset-code-input" maxlength="1" inputmode="numeric" pattern="[0-9]*" required />
+                            <input id="resetCode2" class="register-code-input reset-code-input" maxlength="1" inputmode="numeric" pattern="[0-9]*" required />
+                            <input id="resetCode3" class="register-code-input reset-code-input" maxlength="1" inputmode="numeric" pattern="[0-9]*" required />
+                            <input id="resetCode4" class="register-code-input reset-code-input" maxlength="1" inputmode="numeric" pattern="[0-9]*" required />
+                            <input id="resetCode5" class="register-code-input reset-code-input" maxlength="1" inputmode="numeric" pattern="[0-9]*" required />
+                            <input id="resetCode6" class="register-code-input reset-code-input" maxlength="1" inputmode="numeric" pattern="[0-9]*" required />
+                        </div>
+                        <div class="register-code-status" style="height:1.2em;margin-bottom:0.5rem;"></div>
+                    </div>
+                    <div class="login-modal__field login-modal__field--password">
+                        <label for="resetNewPassword">Nova senha</label>
+                        <div class="login-modal__password-wrapper">
+                            <input id="resetNewPassword" type="password" autocomplete="new-password" minlength="6" required />
+                            <button type="button" class="login-modal__toggle-password reset-toggle-password" aria-label="Mostrar senha">
+                                <i class="fa fa-eye" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="login-modal__field login-modal__field--password">
+                        <label for="resetConfirmPassword">Confirmar nova senha</label>
+                        <div class="login-modal__password-wrapper">
+                            <input id="resetConfirmPassword" type="password" autocomplete="new-password" minlength="6" required />
+                            <button type="button" class="login-modal__toggle-password reset-toggle-password" aria-label="Mostrar senha">
+                                <i class="fa fa-eye" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="login-modal__actions">
+                        <button type="submit" class="login-modal__submit">Atualizar senha</button>
+                        <button type="button" class="login-modal__forgot" id="resetBackToLogin">Voltar ao login</button>
+                    </div>
+                </form>
             </div>
         `;
 
+        const loginFormElement = overlay.querySelector('#loginForm');
+        const resetFormElement = overlay.querySelector('#passwordResetForm');
+        const modalTitle = overlay.querySelector('.login-modal__title');
+        let isResetCodeVerified = false;
+
+        const gatherResetCode = () => {
+            const codeInputs = overlay.querySelectorAll('.reset-code-input');
+            return Array.from(codeInputs).map((input) => input.value.trim()).join('');
+        };
+
+        const setResetCodeState = (state) => {
+            const codeInputs = overlay.querySelectorAll('.reset-code-input');
+            codeInputs.forEach((input) => {
+                input.classList.remove('register-code-valid', 'register-code-invalid');
+                if (state === 'valid') input.classList.add('register-code-valid');
+                if (state === 'invalid') input.classList.add('register-code-invalid');
+            });
+
+            const statusTextEl = overlay.querySelector('.register-code-status');
+            if (!statusTextEl) return;
+
+            if (state === 'valid') {
+                statusTextEl.textContent = 'Codigo confirmado.';
+                statusTextEl.style.color = '#28a745';
+            } else if (state === 'invalid') {
+                statusTextEl.textContent = 'Codigo invalido.';
+                statusTextEl.style.color = '#dc3545';
+            } else {
+                statusTextEl.textContent = '';
+                statusTextEl.style.color = '';
+            }
+        };
+
+        const fillResetCodeInputs = (text) => {
+            const digits = (text || '').replace(/\D/g, '').slice(0, 6).split('');
+            const codeInputs = overlay.querySelectorAll('.reset-code-input');
+            codeInputs.forEach((input, i) => {
+                input.value = digits[i] || '';
+            });
+
+            if (digits.length < codeInputs.length) {
+                codeInputs[digits.length]?.focus();
+            } else {
+                codeInputs[codeInputs.length - 1]?.focus();
+            }
+        };
+
+        const verifyResetCodeApi = async (email, code) => {
+            const response = await fetch(`${API_BASE_URL}/verify_password_reset_code`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, code })
+            });
+
+            const payload = await response.json().catch(() => ({}));
+            return {
+                ok: response.ok,
+                payload
+            };
+        };
+
+        const maybeVerifyResetCode = async () => {
+            const email = (overlay.querySelector('#resetEmail')?.value || '').trim().toLowerCase();
+            const code = gatherResetCode();
+
+            if (!email || !/^[0-9]{6}$/.test(code)) {
+                isResetCodeVerified = false;
+                setResetCodeState('neutral');
+                return;
+            }
+
+            try {
+                const verify = await verifyResetCodeApi(email, code);
+                const valid = verify.ok && verify.payload?.success;
+                isResetCodeVerified = valid;
+                setResetCodeState(valid ? 'valid' : 'invalid');
+            } catch (error) {
+                isResetCodeVerified = false;
+                setResetCodeState('invalid');
+            }
+        };
+
+        const setupResetCodeInputs = () => {
+            const codeInputs = overlay.querySelectorAll('.reset-code-input');
+
+            codeInputs.forEach((input, index) => {
+                input.addEventListener('input', () => {
+                    const value = input.value.replace(/\D/g, '');
+                    input.value = value.slice(0, 1);
+
+                    if (input.value && index < codeInputs.length - 1) {
+                        codeInputs[index + 1].focus();
+                    }
+
+                    isResetCodeVerified = false;
+                    setResetCodeState('neutral');
+                    maybeVerifyResetCode();
+                });
+
+                input.addEventListener('keydown', (event) => {
+                    if (event.key === 'Backspace' && !input.value && index > 0) {
+                        codeInputs[index - 1].focus();
+                    }
+                });
+
+                input.addEventListener('paste', (event) => {
+                    const paste = (event.clipboardData || window.clipboardData).getData('text') || '';
+                    const digits = paste.replace(/\D/g, '');
+                    if (!digits) return;
+                    event.preventDefault();
+                    fillResetCodeInputs(digits);
+                    isResetCodeVerified = false;
+                    setResetCodeState('neutral');
+                    maybeVerifyResetCode();
+                });
+            });
+        };
+
+        const showLoginView = () => {
+            if (loginFormElement) loginFormElement.style.display = '';
+            if (resetFormElement) resetFormElement.style.display = 'none';
+            if (modalTitle) modalTitle.textContent = strings.login_title;
+        };
+
+        const showResetView = (email = '') => {
+            if (loginFormElement) loginFormElement.style.display = 'none';
+            if (resetFormElement) resetFormElement.style.display = '';
+            if (modalTitle) modalTitle.textContent = 'Redefinir senha';
+
+            const resetEmailInput = overlay.querySelector('#resetEmail');
+            if (resetEmailInput) resetEmailInput.value = email;
+            isResetCodeVerified = false;
+            setResetCodeState('neutral');
+            overlay.querySelectorAll('.reset-code-input').forEach((input) => {
+                input.value = '';
+            });
+            const firstResetCodeInput = overlay.querySelector('#resetCode1');
+            if (firstResetCodeInput) firstResetCodeInput.focus();
+        };
+
         const closeModal = () => {
+            showLoginView();
             overlay.classList.remove('open');
             document.body.classList.remove('modal-open');
         };
@@ -1790,25 +1983,133 @@
         });
 
         overlay.querySelector('.login-modal__close')?.addEventListener('click', closeModal);
-        overlay.querySelector('.login-modal__forgot')?.addEventListener('click', () => {
-            alert(strings.login_forgot);
+        overlay.querySelector('.login-modal__forgot')?.addEventListener('click', async () => {
+            const loginEmailInput = overlay.querySelector('#loginEmail');
+            const email = (loginEmailInput?.value || '').trim().toLowerCase();
+
+            if (!email) {
+                alert('Informe seu e-mail para receber o código.');
+                loginEmailInput?.focus();
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/request_password_reset`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+
+                const payload = await response.json().catch(() => ({}));
+                if (!response.ok || payload.success === false) {
+                    throw new Error(payload.message || 'Falha ao solicitar redefinição de senha.');
+                }
+
+                alert('Se o e-mail estiver cadastrado, você receberá um código de redefinição.');
+                showResetView(email);
+            } catch (error) {
+                alert(error?.message || 'Não foi possível solicitar redefinição de senha.');
+            }
         });
 
-        const togglePassword = overlay.querySelector('.login-modal__toggle-password');
-        const passwordInput = overlay.querySelector('#loginPassword');
-        if (togglePassword && passwordInput) {
-            const updateToggle = () => {
-                const isPassword = passwordInput.type === 'password';
-                passwordInput.type = isPassword ? 'text' : 'password';
-                togglePassword.setAttribute('aria-label', isPassword ? strings.login_hide : strings.login_show);
-                const icon = togglePassword.querySelector('i');
+        overlay.querySelector('#resetBackToLogin')?.addEventListener('click', () => {
+            showLoginView();
+            const loginPasswordInput = overlay.querySelector('#loginPassword');
+            if (loginPasswordInput) loginPasswordInput.focus();
+        });
+
+        overlay.querySelector('#resetEmail')?.addEventListener('input', () => {
+            isResetCodeVerified = false;
+            setResetCodeState('neutral');
+            maybeVerifyResetCode();
+        });
+
+        resetFormElement?.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const email = (overlay.querySelector('#resetEmail')?.value || '').trim().toLowerCase();
+            const code = gatherResetCode();
+            const newPassword = overlay.querySelector('#resetNewPassword')?.value || '';
+            const confirmPassword = overlay.querySelector('#resetConfirmPassword')?.value || '';
+
+            if (!email || !code || !newPassword || !confirmPassword) {
+                alert('Preencha todos os campos para redefinir sua senha.');
+                return;
+            }
+
+            if (!/^[0-9]{6}$/.test(code)) {
+                alert('Digite um código válido de 6 dígitos.');
+                return;
+            }
+
+            if (!isResetCodeVerified) {
+                await maybeVerifyResetCode();
+                if (!isResetCodeVerified) {
+                    alert('Código de recuperação inválido ou expirado.');
+                    return;
+                }
+            }
+
+            if (newPassword.length < 6) {
+                alert('A nova senha deve ter no mínimo 6 caracteres.');
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                alert('A confirmação da senha não confere.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/reset_password`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email,
+                        code,
+                        new_password: newPassword
+                    })
+                });
+
+                const payload = await response.json().catch(() => ({}));
+                if (!response.ok || !payload.success) {
+                    throw new Error(payload.message || 'Falha ao redefinir senha.');
+                }
+
+                alert('Senha redefinida com sucesso. Faça login com a nova senha.');
+                showLoginView();
+
+                const loginEmailInput = overlay.querySelector('#loginEmail');
+                const loginPasswordInput = overlay.querySelector('#loginPassword');
+                if (loginEmailInput) loginEmailInput.value = email;
+                if (loginPasswordInput) {
+                    loginPasswordInput.value = '';
+                    loginPasswordInput.focus();
+                }
+            } catch (error) {
+                alert(error?.message || 'Não foi possível redefinir a senha agora.');
+            }
+        });
+
+        setupResetCodeInputs();
+
+        const passwordToggleButtons = overlay.querySelectorAll('.login-modal__toggle-password');
+        passwordToggleButtons.forEach((btn) => {
+            const input = btn.closest('.login-modal__password-wrapper')?.querySelector('input');
+            if (!input) return;
+
+            btn.addEventListener('click', () => {
+                const isPassword = input.type === 'password';
+                input.type = isPassword ? 'text' : 'password';
+
+                btn.setAttribute('aria-label', isPassword ? strings.login_hide : strings.login_show);
+
+                const icon = btn.querySelector('i');
                 if (icon) {
                     icon.className = isPassword ? 'fa fa-eye-slash' : 'fa fa-eye';
                 }
-            };
-
-            togglePassword.addEventListener('click', updateToggle);
-        }
+            });
+        });
 
         document.addEventListener('keydown', (event) => {
             if (event.key === 'Escape' && overlay.classList.contains('open')) {
@@ -2250,13 +2551,6 @@
                         console.warn('Falha no envio do código:', payload);
                         return;
                     }
-
-                    if (payload.code) {
-                        fillCodeInputs(payload.code);
-                        isCodeVerified = true;
-                        setCodeInputsState('valid');
-                        updateSubmitButtonState();
-                    }
                 })
                 .catch((err) => {
                     console.error('Erro ao enviar código de confirmação:', err);
@@ -2517,22 +2811,33 @@
                     localStorage.setItem('userRole', role);
                     localStorage.setItem('userEmail', email);
                     localStorage.setItem('userName', name);
+                    if (data.phone) {
+                        localStorage.setItem('userPhone', data.phone);
+                    } else if (data.celular) {
+                        localStorage.setItem('userPhone', data.celular);
+                    }
                     if (data.token) {
                         localStorage.setItem('authToken', data.token);
                     }
 
-                    updateProfileMenuUI();
+                    const profileMenu = document.querySelector('.profile-menu');
+                    const profileDropdown = profileMenu?.querySelector('.profile-dropdown');
+                    if (profileDropdown) {
+                        profileDropdown.innerHTML = `
+                            <div class="profile-user-info" style="padding:8px 12px; font-weight: 600; border-bottom: 1px solid #e0e0e0;">Olá, ${name}</div>
+                            <a href="#" class="profile-item" data-profile-action="logout">Sair</a>
+                        `;
+                    }
 
                     if (role === 'admin' || role === 'super_admin') {
-                        alert('Bem-vindo, administrador! Acesso nível: ' + role);
                         window.location.href = 'html/Gerenciamento.html';
                     } else {
-                        alert('Bem-vindo, cliente! Acesso nível: ' + role + '. Sem acesso à área de gerenciamento.');
                         const loginOverlay = document.querySelector('.login-modal-overlay');
                         if (loginOverlay) {
                             loginOverlay.classList.remove('open');
                             document.body.classList.remove('modal-open');
                         }
+                        window.location.reload();
                     }
                 } catch (error) {
                     console.error('Erro na conexão:', error);
@@ -2687,6 +2992,540 @@
     window.setReservations = setReservations;
     window.addReservation = addReservation;
 
+    const ensureGlobalNotification = () => {
+        let overlay = document.getElementById('appNotificationOverlay');
+        if (overlay) return overlay;
+
+        overlay = document.createElement('div');
+        overlay.id = 'appNotificationOverlay';
+        overlay.className = 'app-notification-overlay';
+        overlay.setAttribute('aria-hidden', 'true');
+        overlay.innerHTML = `
+            <div class="app-notification" role="status" aria-live="polite" aria-atomic="true">
+                <button type="button" class="app-notification__close" aria-label="Fechar">&times;</button>
+                <div class="app-notification__title">Notificação</div>
+                <div class="app-notification__media" hidden></div>
+                <div class="app-notification__message"></div>
+                <div class="app-notification__details" hidden></div>
+            </div>
+        `;
+
+        const closeButton = overlay.querySelector('.app-notification__close');
+        const close = () => {
+            overlay.classList.remove('open');
+            overlay.setAttribute('aria-hidden', 'true');
+        };
+
+        closeButton?.addEventListener('click', close);
+        overlay.addEventListener('click', (event) => {
+            if (event.target === overlay) close();
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && overlay.classList.contains('open')) {
+                close();
+            }
+        });
+
+        document.body.appendChild(overlay);
+        return overlay;
+    };
+
+    const escapeHtml = (value) => String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+
+    const showGlobalNotification = (message, type = 'info', options = {}) => {
+        const overlay = ensureGlobalNotification();
+        const title = overlay.querySelector('.app-notification__title');
+        const body = overlay.querySelector('.app-notification__message');
+        const media = overlay.querySelector('.app-notification__media');
+        const details = overlay.querySelector('.app-notification__details');
+
+        const {
+            titleText,
+            gifUrl,
+            detailsHtml
+        } = options;
+
+        overlay.classList.remove('is-success', 'is-error', 'is-info');
+        overlay.classList.add(`is-${type}`);
+
+        if (title) {
+            if (typeof titleText === 'string' && titleText.trim().length === 0) {
+                title.hidden = true;
+            } else {
+                title.hidden = false;
+                title.textContent = titleText || (type === 'success' ? 'Sucesso' : (type === 'error' ? 'Atenção' : 'Notificação'));
+            }
+        }
+        if (body) {
+            body.textContent = message;
+        }
+
+        if (media) {
+            if (gifUrl) {
+                if (gifUrl.toLowerCase().endsWith('.mp4')) {
+                    media.innerHTML = `
+                        <video
+                            src="${escapeHtml(gifUrl)}"
+                            autoplay
+                            muted
+                            loop
+                            playsinline
+                            class="app-notification__video"
+                        ></video>
+                    `;
+                } else {
+                    media.innerHTML = `<img src="${escapeHtml(gifUrl)}" alt="Confirmação" loading="lazy">`;
+                }
+                media.hidden = false;
+            } else {
+                media.innerHTML = '';
+                media.hidden = true;
+            }
+        }
+
+        if (details) {
+            if (detailsHtml) {
+                details.innerHTML = detailsHtml;
+                details.hidden = false;
+            } else {
+                details.innerHTML = '';
+                details.hidden = true;
+            }
+        }
+
+        overlay.classList.add('open');
+        overlay.setAttribute('aria-hidden', 'false');
+    };
+
+    window.showAppNotification = showGlobalNotification;
+
+    const openMyReservationsModal = async () => {
+        let modal = document.getElementById('myReservationsModal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'myReservationsModal';
+            modal.className = 'my-reservations-overlay';
+            modal.setAttribute('aria-modal', 'true');
+            modal.setAttribute('role', 'dialog');
+            modal.setAttribute('aria-label', 'Minhas Reservas');
+            modal.innerHTML = `
+                <div class="my-reservations-modal">
+                    <button type="button" class="my-reservations-close" aria-label="Fechar">&times;</button>
+                    <h2 class="my-reservations-title">Minhas Reservas</h2>
+                    <div class="my-reservations-list"></div>
+                </div>
+            `;
+            modal.querySelector('.my-reservations-close').addEventListener('click', () => {
+                modal.classList.remove('open');
+            });
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.classList.remove('open');
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && modal.classList.contains('open')) modal.classList.remove('open');
+            });
+            document.body.appendChild(modal);
+        }
+
+        const listEl = modal.querySelector('.my-reservations-list');
+        modal.classList.add('open');
+
+        listEl.innerHTML = '<p class="my-reservations-empty">Carregando reservas...</p>';
+
+        const email = localStorage.getItem('userEmail');
+        if (!email) {
+            listEl.innerHTML = '<p class="my-reservations-empty">Não foi possível identificar o usuário.</p>';
+            return;
+        }
+
+        const endpoints = [
+            `${API_BASE_URL}/get_meus_agendamentos`,
+            'http://127.0.0.1:5000/get_meus_agendamentos',
+            'https://api.exksvol.com/get_meus_agendamentos'
+        ];
+
+        let data = null;
+        for (const endpoint of endpoints) {
+            try {
+                const res = await fetch(`${endpoint}?email=${encodeURIComponent(email)}`);
+                if (res.ok) {
+                    data = await res.json();
+                    break;
+                }
+            } catch {
+                // tenta próximo endpoint
+            }
+        }
+
+        if (!data) {
+            listEl.innerHTML = '<p class="my-reservations-empty">Não foi possível carregar as reservas. Tente novamente mais tarde.</p>';
+            return;
+        }
+
+        if (!Array.isArray(data) || !data.length) {
+            listEl.innerHTML = '<p class="my-reservations-empty">Nenhuma reserva encontrada.</p>';
+            return;
+        }
+
+        listEl.innerHTML = data.map((r) => {
+            const statusRaw = String(r.status || 'Pendente').trim();
+            const statusKey = statusRaw.toLowerCase();
+            const statusLabel = statusKey.includes('pendente')
+                ? 'Status: Confirmação pendente'
+                : `Status: ${escapeHtml(statusRaw)}`;
+            const showActions = true;
+            return `
+            <div class="my-reservations-item" data-reservation-id="${escapeHtml(String(r.id || ''))}">
+                <strong class="my-reservations-tour">${escapeHtml(r.tour || '—')}</strong>
+                <span class="my-reservations-date">Data: ${escapeHtml(r.data || '—')}</span>
+                ${r.hora ? `<span class="my-reservations-detail">Hora: ${escapeHtml(r.hora)}</span>` : ''}
+                ${r.idioma ? `<span class="my-reservations-detail">Idioma: ${escapeHtml(r.idioma)}</span>` : ''}
+                ${r.qtd ? `<span class="my-reservations-detail">Pessoas: ${escapeHtml(String(r.qtd))}</span>` : ''}
+                <span class="my-reservations-status my-reservations-status--${escapeHtml(statusKey)}">${statusLabel}</span>
+                ${showActions ? `
+                    <div class="my-reservations-actions">
+                        <button type="button" class="btn-edit-reservation" data-reservation-id="${escapeHtml(String(r.id || ''))}" data-reservation-tour="${escapeHtml(String(r.tour || ''))}" data-reservation-date="${escapeHtml(String(r.data || ''))}" data-reservation-hour="${escapeHtml(String(r.hora || ''))}" data-reservation-people="${escapeHtml(String(r.qtd || '1'))}">Editar</button>
+                        <button type="button" class="btn-cancel-reservation" data-reservation-id="${escapeHtml(String(r.id || ''))}">Cancelar</button>
+                    </div>
+                ` : ''}
+            </div>
+        `;
+        }).join('');
+
+        const parseDisplayDateToIso = (displayDate) => {
+            const value = String(displayDate || '').trim();
+            if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+            const parts = value.split('/');
+            if (parts.length === 3) {
+                const [dd, mm, yyyy] = parts;
+                if (dd && mm && yyyy) return `${yyyy}-${mm.padStart(2, '0')}-${dd.padStart(2, '0')}`;
+            }
+            return '';
+        };
+
+        const ensureReservationEditModal = () => {
+            let overlayEl = document.getElementById('reservationEditOverlay');
+            if (overlayEl) return overlayEl;
+
+            overlayEl = document.createElement('div');
+            overlayEl.id = 'reservationEditOverlay';
+            overlayEl.className = 'reservation-edit-overlay';
+            overlayEl.innerHTML = `
+                <div class="reservation-edit-modal" role="dialog" aria-modal="true" aria-label="Editar reserva">
+                    <button type="button" class="reservation-edit-close" aria-label="Fechar">&times;</button>
+                    <h3 class="reservation-edit-title">Editar Reserva</h3>
+                    <form class="reservation-edit-form">
+                        <input type="hidden" name="reservationId">
+                        <label>
+                            Data
+                            <input type="date" name="date" required>
+                        </label>
+                        <label>
+                            Hora
+                            <input type="time" name="hour" required>
+                        </label>
+                        <label>
+                            Quantidade de pessoas
+                            <input type="number" name="people" min="1" step="1" required>
+                        </label>
+                        <div class="reservation-edit-actions">
+                            <button type="button" class="reservation-edit-cancel">Cancelar</button>
+                            <button type="submit" class="reservation-edit-save">Salvar alterações</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+
+            const closeModal = () => overlayEl.classList.remove('open');
+            overlayEl.querySelector('.reservation-edit-close')?.addEventListener('click', closeModal);
+            overlayEl.querySelector('.reservation-edit-cancel')?.addEventListener('click', closeModal);
+            overlayEl.addEventListener('click', (event) => {
+                if (event.target === overlayEl) closeModal();
+            });
+
+            const formEl = overlayEl.querySelector('.reservation-edit-form');
+            formEl?.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const id = Number(formEl.elements.reservationId.value || 0);
+                const data = formEl.elements.date.value;
+                const hora = formEl.elements.hour.value;
+                const quantas_pessoas = Number(formEl.elements.people.value || 0);
+
+                if (!id || !data || !hora || !quantas_pessoas || quantas_pessoas < 1) {
+                    showGlobalNotification('Preencha os dados de edição corretamente.', 'error');
+                    return;
+                }
+
+                const payload = { id, data, hora, quantas_pessoas };
+                const endpointsUpdate = [
+                    `${API_BASE_URL}/update_agendamento`,
+                    'http://127.0.0.1:5000/update_agendamento',
+                    'https://api.exksvol.com/update_agendamento'
+                ];
+
+                let updated = false;
+                for (const endpoint of endpointsUpdate) {
+                    try {
+                        const response = await fetch(endpoint, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+                        if (response.ok) {
+                            const result = await response.json();
+                            if (result.success) {
+                                updated = true;
+                                break;
+                            }
+                        }
+                    } catch (err) {
+                        console.warn('Atualização falhou em', endpoint, err);
+                    }
+                }
+
+                if (updated) {
+                    closeModal();
+                    showGlobalNotification('Reserva atualizada com sucesso.', 'success');
+                    openMyReservationsModal();
+                } else {
+                    showGlobalNotification('Não foi possível atualizar a reserva. Tente novamente.', 'error');
+                }
+            });
+
+            document.body.appendChild(overlayEl);
+            return overlayEl;
+        };
+
+        // Ações de edição e cancelamento de reservas
+        listEl.querySelectorAll('.btn-cancel-reservation').forEach((button) => {
+            button.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                const id = button.getAttribute('data-reservation-id');
+                if (!id) return;
+                if (!confirm('Deseja cancelar esta reserva? Clique em OK para continuar.')) return;
+                if (!confirm('Confirma novamente: realmente deseja cancelar a reserva?')) return;
+
+                const endpointsDelete = [
+                    `${API_BASE_URL}/delete_agendamento`,
+                    'http://127.0.0.1:5000/delete_agendamento',
+                    'https://api.exksvol.com/delete_agendamento'
+                ];
+
+                let deleted = false;
+                for (const endpoint of endpointsDelete) {
+                    try {
+                        const response = await fetch(endpoint, {
+                            method: 'DELETE',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ id })
+                        });
+                        if (response.ok) {
+                            const result = await response.json();
+                            if (result.success) {
+                                deleted = true;
+                                break;
+                            }
+                        }
+                    } catch (err) {
+                        console.warn('Cancelamento falhou em', endpoint, err);
+                    }
+                }
+
+                if (deleted) {
+                    showGlobalNotification('Reserva cancelada com sucesso.', 'success');
+                    openMyReservationsModal();
+                } else {
+                    showGlobalNotification('Não foi possível cancelar a reserva. Tente novamente.', 'error');
+                }
+            });
+        });
+
+        listEl.querySelectorAll('.btn-edit-reservation').forEach((button) => {
+            button.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const id = button.getAttribute('data-reservation-id');
+                if (!id) return;
+
+                const currentDate = parseDisplayDateToIso(button.getAttribute('data-reservation-date') || '');
+                const currentHour = button.getAttribute('data-reservation-hour') || '12:00';
+                const currentPeople = button.getAttribute('data-reservation-people') || '1';
+
+                const overlayEl = ensureReservationEditModal();
+                const formEl = overlayEl.querySelector('.reservation-edit-form');
+                if (!formEl) return;
+
+                formEl.elements.reservationId.value = String(id);
+                formEl.elements.date.value = currentDate;
+                formEl.elements.hour.value = currentHour;
+                formEl.elements.people.value = String(currentPeople);
+
+                overlayEl.classList.add('open');
+            });
+        });
+    };
+
+    const openUserDataModal = async () => {
+        let modal = document.getElementById('userDataModal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'userDataModal';
+            modal.className = 'user-data-overlay';
+            modal.innerHTML = `
+                <div class="user-data-modal" role="dialog" aria-modal="true" aria-label="Meus dados">
+                    <button type="button" class="user-data-close" aria-label="Fechar">&times;</button>
+                    <h3>Meus Dados</h3>
+                    <div class="user-data-loading" hidden>Carregando dados...</div>
+                    <form class="user-data-form">
+                        <label>Nome<input name="nome" required /></label>
+                        <label>Sobrenome<input name="sobrenome" required /></label>
+                        <label>Telefone<input name="celular" /></label>
+                        <label>País<input name="pais_origem" /></label>
+                        <label>Gênero<input name="genero" /></label>
+                        <div class="user-data-actions">
+                            <button type="button" class="user-data-cancel">Cancelar</button>
+                            <button type="submit" class="user-data-save">Salvar</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+
+            const close = () => {
+                modal.classList.remove('open');
+            };
+
+            modal.querySelector('.user-data-close')?.addEventListener('click', close);
+            modal.querySelector('.user-data-cancel')?.addEventListener('click', close);
+            modal.addEventListener('click', (event) => {
+                if (event.target === modal) close();
+            });
+
+            const form = modal.querySelector('.user-data-form');
+            form?.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const email = localStorage.getItem('userEmail');
+                if (!email) {
+                    showGlobalNotification('Erro: usuário não identificado.', 'error');
+                    return;
+                }
+
+                const payload = {
+                    email,
+                    nome: form.elements.nome.value.trim(),
+                    sobrenome: form.elements.sobrenome.value.trim(),
+                    celular: form.elements.celular.value.trim(),
+                    pais_origem: form.elements.pais_origem.value.trim(),
+                    genero: form.elements.genero.value.trim()
+                };
+
+                const endpointsUpdate = [
+                    `${API_BASE_URL}/update_user`,
+                    'http://127.0.0.1:5000/update_user',
+                    'https://api.exksvol.com/update_user'
+                ];
+
+                let updated = false;
+                for (const endpoint of endpointsUpdate) {
+                    try {
+                        const response = await fetch(endpoint, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+                        if (response.ok) {
+                            const result = await response.json();
+                            if (result.success) {
+                                updated = true;
+                                break;
+                            }
+                        }
+                    } catch (err) {
+                        console.warn('Update user falhou em', endpoint, err);
+                    }
+                }
+
+                if (updated) {
+                    localStorage.setItem('userName', payload.nome || email);
+                    localStorage.setItem('userPhone', payload.celular || '');
+                    localStorage.setItem('userSobrenome', payload.sobrenome || '');
+                    localStorage.setItem('userPais', payload.pais_origem || '');
+                    localStorage.setItem('userGenero', payload.genero || '');
+                    showGlobalNotification('Dados atualizados com sucesso.', 'success');
+                    updateProfileMenuUI();
+                    close();
+                } else {
+                    showGlobalNotification('Não foi possível atualizar seus dados.', 'error');
+                }
+            });
+
+            document.body.appendChild(modal);
+        }
+
+        const form = modal.querySelector('.user-data-form');
+        if (!form) return;
+        const loadingEl = modal.querySelector('.user-data-loading');
+
+        const setLoading = (isLoading, message = 'Carregando dados...') => {
+            if (loadingEl) {
+                loadingEl.textContent = message;
+                loadingEl.hidden = !isLoading;
+            }
+            form.style.opacity = isLoading ? '0.55' : '1';
+            form.style.pointerEvents = isLoading ? 'none' : 'auto';
+            const saveBtn = form.querySelector('.user-data-save');
+            if (saveBtn) saveBtn.disabled = isLoading;
+        };
+
+        modal.classList.add('open');
+        setLoading(true);
+
+        form.elements.nome.value = localStorage.getItem('userName') || '';
+        form.elements.sobrenome.value = localStorage.getItem('userSobrenome') || '';
+        form.elements.celular.value = localStorage.getItem('userPhone') || '';
+        form.elements.pais_origem.value = localStorage.getItem('userPais') || '';
+        form.elements.genero.value = localStorage.getItem('userGenero') || '';
+
+        const email = localStorage.getItem('userEmail');
+        if (email) {
+            const endpointsGetUser = [
+                `${API_BASE_URL}/get_user`,
+                'http://127.0.0.1:5000/get_user',
+                'https://api.exksvol.com/get_user'
+            ];
+
+            for (const endpoint of endpointsGetUser) {
+                try {
+                    const response = await fetch(`${endpoint}?email=${encodeURIComponent(email)}`);
+                    if (!response.ok) continue;
+                    const data = await response.json();
+                    if (!data || data.success === false) continue;
+
+                    form.elements.nome.value = data.nome || '';
+                    form.elements.sobrenome.value = data.sobrenome || '';
+                    form.elements.celular.value = data.celular || '';
+                    form.elements.pais_origem.value = data.pais_origem || '';
+                    form.elements.genero.value = data.genero || '';
+
+                    localStorage.setItem('userName', data.nome || email);
+                    localStorage.setItem('userPhone', data.celular || '');
+                    localStorage.setItem('userSobrenome', data.sobrenome || '');
+                    localStorage.setItem('userPais', data.pais_origem || '');
+                    localStorage.setItem('userGenero', data.genero || '');
+                    updateProfileMenuUI();
+                    break;
+                } catch (err) {
+                    console.warn('Leitura de dados do usuário falhou em', endpoint, err);
+                }
+            }
+        }
+        setLoading(false);
+    };
+
     const initReservationTracking = () => {
         const reservationModal = document.getElementById('reservationModal');
         const reservationForm = document.getElementById('reservationForm');
@@ -2698,19 +3537,32 @@
         const reservationPhone = document.getElementById('reservationPhone');
         const reservationEmail = document.getElementById('reservationEmail');
         const reservationCancel = document.getElementById('reservationCancel');
+        let selectedMeetingPoint = '';
 
         const closeReservationModal = () => {
             if (!reservationModal) return;
             reservationModal.classList.add('hidden');
         };
 
-        const openReservationModal = (tourName, languageText) => {
+        const openReservationModal = (tourName, languageText, meetingPoint) => {
             if (!reservationModal) return;
+            const userRole = localStorage.getItem('userRole');
+            const userEmail = localStorage.getItem('userEmail');
+            const userName = localStorage.getItem('userName');
+            const userPhone = localStorage.getItem('userPhone');
+
+            if (!userRole || !userEmail) {
+                showGlobalNotification('É necessário realizar login para fazer uma reserva.', 'error');
+                return;
+            }
+
             reservationTour.value = tourName;
-            reservationName.value = '';
+            reservationName.value = userName || '';
             reservationDate.value = '';
             reservationQuantity.value = 1;
-            reservationPhone.value = '';
+            reservationPhone.value = userPhone || '';
+            reservationEmail.value = userEmail || '';
+            selectedMeetingPoint = (meetingPoint || '').trim();
 
             const langs = (languageText || '').split(/[,;]+|\s+e\s+/i)
                 .map(s => s.trim())
@@ -2740,7 +3592,9 @@
                 const card = button.closest('.rio-tour-card');
                 const tourName = card?.querySelector('.rio-tour-name')?.textContent?.trim() || '';
                 const languageText = card?.querySelector('.fa-language')?.parentElement?.textContent?.replace(/\s*Idiomas?:\s*/i, '').trim() || '';
-                openReservationModal(tourName, languageText);
+                const meetingTextRaw = card?.querySelector('.fa-map-marker-alt')?.parentElement?.textContent?.trim() || '';
+                const meetingText = meetingTextRaw.replace(/^\s*(Encontro|Meeting|Rendez-vous|Encuentro|Incontro|集合)\s*:\s*/i, '').trim();
+                openReservationModal(tourName, languageText, meetingText);
             });
         });
 
@@ -2777,24 +3631,24 @@
                 const modality = 'Privado';
 
                 if (!tour || !clientName || !date || !quantity || !language || !phone || !email) {
-                    alert('Preencha todos os campos obrigatórios para concluir a reserva.');
+                    showGlobalNotification('Preencha todos os campos obrigatórios para concluir a reserva.', 'error');
                     return;
                 }
 
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 if (!emailRegex.test(email)) {
-                    alert('Por favor, insira um email válido.');
+                    showGlobalNotification('Por favor, insira um email válido.', 'error');
                     return;
                 }
 
                 if (date.trim() === '') {
-                    alert('Escolha uma data de reserva.');
+                    showGlobalNotification('Escolha uma data de reserva.', 'error');
                     return;
                 }
 
                 const phoneRegex = /^[0-9()+\-\s]+$/;
                 if (!phoneRegex.test(phone)) {
-                    alert('O campo celular só permite números, +, -, ( ) e espaços.');
+                    showGlobalNotification('O campo celular só permite números, +, -, ( ) e espaços.', 'error');
                     return;
                 }
 
@@ -2842,7 +3696,25 @@
                 for (const endpoint of endpoints) {
                     try {
                         await sendReservationToApi(endpoint);
-                        alert(`Reserva adicionada com sucesso via ${endpoint}!`);
+                        const [yyyy, mm, dd] = date.split('-');
+                        const formattedDate = (dd && mm && yyyy) ? `${dd}/${mm}/${yyyy}` : date;
+                        const safeMeetingPoint = escapeHtml(selectedMeetingPoint || 'Conforme descrição do tour');
+                        const safeDate = escapeHtml(formattedDate);
+                        const safeTime = escapeHtml(defaultTime);
+                        const detailsHtml = `
+                            <ul class="app-notification__summary">
+                                <li><strong>Data:</strong> ${safeDate}</li>
+                                <li><strong>Hora:</strong> ${safeTime}</li>
+                                <li><strong>Local de encontro:</strong> ${safeMeetingPoint}</li>
+                            </ul>
+                            <p class="app-notification__hint">Fique atento ao meio de contato cadastrado. Nossa equipe entrará em contato para confirmar.</p>
+                        `;
+
+                        showGlobalNotification('Reserva concluída com sucesso.', 'success', {
+                            titleText: '',
+                            gifUrl: 'imagem/assets/certo.mp4',
+                            detailsHtml
+                        });
                         closeReservationModal();
                         saved = true;
                         break;
@@ -2854,7 +3726,7 @@
 
                 if (!saved) {
                     console.error('Todos endpoints falharam:', firstError);
-                    alert('Não foi possível enviar a reserva ao servidor. Por favor, tente novamente mais tarde.');
+                    showGlobalNotification('Não foi possível enviar a reserva ao servidor. Por favor, tente novamente mais tarde.', 'error');
                 }
             });
         }
