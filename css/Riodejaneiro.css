@@ -257,10 +257,6 @@ body {
     text-align: center;
 }
 
-.rio-page .btn-signup:hover {
-    /* existing styles preserved */
-}
-
 /* field code 6 inputs */
 .register-code-group {
     display: flex;
@@ -2229,6 +2225,13 @@ header {
     margin: 0;
   }
 
+  .profile-dropdown .profile-user-info,
+  .profile-dropdown .profile-user-info > div:first-child span[data-i18n="profile_hello"],
+  .profile-dropdown .profile-user-info > span[data-i18n="profile_hello"],
+  .profile-user-info > span[data-i18n="profile_hello"] {
+    color: #0f3a7a !important;
+  }
+
   .lang-selector .lang-list li,
   .profile-dropdown .profile-item {
     padding: 0.6rem 1rem;
@@ -2535,6 +2538,11 @@ header {
   padding: 0.6rem 0;
   min-width: 180px;
   z-index: 30;
+}
+
+.profile-dropdown .profile-user-info span[data-i18n="profile_hello"],
+.profile-user-info span[data-i18n="profile_hello"] {
+  color: #0f3a7a !important;
 }
 
 .profile-menu.open .profile-dropdown {

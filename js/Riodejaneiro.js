@@ -1,481 +1,7 @@
-
+﻿
 // version 1.0 
 (() => {
-    const pageTranslations = {
-        pt: {
-            hero_title: 'Tour no<br><span class="rio-city-highlight">RIO DE JANEIRO</span>',
-            hero_location: 'Rio de Janeiro - Brasil',
-            hero_desc: 'Seja bem-vindo à Cidade Maravilhosa! O Rio dos amores e da beleza inconfundível te espera de braços abertos.',
-            hero_button: 'Conhecer Tours',
-            notice_title: 'Informações Importantes',
-            notice_lines: [
-                'Seguimos todas as medidas sanitárias exigidas para este tipo de passeio.',
-                'Por favor estar atentos aos dias disponíveis no formulário de reserva.',
-                'Sua contribuição é a remuneração do guia, seja consciente.',
-                'Em caso de não poder comparecer ao tour, cancele sua reserva pelo <a href="https://wa.me/5521970018590?text=Ol%C3%A1%2C%20preciso%20cancelar%20minha%20reserva." target="_blank" rel="noopener"><strong>WhatsApp</strong></a>.'
-            ],
-            proceed: 'Prosseguir',
-            section_title: 'Nossas Experiências',
-            free_subtitle: 'Free Tours',
-            paid_title: 'Outros Tours',
-            paid_subtitle: 'Tours Pagos',
-            reserve_unavailable: 'Temporariamente indisponível',
-            cards: [
-                {
-                    name: 'Centro Histórico e Lapa',
-                    details: [
-                        
-                        '<i class="fa fa-language"></i> <strong>Idiomas:</strong> Português, Inglês e Espanhol',
-                        '<i class="fa fa-map-marker-alt"></i> <strong>Encontro:</strong> Praça Cinelândia, em frente ao Theatro Municipal',
-                        '<i class="fa fa-shirt"></i> <strong>Identificação:</strong> Guias com camisetas verdes'
-                    ],
-                    map: '<i class="fa fa-map"></i> Ver no Mapa',
-                    reserve: 'Reservar Agora'
-                },
-                {
-                    name: 'Santa Teresa & Experiência Gastronômica Carioca',
-                    details: [
-                        '<i class="fa fa-language"></i> <strong>Idiomas:</strong> Português, Inglês e Espanhol',
-                        '<i class="fa fa-map-marker-alt"></i> <strong>Encontro:</strong> Largo dos Guimarães, em frente ao Cine Santa Teresa',
-                        '<i class="fa fa-shirt"></i> <strong>Identificação:</strong> Guias com camisetas verdes'
-                    ],
-                    map: '<i class="fa fa-map"></i> Ver no Mapa',
-                    reserve: 'Reservar Agora'
-                },
-                {
-                    name: 'Pedra do Sal: Samba e Herança Afro-brasileira',
-                    details: [
-                        '<i class="fa fa-language"></i> <strong>Idiomas:</strong> Português, Inglês e Espanhol',
-                        '<i class="fa fa-map-marker-alt"></i> <strong>Encontro:</strong> Museu de Arte do Rio (MAR) - Praça Mauá, 5 - Centro',
-                        '<i class="fa fa-shirt"></i> <strong>Identificação:</strong> Guias com camisetas verdes'
-                    ],
-                    map: '<i class="fa fa-map"></i> Ver no Mapa',
-                    reserve: 'Reservar Agora'
-                },
-                {
-                    name: 'Pedra do Sal + Experiência de Carnaval',
-                    details: [
-                        '<i class="fa fa-language"></i> <strong>Idiomas:</strong> Português, Inglês e Espanhol',
-                        '<i class="fa fa-map-marker-alt"></i> <strong>Encontro:</strong> Museu de Arte do Rio (MAR) - Praça Mauá, 5 - Centro',
-                        '<i class="fa fa-shirt"></i> <strong>Identificação:</strong> Guias com camisetas verdes'
-                    ],
-                    map: '<i class="fa fa-map"></i> Ver no Mapa',
-                    reserve: 'Reservar Agora'
-                },
-                {
-                    name: 'Copacabana e Ipanema',
-                    details: [
-                        '<i class="fa fa-language"></i> <strong>Idiomas:</strong> Português, Inglês e Espanhol',
-                        '<i class="fa fa-map-marker-alt"></i> <strong>Encontro:</strong> Praça General Osório, em frente à estação de metrô',
-                        '<i class="fa fa-shirt"></i> <strong>Identificação:</strong> Guias com camisetas verdes'
-                    ],
-                    map: '<i class="fa fa-map"></i> Ver no Mapa',
-                    reserve: 'Reservar Agora'
-                },
-            ],
-            footer: '',
-            footer_info: {
-                sobre: '<p>Somos um tour que explora os principais pontos históricos do Rio de Janeiro enquanto compartilhamos curiosidades e histórias locais.</p>',
-                contato: '<p>WhatsApp: <a href="https://wa.me/5521970018590" target="_blank" rel="noopener">+5521970018590</a><br>Email: <a href="mailto:riobyfoottour@gmail.com">riobyfoottour@gmail.com</a><br>Endereço: Praça Cinelândia, Rio de Janeiro - RJ</p>',
-                ajuda: '<p>Para ajuda geral, use o menu ou envie uma mensagem pelo WhatsApp. Estamos disponíveis 7 dias por semana.</p>'
-            }
-        },
-        en: {
-            hero_title: 'Tour in<br><span class="rio-city-highlight">RIO DE JANEIRO</span>',
-            hero_location: 'Rio de Janeiro - Brazil',
-            hero_desc: 'Welcome to the Marvelous City! Rio, a city of love and unmistakable beauty, welcomes you with open arms.',
-            hero_button: 'See Tours',
-            notice_title: 'Important Information',
-            notice_lines: [
-                'To join our Free Tour, you need to reserve your spot.',
-                'We follow all required health and safety measures for this kind of tour.',
-                'Please check available days in the reservation form.',
-                'Your contribution is the guide remuneration, please be mindful.',
-                'If you cannot attend the tour, please cancel your booking via <a href="https://wa.me/5521970018590?text=Hello%2C%20I%20need%20to%20cancel%20my%20booking." target="_blank" rel="noopener"><strong>WhatsApp</strong></a>.'
-            ],
-            proceed: 'Proceed',
-            section_title: 'Our Experiences',
-            free_subtitle: 'Free Tours',
-            paid_title: 'Other Tours',
-            paid_subtitle: 'Paid Tours',
-            reserve_unavailable: 'Temporarily unavailable',
-            cards: [
-                {
-                    name: 'Centro Histórico e Lapa',
-                    details: [
-                        '<i class="fa fa-language"></i> <strong>Languages:</strong> Portuguese, English and Spanish',
-                        '<i class="fa fa-map-marker-alt"></i> <strong>Meeting:</strong> Cinelandia Square, in front of Theatro Municipal',
-                        '<i class="fa fa-shirt"></i> <strong>Identification:</strong> Guides wearing green shirts'
-                    ],
-                    map: '<i class="fa fa-map"></i> View on Map',
-                    reserve: 'Book Now'
-                },
-                {
-                    name: 'Santa Teresa & Carioca Gastronomy Experience',
-                    details: [
-                        '<i class="fa fa-language"></i> <strong>Languages:</strong> Portuguese, English and Spanish',
-                        '<i class="fa fa-map-marker-alt"></i> <strong>Meeting:</strong> Largo dos Guimaraes, in front of Cine Santa Teresa',
-                        '<i class="fa fa-shirt"></i> <strong>Identification:</strong> Guides wearing green shirts'
-                    ],
-                    map: '<i class="fa fa-map"></i> View on Map',
-                    reserve: 'Book Now'
-                },
-                {
-                    name: 'Pedra do Sal: Samba and Afro-Brazilian Heritage',
-                    details: [
-                        '<i class="fa fa-language"></i> <strong>Languages:</strong> Portuguese, English and Spanish',
-                        '<i class="fa fa-map-marker-alt"></i> <strong>Meeting:</strong> Museum of Art of Rio (MAR) - Praca Maua, 5 - Downtown',
-                        '<i class="fa fa-shirt"></i> <strong>Identification:</strong> Guides wearing green shirts'
-                    ],
-                    map: '<i class="fa fa-map"></i> View on Map',
-                    reserve: 'Book Now'
-                },
-                {
-                    name: 'Pedra do Sal + Carnival Experience',
-                    details: [
-                        '<i class="fa fa-language"></i> <strong>Languages:</strong> Portuguese, English and Spanish',
-                        '<i class="fa fa-map-marker-alt"></i> <strong>Meeting:</strong> Museum of Art of Rio (MAR) - Praca Maua, 5 - Downtown',
-                        '<i class="fa fa-shirt"></i> <strong>Identification:</strong> Guides wearing green shirts'
-                    ],
-                    map: '<i class="fa fa-map"></i> View on Map',
-                    reserve: 'Book Now'
-                },
-                {
-                    name: 'Copacabana and Ipanema',
-
-                    details: [
-                        '<i class="fa fa-language"></i> <strong>Languages:</strong> Portuguese, English and Spanish',
-                        '<i class="fa fa-map-marker-alt"></i> <strong>Meeting:</strong> General Osorio Square, in front of the metro station',
-                        '<i class="fa fa-shirt"></i> <strong>Identification:</strong> Guides wearing green shirts'
-                    ],
-                    map: '<i class="fa fa-map"></i> View on Map',
-                    reserve: 'Book Now'
-                },
-            ],
-            footer: '',
-            footer_info: {
-                sobre: '<p>We run walking tours that highlight Rio de Janeiro’s culture, history and local stories.</p>',
-                contato: '<p>WhatsApp: <a href="https://wa.me/5521970018590" target="_blank" rel="noopener">+5521970018590</a><br>Email: <a href="mailto:riobyfoottour@gmail.com">riobyfoottour@gmail.com</a><br>Address: Cinelândia Square, Rio de Janeiro - RJ</p>',
-                ajuda: '<p>Need help? Send us a message on WhatsApp or check the FAQ section in the menu.</p>'
-            }
-        }
-    };
-
-    pageTranslations.fr = {
-        hero_title: 'Tour à<br><span class="rio-city-highlight">RIO DE JANEIRO</span>',
-        hero_location: 'Rio de Janeiro - Brésil',
-        hero_desc: 'Bienvenue dans la Ville Merveilleuse ! Rio, ville d’amour et de beauté incomparable, vous accueille à bras ouverts.',
-        hero_button: 'Voir les tours',
-        notice_title: 'Informations importantes',
-        notice_lines: [
-            'Pour participer à notre Free Tour, vous devez réserver votre place.',
-            'Nous suivons toutes les mesures sanitaires exigées pour ce type de visite.',
-            'Veuillez vérifier les jours disponibles dans le formulaire de réservation.',
-            'Votre contribution est la rémunération du guide, soyez conscient.',
-            'Si vous ne pouvez pas participer, annulez votre réservation via <a href="https://wa.me/5521970018590?text=Bonjour%2C%20je%20dois%20annuler%20ma%20r%C3%A9servation." target="_blank" rel="noopener"><strong>WhatsApp</strong></a>.'
-        ],
-        proceed: 'Continuer',
-        section_title: 'Nos expériences',
-        free_subtitle: 'Free Tours',
-        paid_title: 'Autres tours',
-        paid_subtitle: 'Tours payants',
-        reserve_unavailable: 'Temporairement indisponible',
-        cards: [
-            {
-                name: 'Centro Histórico e Lapa',
-                details: [
-                    '<i class="fa fa-language"></i> <strong>Langues :</strong> Portugais, anglais et espagnol',
-                    '<i class="fa fa-map-marker-alt"></i> <strong>Rendez-vous :</strong> Place Cinelândia, devant le Theatro Municipal',
-                    '<i class="fa fa-shirt"></i> <strong>Identification :</strong> Guides avec t-shirts verts'
-                ],
-                map: '<i class="fa fa-map"></i> Voir sur la carte',
-                reserve: 'Réserver'
-            },
-            {
-                name: 'Santa Teresa & Expérience Gastronomique Carioca',
-                details: [
-                    '<i class="fa fa-language"></i> <strong>Langues :</strong> Portugais, anglais et espagnol',
-                    '<i class="fa fa-map-marker-alt"></i> <strong>Rendez-vous :</strong> Largo dos Guimarães, devant le Cine Santa Teresa',
-                    '<i class="fa fa-shirt"></i> <strong>Identification :</strong> Guides avec t-shirts verts'
-                ],
-                map: '<i class="fa fa-map"></i> Voir sur la carte',
-                reserve: 'Réserver'
-            },
-            {
-                name: 'Pedra do Sal : Samba et héritage afro-brésilien',
-                details: [
-                    '<i class="fa fa-language"></i> <strong>Langues :</strong> Portugais, anglais et espagnol',
-                    '<i class="fa fa-map-marker-alt"></i> <strong>Rendez-vous :</strong> Place Cinelândia, devant le Theatro Municipal',
-                    '<i class="fa fa-shirt"></i> <strong>Identification :</strong> Guides avec t-shirts verts'
-                ],
-                map: '<i class="fa fa-map"></i> Voir sur la carte',
-                reserve: 'Réserver'
-            },
-            {
-                name: 'Pedra do Sal + Expérience Carnaval',
-                details: [
-                    '<i class="fa fa-language"></i> <strong>Langues :</strong> Portugais, anglais et espagnol',
-                    '<i class="fa fa-map-marker-alt"></i> <strong>Rendez-vous :</strong> Place Cinelândia, devant le Theatro Municipal',
-                    '<i class="fa fa-shirt"></i> <strong>Identification :</strong> Guides avec t-shirts verts'
-                ],
-                map: '<i class="fa fa-map"></i> Voir sur la carte',
-                reserve: 'Réserver'
-            },
-            {
-                name: 'Copacabana et Ipanema',
-                details: [
-                    '<i class="fa fa-language"></i> <strong>Langues :</strong> Portugais, anglais et espagnol',
-                    '<i class="fa fa-map-marker-alt"></i> <strong>Rendez-vous :</strong> Place General Osório, devant la station de métro',
-                    '<i class="fa fa-shirt"></i> <strong>Identification :</strong> Guides avec t-shirts verts'
-                ],
-                map: '<i class="fa fa-map"></i> Voir sur la carte',
-                reserve: 'Réserver'
-            },
-        ],
-        footer: '',
-        footer_info: {
-            sobre: '<p>Nous proposons des visites guidées à pied qui couvrent l’histoire et la culture du Rio de Janeiro.</p>',
-            contato: '<p>WhatsApp: <a href="https://wa.me/5521970018590" target="_blank" rel="noopener">+5521970018590</a><br>Email: <a href="mailto:riobyfoottour@gmail.com">riobyfoottour@gmail.com</a><br>Adresse: Place Cinelândia, Rio de Janeiro - RJ</p>',
-            ajuda: '<p>Besoin d’aide ? Envoyez-nous un message sur WhatsApp ou consultez la section FAQ.</p>'
-        }
-    };
-
-    pageTranslations.es = {
-        hero_title: 'Tour en<br><span class="rio-city-highlight">RIO DE JANEIRO</span>',
-        hero_location: 'Rio de Janeiro - Brasil',
-        hero_desc: '¡Bienvenido a la Ciudad Maravillosa! Río, ciudad de amores y de belleza inconfundible, te recibe con los brazos abiertos.',
-        hero_button: 'Ver tours',
-        notice_title: 'Información importante',
-        notice_lines: [
-            'Para participar en nuestro Free Tour es necesario reservar su plaza.',
-            'Seguimos todas las medidas sanitarias exigidas para este tipo de paseo.',
-            'Por favor revise los días disponibles en el formulario de reserva.',
-            'Su contribución es la remuneración del guía, sea consciente.',
-            'Si no puede asistir al tour, cancele su reserva por <a href="https://wa.me/5521970018590?text=Hola%2C%20necesito%20cancelar%20mi%20reserva." target="_blank" rel="noopener"><strong>WhatsApp</strong></a>.'
-        ],
-        proceed: 'Continuar',
-        section_title: 'Nuestras experiencias',
-        free_subtitle: 'Free Tours',
-        paid_title: 'Otros tours',
-        paid_subtitle: 'Tours pagados',
-        reserve_unavailable: 'Temporalmente no disponible',
-        cards: [
-            {
-                name: 'Centro Histórico e Lapa',
-                details: [
-                    '<i class="fa fa-language"></i> <strong>Idiomas:</strong> Portugués, inglés y español',
-                    '<i class="fa fa-map-marker-alt"></i> <strong>Encuentro:</strong> Plaza Cinelândia, frente al Theatro Municipal',
-                    '<i class="fa fa-shirt"></i> <strong>Identificación:</strong> Guías con camisetas verdes'
-                ],
-                map: '<i class="fa fa-map"></i> Ver en el mapa',
-                reserve: 'Reservar ahora'
-            },
-            {
-                name: 'Santa Teresa & Experiencia Gastronómica Carioca',
-                details: [
-                    '<i class="fa fa-language"></i> <strong>Idiomas:</strong> Portugués, inglés y español',
-                    '<i class="fa fa-map-marker-alt"></i> <strong>Encuentro:</strong> Largo dos Guimarães, frente al Cine Santa Teresa',
-                    '<i class="fa fa-shirt"></i> <strong>Identificación:</strong> Guías con camisetas verdes'
-                ],
-                map: '<i class="fa fa-map"></i> Ver en el mapa',
-                reserve: 'Reservar ahora'
-            },
-            {
-                name: 'Pedra do Sal: Samba y herencia afrobrasileña',
-                details: [
-                    '<i class="fa fa-language"></i> <strong>Idiomas:</strong> Portugués, inglés y español',
-                    '<i class="fa fa-map-marker-alt"></i> <strong>Encuentro:</strong> Museo de Arte de Río (MAR) - Praça Mauá, 5 - Centro',
-                    '<i class="fa fa-shirt"></i> <strong>Identificación:</strong> Guías con camisetas verdes'
-                ],
-                map: '<i class="fa fa-map"></i> Ver en el mapa',
-                reserve: 'Reservar ahora'
-            },
-            {
-                name: 'Pedra do Sal + Experiencia de Carnaval',
-                details: [
-                    '<i class="fa fa-language"></i> <strong>Idiomas:</strong> Portugués, inglés y español',
-                    '<i class="fa fa-map-marker-alt"></i> <strong>Encuentro:</strong> Museo de Arte de Río (MAR) - Praça Mauá, 5 - Centro',
-                    '<i class="fa fa-shirt"></i> <strong>Identificación:</strong> Guías con camisetas verdes'
-                ],
-                map: '<i class="fa fa-map"></i> Ver en el mapa',
-                reserve: 'Reservar ahora'
-            },
-            {
-                name: 'Copacabana e Ipanema',
-                details: [
-                    '<i class="fa fa-language"></i> <strong>Idiomas:</strong> Portugués, inglés y español',
-                    '<i class="fa fa-map-marker-alt"></i> <strong>Encuentro:</strong> Plaza General Osório, frente a la estación de metro',
-                    '<i class="fa fa-shirt"></i> <strong>Identificación:</strong> Guías con camisetas verdes'
-                ],
-                map: '<i class="fa fa-map"></i> Ver en el mapa',
-                reserve: 'Reservar ahora'
-            },
-        ],
-        footer: '',
-        footer_info: {
-            sobre: '<p>Ofrecemos tours a pie por Río de Janeiro que combinan historia, cultura y datos curiosos.</p>',
-            contato: '<p>WhatsApp: <a href="https://wa.me/5521970018590" target="_blank" rel="noopener">+5521970018590</a><br>Email: <a href="mailto:riobyfoottour@gmail.com">riobyfoottour@gmail.com</a><br>Dirección: Plaza Cinelândia, Río de Janeiro - RJ</p>',
-            ajuda: '<p>¿Necesitas ayuda? Envía un mensaje por WhatsApp o visita nuestras preguntas frecuentes.</p>'
-        }
-    };
-
-    pageTranslations.it = {
-        hero_title: 'Tour a<br><span class="rio-city-highlight">RIO DE JANEIRO</span>',
-        hero_location: 'Rio de Janeiro - Brasile',
-        hero_desc: 'Benvenuto nella Città Meravigliosa! Rio, città dell’amore e dalla bellezza inconfondibile, ti accoglie a braccia aperte.',
-        hero_button: 'Vedi tour',
-        notice_title: 'Informazioni importanti',
-        notice_lines: [
-            'Per partecipare al nostro Free Tour è necessario prenotare il tuo posto.',
-            'Seguiamo tutte le misure sanitarie richieste per questo tipo di visita.',
-            'Controlla i giorni disponibili nel modulo di prenotazione.',
-            'Il tuo contributo è la remunerazione della guida, sii consapevole.',
-            'Se non puoi partecipare al tour, annulla la tua prenotazione via <a href="https://wa.me/5521970018590?text=Ciao%2C%20devo%20annullare%20la%20mia%20prenotazione." target="_blank" rel="noopener"><strong>WhatsApp</strong></a>.'
-        ],
-        proceed: 'Procedi',
-        section_title: 'Le nostre esperienze',
-        free_subtitle: 'Free Tours',
-        paid_title: 'Altri tour',
-        paid_subtitle: 'Tour a pagamento',
-        reserve_unavailable: 'Temporaneamente non disponibile',
-        cards: [
-            {
-                name: 'Centro Histórico e Lapa',
-                details: [
-                    '<i class="fa fa-language"></i> <strong>Lingue:</strong> Portoghese, inglese e spagnolo',
-                    '<i class="fa fa-map-marker-alt"></i> <strong>Incontro:</strong> Piazza Cinelândia, davanti al Theatro Municipal',
-                    '<i class="fa fa-shirt"></i> <strong>Identificazione:</strong> Guide con magliette verdi'
-                ],
-                map: '<i class="fa fa-map"></i> Vedi sulla mappa',
-                reserve: 'Prenota ora'
-            },
-            {
-                name: 'Santa Teresa & Esperienza Gastronomica Carioca',
-                details: [
-                    '<i class="fa fa-language"></i> <strong>Lingue:</strong> Portoghese, inglese e spagnolo',
-                    '<i class="fa fa-map-marker-alt"></i> <strong>Incontro:</strong> Largo dos Guimarães, davanti al Cine Santa Teresa',
-                    '<i class="fa fa-shirt"></i> <strong>Identificazione:</strong> Guide con magliette verdi'
-                ],
-                map: '<i class="fa fa-map"></i> Vedi sulla mappa',
-                reserve: 'Prenota ora'
-            },
-            {
-                name: 'Pedra do Sal: Samba e patrimonio afro-brasiliano',
-                details: [
-                    '<i class="fa fa-language"></i> <strong>Lingue:</strong> Portoghese, inglese e spagnolo',
-                    '<i class="fa fa-map-marker-alt"></i> <strong>Incontro:</strong> Museo d\'Arte di Rio (MAR) - Praça Mauá, 5 - Centro',
-                    '<i class="fa fa-shirt"></i> <strong>Identificazione:</strong> Guide con magliette verdi'
-                ],
-                map: '<i class="fa fa-map"></i> Vedi sulla mappa',
-                reserve: 'Prenota ora'
-            },
-            {
-                name: 'Pedra do Sal + Esperienza di Carnevale',
-                details: [
-                    '<i class="fa fa-language"></i> <strong>Lingue:</strong> Portoghese, inglese e spagnolo',
-                    '<i class="fa fa-map-marker-alt"></i> <strong>Incontro:</strong> Museo d\'Arte di Rio (MAR) - Praça Mauá, 5 - Centro',
-                    '<i class="fa fa-shirt"></i> <strong>Identificazione:</strong> Guide con magliette verdi'
-                ],
-                map: '<i class="fa fa-map"></i> Vedi sulla mappa',
-                reserve: 'Prenota ora'
-            },
-            {
-                name: 'Copacabana e Ipanema',
-                details: [
-                    '<i class="fa fa-language"></i> <strong>Lingue:</strong> Portoghese, inglese e spagnolo',
-                    '<i class="fa fa-map-marker-alt"></i> <strong>Incontro:</strong> Piazza General Osório, davanti alla stazione della metro',
-                    '<i class="fa fa-shirt"></i> <strong>Identificazione:</strong> Guide con magliette verdi'
-                ],
-                map: '<i class="fa fa-map"></i> Vedi sulla mappa',
-                reserve: 'Prenota ora'
-            },
-        ],
-        footer: '',
-        footer_info: {
-            sobre: '<p>Offriamo tour a piedi che raccontano la storia e la cultura di Rio de Janeiro.</p>',
-            contato: '<p>WhatsApp: <a href="https://wa.me/5521970018590" target="_blank" rel="noopener">+5521970018590</a><br>Email: <a href="mailto:riobyfoottour@gmail.com">riobyfoottour@gmail.com</a><br>Indirizzo: Piazza Cinelândia, Rio de Janeiro - RJ</p>',
-            ajuda: '<p>Hai bisogno di aiuto? Inviaci un messaggio su WhatsApp o consulta la sezione FAQ.</p>'
-        }
-    };
-
-    pageTranslations.zh = {
-        hero_title: '里约之旅<br><span class="rio-city-highlight">RIO DE JANEIRO</span>',
-        hero_location: '里约热内卢 - 巴西',
-        hero_desc: '欢迎来到这座奇妙之城！里约，这座充满爱与独特之美的城市，正张开双臂欢迎你。',
-        hero_button: '查看旅游',
-        notice_title: '重要信息',
-        notice_lines: [
-            '参加我们的Free Tour需要提前预约。',
-            '我们遵守此类活动所要求的所有卫生安全措施。',
-            '请在预约表格中查看可用日期。',
-            '您的贡献是导游的报酬，请用心对待。',
-            '如果无法参加，请通过 <a href="https://wa.me/5521970018590?text=%E4%BD%A0%E5%A5%BD%EF%BC%8C%E6%88%91%E9%9C%80%E8%A6%81%E5%8F%96%E6%B6%88%E6%88%91%E7%9A%84%E9%A2%84%E8%AE%A2%E3%80%82" target="_blank" rel="noopener"><strong>WhatsApp</strong></a> 取消预约。'
-        ],
-        proceed: '继续',
-        section_title: '我们的体验',
-        free_subtitle: 'Free Tours',
-        paid_title: '其他旅游',
-        paid_subtitle: '付费旅游',
-        reserve_unavailable: '暂时不可用',
-        cards: [
-            {
-                name: '历史中心和拉帕',
-                details: [
-                    '<i class="fa fa-language"></i> <strong>语言：</strong>葡萄牙语、英语和西班牙语',
-                    '<i class="fa fa-map-marker-alt"></i> <strong>集合：</strong>Cinelândia广场，市政剧院前',
-                    '<i class="fa fa-shirt"></i> <strong>识别：</strong>穿绿色T恤的导游'
-                ],
-                map: '<i class="fa fa-map"></i> 查看地图',
-                reserve: '立即预约'
-            },
-            {
-                name: 'Santa Teresa & 里约美食体验',
-                details: [
-                    '<i class="fa fa-language"></i> <strong>语言：</strong>葡萄牙语、英语和西班牙语',
-                    '<i class="fa fa-map-marker-alt"></i> <strong>集合：</strong>Largo dos Guimarães，Cine Santa Teresa前',
-                    '<i class="fa fa-shirt"></i> <strong>识别：</strong>穿绿色T恤的导游'
-                ],
-                map: '<i class="fa fa-map"></i> 查看地图',
-                reserve: '立即预约'
-            },
-            {
-                name: 'Pedra do Sal：桑巴与非裔巴西遗产',
-                details: [
-                    '<i class="fa fa-language"></i> <strong>语言：</strong>葡萄牙语、英语和西班牙语',
-                    '<i class="fa fa-map-marker-alt"></i> <strong>集合：</strong>里约艺术博物馆 (MAR) - Praça Mauá, 5 - 中心',
-                    '<i class="fa fa-shirt"></i> <strong>识别：</strong>穿绿色T恤的导游'
-                ],
-                map: '<i class="fa fa-map"></i> 查看地图',
-                reserve: '立即预约'
-            },
-            {
-                name: 'Pedra do Sal + 嘉年华体验',
-                details: [
-                    '<i class="fa fa-language"></i> <strong>语言：</strong>葡萄牙语、英语和西班牙语',
-                    '<i class="fa fa-map-marker-alt"></i> <strong>集合：</strong>里约艺术博物馆 (MAR) - Praça Mauá, 5 - 中心',
-                    '<i class="fa fa-shirt"></i> <strong>识别：</strong>穿绿色T恤的导游'
-                ],
-                map: '<i class="fa fa-map"></i> 查看地图',
-                reserve: '立即预约'
-            },
-            {
-                name: 'Copacabana 和 Ipanema', 
-                details: [
-                    '<i class="fa fa-language"></i> <strong>语言：</strong>葡萄牙语、英语和西班牙语',
-                    '<i class="fa fa-map-marker-alt"></i> <strong>集合：</strong>General Osório广场，地铁站前',
-                    '<i class="fa fa-shirt"></i> <strong>识别：</strong>穿绿色T恤的导游'
-                ],
-                map: '<i class="fa fa-map"></i> 查看地图',
-                reserve: '立即预约'
-            }
-        ],
-        footer: '',
-        footer_info: {
-            sobre: '<p>我们提供里约热内卢的徒步游，让您了解当地历史、文化与趣闻。</p>',
-            contato: '<p>WhatsApp: <a href="https://wa.me/5521970018590" target="_blank" rel="noopener">+5521970018590</a><br>邮箱: <a href="mailto:riobyfoottour@gmail.com">riobyfoottour@gmail.com</a><br>地址: Cinelândia 广场, 里约热内卢 - RJ</p>',
-            ajuda: '<p>需要帮助？请通过 WhatsApp 联系我们，或查看常见问题。</p>'
-        }
-    };
+    const pageTranslations = window.pageTranslations || {};
 
     let currentFooterInfo = pageTranslations.pt.footer_info;
     let rolePermissionsMap = {};
@@ -534,21 +60,14 @@
         return DEFAULT_ROLE_PERMISSIONS[currentRole] || DEFAULT_ROLE_PERMISSIONS.cliente_user;
     };
 
-    // Exporta globalmente os helpers já definidos.
+    // Exporta globalmente os helpers jÃ¡ definidos.
     window.normalizeRole = normalizeRole;
     window.getCurrentUserRole = getCurrentUserRole;
     window.getCurrentRolePermissions = getCurrentRolePermissions;
 
     const canAccessManagement = () => {
         const role = getCurrentUserRole();
-        if (role === 'super_admin') return true;
-        if (role === 'admin') {
-            const perms = getCurrentRolePermissions();
-            const tabs = Array.isArray(perms.tabs) ? perms.tabs : [];
-            const pages = Array.isArray(perms.pages) ? perms.pages : [];
-            return tabs.includes('Gerenciamento') || pages.includes('Gerenciamento');
-        }
-        return false;
+        return role !== 'cliente_user';
     };
 
     const applyRoleBasedControls = () => {
@@ -583,19 +102,19 @@
             if (el) el.style.display = tabs.includes('MEUS DADOS') ? '' : 'none';
         });
 
-        // Permissões funcionais adicionais
+        // PermissÃµes funcionais adicionais
         if (!perms.managePerfis) {
             document.querySelectorAll('.profile-item--admin').forEach(el => { if (el) el.style.display = 'none'; });
         }
 
-        // Situação de páginas (principal / gerenciamento)
+        // SituaÃ§Ã£o de pÃ¡ginas (principal / gerenciamento)
         const isManagementPage = window.location.pathname.endsWith('/html/Gerenciamento.html') || window.location.pathname.endsWith('Gerenciamento.html');
         if (isManagementPage && !allowed) {
             window.location.href = window.location.origin + '/';
         }
 
         if (!pages.includes('Principal') && !isManagementPage) {
-            // se não tiver acesso à página principal, remove ações de tour (só para controle leve de UI)
+            // se nÃ£o tiver acesso Ã  pÃ¡gina principal, remove aÃ§Ãµes de tour (sÃ³ para controle leve de UI)
             document.querySelectorAll('.rio-btn-reserve, .btn-book').forEach(el => { if (el) el.style.display = 'none'; });
         }
 
@@ -644,11 +163,11 @@
         applyRoleBasedControls();
     };
 
-    // Exporta controles após definição para evitar acesso antecipado (TDZ).
+    // Exporta controles apÃ³s definiÃ§Ã£o para evitar acesso antecipado (TDZ).
     window.applyRoleBasedControls = applyRoleBasedControls;
     window.loadRolePermissions = loadRolePermissions;
 
-    // 1. Definição única do endereço da API
+    // 1. DefiniÃ§Ã£o Ãºnica do endereÃ§o da API
     const API_BASE_URL = 'https://api-tour.exksvol.com';
 
     // Disponibiliza globalmente para outros scripts e IIFEs
@@ -656,7 +175,7 @@
 
     console.debug('API_BASE_URL configurado para:', API_BASE_URL);
 
-    // 2. Método padronizado para adicionar reserva
+    // 2. MÃ©todo padronizado para adicionar reserva
     const adicionarReservaNoServidor = async (dadosReserva) => {
         try {
             const response = await fetch(`${API_BASE_URL}/add_agendamento`, {
@@ -670,7 +189,7 @@
             const result = await response.json();
 
             if (result.success) {
-                alert('Reserva concluída com sucesso.');
+                alert('Reserva concluÃ­da com sucesso.');
                 if (typeof carregarAgendamentosDoBanco === 'function') {
                     carregarAgendamentosDoBanco();
                 }
@@ -678,8 +197,8 @@
                 alert('Erro: ' + result.message);
             }
         } catch (error) {
-            console.error('Erro na requisição:', error);
-            alert('Ocorreu um erro de conexão com o servidor.');
+            console.error('Erro na requisiÃ§Ã£o:', error);
+            alert('Ocorreu um erro de conexÃ£o com o servidor.');
         }
     };
 
@@ -696,7 +215,7 @@
         const url = path.startsWith('http') ? path : `${API_BASE_URL}${path.startsWith('/') ? '' : '/'}${path}`;
         const defaultOptions = {
             headers: {
-                // Não definir Content-Type por padrão para evitar preflight se possível
+                // NÃ£o definir Content-Type por padrÃ£o para evitar preflight se possÃ­vel
                 ...(options.headers || {})
             },
             ...options
@@ -738,11 +257,11 @@
         }
     };
 
-    // Expor apiFetch globalmente para evitar erro "apiFetch is not defined" em outros módulos
+    // Expor apiFetch globalmente para evitar erro "apiFetch is not defined" em outros mÃ³dulos
     window.apiFetch = apiFetch;
 
     const login = async (email, password) => {
-        if (!email || !password) throw new Error('Email e senha são obrigatórios');
+        if (!email || !password) throw new Error('Email e senha sÃ£o obrigatÃ³rios');
 
         const params = new URLSearchParams({
             username: email,
@@ -755,7 +274,7 @@
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
             body: params.toString()
-            // sem credentials para reduzir verificações extras CORS
+            // sem credentials para reduzir verificaÃ§Ãµes extras CORS
         });
     };
 
@@ -813,8 +332,8 @@
 
                 const detailsEl = card.querySelector('.rio-tour-details');
                 if (detailsEl) {
-                    const languages = tour.idiomas || tour.languages || 'Português, Inglês e Espanhol';
-                    const meeting = tour.encontro || tour.meeting || 'Não informado';
+                    const languages = tour.idiomas || tour.languages || 'PortuguÃªs, InglÃªs e Espanhol';
+                    const meeting = tour.encontro || tour.meeting || 'NÃ£o informado';
                     const identification = tour.identificacao || tour.identification || 'Guias com camisetas verdes';
                     const value = tour.valor ?? tour.value;
                     const estado = (tour.estado || tour.status || '').trim();
@@ -844,7 +363,7 @@
                 }
             });
 
-            // Reaplica idioma para garantir que conteúdo dinâmico vença qualquer texto estático.
+            // Reaplica idioma para garantir que conteÃºdo dinÃ¢mico venÃ§a qualquer texto estÃ¡tico.
             if (typeof window.dispatchLanguageChange === 'function' && typeof window.getCurrentLang === 'function') {
                 window.dispatchLanguageChange(window.getCurrentLang());
             }
@@ -897,16 +416,9 @@
         const paidSubtitle = document.querySelector('.rio-paid-subtitle');
         if (paidSubtitle) paidSubtitle.textContent = t.paid_subtitle;
 
-        const footerTitleMap = {
-            pt: 'Informações',
-            en: 'Information',
-            fr: 'Informations',
-            es: 'Información',
-            it: 'Informazioni',
-            zh: '信息'
-        };
+        const footerTitleByLang = window.translationCatalog?.footerTitleByLang || {};
         const footerTitle = document.querySelector('.rio-footer-card-title');
-        if (footerTitle) footerTitle.textContent = footerTitleMap[lang] || footerTitleMap.pt;
+        if (footerTitle) footerTitle.textContent = footerTitleByLang[lang] || footerTitleByLang.pt || 'Informações';
 
         cards.forEach((card, index) => {
             const dbTour = toursFromDatabase[index];
@@ -925,8 +437,8 @@
 
                 const detailList = card.querySelector('.rio-tour-details');
                 if (detailList) {
-                    const languages = dbTour.idiomas || dbTour.languages || 'Português, Inglês e Espanhol';
-                    const meeting = dbTour.encontro || dbTour.meeting || 'Não informado';
+                    const languages = dbTour.idiomas || dbTour.languages || 'PortuguÃªs, InglÃªs e Espanhol';
+                    const meeting = dbTour.encontro || dbTour.meeting || 'NÃ£o informado';
                     const identification = dbTour.identificacao || dbTour.identification || 'Guias com camisetas verdes';
                     detailList.innerHTML = `
                         <li><i class="fa fa-language"></i> <strong>${labels.idiomas}:</strong> ${languages}</li>
@@ -944,7 +456,7 @@
                     const tourStatus = (dbTour.estado || dbTour.status || '').toString().trim().toLowerCase();
                     const isAvailable = tourStatus === 'ativo' || tourStatus === 'active';
                     if (!isAvailable) {
-                        const unavailableText = t.reserve_unavailable || 'Temporariamente indisponível';
+                        const unavailableText = t.reserve_unavailable || 'Temporariamente indisponÃ­vel';
                         actions[1].textContent = unavailableText;
                         actions[1].removeAttribute('href');
                         actions[1].classList.add('disabled');
@@ -970,15 +482,8 @@
             if (name) name.innerHTML = cardData.name;
 
             const detailList = card.querySelector('.rio-tour-details');
-            const labelTranslations = {
-                pt: { idiomas: 'Idiomas', valor: 'Valor', encontro: 'Encontro', identificacao: 'Identificação' },
-                en: { idiomas: 'Languages', valor: 'Value', encontro: 'Meeting', identificacao: 'Identification' },
-                fr: { idiomas: 'Langues', valor: 'Valeur', encontro: 'Rendez-vous', identificacao: 'Identification' },
-                es: { idiomas: 'Idiomas', valor: 'Valor', encontro: 'Encuentro', identificacao: 'Identificación' },
-                it: { idiomas: 'Lingue', valor: 'Valore', encontro: 'Incontro', identificacao: 'Identificazione' },
-                zh: { idiomas: '语言', valor: '价格', encontro: '集合', identificacao: '识别' }
-            };
-            const labels = labelTranslations[lang] || labelTranslations.pt;
+            const tourCardLabelByLang = window.translationCatalog?.tourCardLabelByLang || {};
+            const labels = tourCardLabelByLang[lang] || tourCardLabelByLang.pt || { idiomas: 'Idiomas', valor: 'Valor', encontro: 'Encontro', identificacao: 'Identificação' };
 
             const parsed = {
                 idiomas: '',
@@ -1017,10 +522,17 @@
             if (detailList) {
                 detailList.innerHTML = '';
 
+                const tourCardDefaultByLang = window.translationCatalog?.tourCardDefaultByLang || {};
+                const defaultsByLang = tourCardDefaultByLang[lang] || tourCardDefaultByLang.pt || {
+                    languages: 'PortuguÃªs, InglÃªs e Espanhol',
+                    meeting: 'NÃ£o informado',
+                    identification: 'Guias com camisetas verdes'
+                };
+
                 const defaultDetails = {
-                    idiomas: `<i class="fa fa-language"></i> <strong>${labels.idiomas}:</strong> Português, Inglês e Espanhol`,
-                    encontro: `<i class="fa fa-map-marker-alt"></i> <strong>${labels.encontro}:</strong> ${lang === 'es' ? 'No informado' : lang === 'fr' ? 'Non renseigné' : lang === 'it' ? 'Non indicato' : lang === 'zh' ? '未指定' : 'Não informado'}`,
-                    identificacao: `<i class="fa fa-shirt"></i> <strong>${labels.identificacao}:</strong> ${lang === 'es' ? 'Guías con camisetas verdes' : lang === 'fr' ? 'Guides avec t-shirts verts' : lang === 'it' ? 'Guide con magliette verdi' : lang === 'zh' ? '穿绿色T恤的导游' : 'Guias com camisetas verdes'}`
+                    idiomas: `<i class="fa fa-language"></i> <strong>${labels.idiomas}:</strong> ${defaultsByLang.languages}`,
+                    encontro: `<i class="fa fa-map-marker-alt"></i> <strong>${labels.encontro}:</strong> ${defaultsByLang.meeting}`,
+                    identificacao: `<i class="fa fa-shirt"></i> <strong>${labels.identificacao}:</strong> ${defaultsByLang.identification}`
                 };
 
                 ['idiomas', 'encontro', 'identificacao'].forEach(key => {
@@ -1047,7 +559,7 @@
         const body = document.getElementById('rioFooterCardBody');
         if (!body) return;
         const info = currentFooterInfo?.[key];
-        body.innerHTML = info || '<p>Selecione uma opção para ver mais informações.</p>';
+        body.innerHTML = info || '<p>Selecione uma opÃ§Ã£o para ver mais informações.</p>';
     }
 
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -1109,6 +621,23 @@
 
     initAwardToast();
 
+    const translateProfileDropdown = (container) => {
+        if (!container) return;
+        const lang = (typeof window.getCurrentLang === 'function'
+            ? window.getCurrentLang()
+            : (document.documentElement.lang || 'pt').slice(0, 2)
+        ).split('-')[0] || 'pt';
+        const strings = window.uiTranslations?.[lang] || window.uiTranslations?.pt || {};
+        container.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (!key) return;
+            const value = strings[key];
+            if (typeof value === 'string') {
+                el.textContent = value;
+            }
+        });
+    };
+
     const updateProfileMenuUI = () => {
         const menu = document.querySelector('.profile-menu');
         const dropdown = menu?.querySelector('.profile-dropdown');
@@ -1119,20 +648,26 @@
 
         if (userRole) {
             const showManagement = canAccessManagement();
+            const isManagementPage = window.location.pathname.endsWith('/html/Gerenciamento.html') || window.location.pathname.endsWith('Gerenciamento.html');
+            const managementAction = isManagementPage ? 'principal' : 'manage';
+            const managementLabel = isManagementPage ? 'Principal' : 'Gerenciamento';
             dropdown.innerHTML = `
-                <div class="profile-user-info" style="padding:8px 12px; font-weight: 600; border-bottom: 1px solid #e0e0e0;">Olá, ${userName}</div>
-                ${showManagement ? '<a href="html/Gerenciamento.html" class="profile-item profile-item--admin">Gerenciamento da página</a>' : ''}
-                <a href="#" class="profile-item" data-profile-action="my-reservations">Minhas Reservas</a>
-                <a href="#" class="profile-item" data-profile-action="my-data">Meus Dados</a>
-                <a href="#" class="profile-item" data-profile-action="logout">Sair</a>
+                <div class="profile-user-info" style="padding:8px 12px; font-weight: 600; border-bottom: 1px solid #e0e0e0;"><span data-i18n="profile_hello">Olá</span>, ${userName}</div>
+                ${showManagement ? `<a href="#" class="profile-item profile-item--admin" data-profile-action="${managementAction}">${managementLabel}</a>` : ''}
+                <a href="#" class="profile-item" data-profile-action="my-reservations" data-i18n="profile_my_reservations">Minhas Reservas</a>
+                <a href="#" class="profile-item" data-profile-action="my-data" data-i18n="profile_my_data">Meus Dados</a>
+                <a href="#" class="profile-item" data-profile-action="logout" data-i18n="profile_logout">Sair</a>
             `;
 
+            translateProfileDropdown(dropdown);
             applyRoleBasedControls();
         } else {
             dropdown.innerHTML = `
                 <a href="#" class="profile-item" data-profile-action="login" data-i18n="profile_login">Entrar</a>
                 <a href="#" class="profile-item" data-profile-action="register" data-i18n="profile_register">Cadastrar</a>
             `;
+
+            translateProfileDropdown(dropdown);
         }
     };
 
@@ -1151,7 +686,7 @@
         loadRolePermissions().then(() => {
             updateProfileMenuUI();
         }).catch((error) => {
-            console.warn('Erro ao carregar permissões de role:', error);
+            console.warn('Erro ao carregar permissÃµes de role:', error);
             updateProfileMenuUI();
         });
 
@@ -1175,14 +710,22 @@
             event.stopPropagation();
 
             const action = target.getAttribute('data-profile-action');
-            if (action === 'my-data') {
+            if (action === 'manage') {
                 menu.classList.remove('open');
                 button.setAttribute('aria-expanded', 'false');
-                openUserDataModal();
+                window.location.href = 'html/Gerenciamento.html';
+            } else if (action === 'principal') {
+                menu.classList.remove('open');
+                button.setAttribute('aria-expanded', 'false');
+                window.location.href = '../index.html';
+            } else if (action === 'my-data') {
+                menu.classList.remove('open');
+                button.setAttribute('aria-expanded', 'false');
+                window.openUserDataModal?.();
             } else if (action === 'my-reservations') {
                 menu.classList.remove('open');
                 button.setAttribute('aria-expanded', 'false');
-                openMyReservationsModal();
+                window.openMyReservationsModal?.();
             } else if (action === 'logout') {
                 localStorage.removeItem('userRole');
                 localStorage.removeItem('userEmail');
@@ -1190,8 +733,8 @@
                 localStorage.removeItem('authToken');
                 localStorage.removeItem('currentRolePermissions');
 
-                // Remove possíveis variáveis de UI internas (cache temporário, etc.)
-                // e força reload para limpar tudo da página.
+                // Remove possÃ­veis variÃ¡veis de UI internas (cache temporÃ¡rio, etc.)
+                // e forÃ§a reload para limpar tudo da pÃ¡gina.
                 menu.classList.remove('open');
                 button.setAttribute('aria-expanded', 'false');
 
@@ -1233,483 +776,9 @@
 })();
 // script.js - shared logic for navigation, language switching and UI helpers
 (() => {
-    const storageKey = 'preferredLanguage';
-    const supportedLangs = ['pt', 'en', 'fr', 'es', 'it', 'zh'];
-
-    const translations = {
-        pt: {
-            lang_label: 'Português',
-            nav_home: 'INÍCIO',
-            nav_about: 'SOBRE',
-            nav_contact: 'CONTATO',
-            nav_help: 'AJUDA',
-            profile_login: 'Entrar',
-            profile_register: 'Cadastrar',
-            login_title: 'Entrar',
-            login_email: 'Email',
-            login_password: 'Senha',
-            login_button: 'Entrar',
-            login_show: 'Mostrar senha',
-            login_hide: 'Ocultar senha',
-            login_forgot: 'Esqueci minha senha',
-            login_close: 'Fechar',
-            register_title: 'Cadastrar',
-            register_first_name: 'Nome',
-            register_last_name: 'Sobrenome',
-            register_email: 'Email',
-            register_dob: 'Data de nascimento',
-            register_phone: 'Celular',
-            register_country: 'País de origem',
-            register_password: 'Senha',
-            register_confirm: 'Confirmar senha',
-            register_button: 'Cadastrar',
-            register_close: 'Fechar',
-            register_next: 'Próximo',
-            register_back: 'Voltar',
-            register_gender: 'Gênero',
-            register_gender_male: 'Masculino',
-            register_gender_female: 'Feminino',
-            register_gender_nonbinary: 'Não-binário',
-            register_gender_prefer_not: 'Prefiro não dizer',
-            register_gender_other: 'Outro',
-            register_mismatch: 'As senhas não coincidem.',
-            register_invalid_email: 'Por favor, insira um email válido.',
-            register_invalid_phone: 'Por favor, insira um número de celular válido.',
-            register_invalid_dob: 'Data de nascimento inválida (não pode ser no futuro e deve ter no máximo 123 anos).',
-            register_invalid_code: 'Por favor, insira o código de confirmação.',
-            register_resend_code: 'Reenviar código',
-            register_resend_wait: 'Reenviar código em',
-            register_code_sent: 'Código enviado.',
-            register_code: 'Código de confirmação',
-            register_fill_all: 'Por favor, preencha todos os campos.',
-            btn_book: 'Conhecer Tours',
-
-            hero_title: 'Tour',
-            city_preposition: 'no',
-            city_rio: 'Rio de Janeiro',
-            hero_desc_rio: 'Seja bem-vindo à Cidade Maravilhosa! O Rio dos amores e da beleza inconfundível te espera de braços abertos.',
-            tours_section_title: 'Nossas Experiências',
-            tours_free: 'Free Tours',
-            tours_other: 'Outros Tours',
-            tours_paid: 'Tours Pagos',
-            notice_title: 'Informações Importantes',
-            notice_line1: 'Para participar de nosso Free Tour é necessário reservar sua vaga.',
-            notice_line2: 'Seguimos todas as medidas sanitárias exigidas para este tipo de passeio.',
-            notice_line3: 'Por favor estar atentos aos dias disponíveis no formulário de reserva.',
-            notice_line4: 'Sua contribuição é a remuneração do guia, seja consciente.',
-            award_title: 'Reconhecimento Especial',
-            award_text: 'Sabia que fomos premiados como a melhor escolha pelo TripAdvisor em 2021? 🥰',
-            btn_proceed: 'Prosseguir',
-            footer_sobre_title: 'SOBRE',
-            footer_sobre: '<p>A Rio by Foot Free Walking Tour é uma empresa especializada em passeios guiados a pé, oferecendo experiências culturais autênticas no Rio de Janeiro e em outras cidades do Brasil. Com anos de atuação no turismo, a empresa se destaca pela excelência dos seus guias e pela forma envolvente de apresentar a história, a cultura e as curiosidades de cada destino.</p><p>Reconhecida por viajantes do mundo inteiro, a empresa já recebeu o prêmio Tripadvisor Travellers’ Choice Awards, concedido às experiências que estão entre as 10% melhores atrações avaliadas na plataforma Tripadvisor. Esse reconhecimento reforça o compromisso da equipe em oferecer passeios de alta qualidade e experiências memoráveis para visitantes de diferentes partes do mundo.</p>',
-            footer_contato_title: 'CONTATO',
-            footer_contato: '<p>Entre em contato via WhatsApp, email ou redes sociais nas páginas de destino.</p><p><i class="fa fa-envelope" aria-hidden="true"></i> <a href="mailto:riobyfoottour@gmail.com">riobyfoottour@gmail.com</a></p>',
-            footer_ajuda_title: 'AJUDA',
-            footer_ajuda: '<p>Se precisar de ajuda, entre em contato pelos canais abaixo (WhatsApp, email ou Instagram) e nossa equipe responderá o mais rápido possível.</p>',
-
-            index_title: 'Travel the World',
-            index_desc: 'Bem-vindo ao projeto de demonstração. Use o menu para explorar as páginas do site.',
-            index_sobre_title: 'Sobre',
-            index_sobre_text: 'Este site demonstra um layout simples com suporte a múltiplos idiomas e rotas estáticas.',
-            index_contato_title: 'Contato',
-            index_contato_text: 'Entre em contato via WhatsApp ou redes sociais nas páginas de destino.',
-            index_ajuda_title: 'Ajuda',
-            index_ajuda_text: 'Se precisar, abra a ferramenta de desenvolvedor do navegador para inspecionar erros de console.',
-        },
-        en: {
-            lang_label: 'English',
-            nav_home: 'HOME',
-            nav_about: 'ABOUT',
-            nav_contact: 'CONTACT',
-            nav_help: 'HELP',
-            profile_login: 'Login',
-            profile_register: 'Register',
-            login_title: 'Login',
-            login_email: 'Email',
-            login_password: 'Password',
-            login_button: 'Sign in',
-            login_show: 'Show password',
-            login_hide: 'Hide password',
-            login_forgot: 'Forgot password?',
-            login_close: 'Close',
-            register_title: 'Register',
-            register_first_name: 'First name',
-            register_last_name: 'Last name',
-            register_email: 'Email',
-            register_dob: 'Date of birth',
-            register_phone: 'Phone',
-            register_country: 'Country',
-            register_password: 'Password',
-            register_confirm: 'Confirm password',
-            register_button: 'Register',
-            register_close: 'Close',
-            register_fill_all: 'Please fill out all fields.',
-            register_next: 'Next',
-            register_back: 'Back',
-            register_gender: 'Gender',
-            register_gender_male: 'Male',
-            register_gender_female: 'Female',
-            register_gender_nonbinary: 'Non-binary',
-            register_gender_prefer_not: 'Prefer not to say',
-            register_gender_other: 'Other',
-            register_mismatch: 'Passwords do not match.',
-            register_invalid_email: 'Please enter a valid email.',
-            register_invalid_phone: 'Please enter a valid phone number.',
-            register_invalid_dob: 'Please enter a date of birth between now and 123 years ago.',
-            register_invalid_code: 'Please enter the confirmation code.',
-            register_resend_code: 'Resend code',
-            register_resend_wait: 'Resend code in',
-            register_code_sent: 'Code sent.',
-            register_code: 'Confirmation code',
-            btn_book: 'Get to Know Tours',
-            hero_title: 'Tour',
-            city_preposition: 'in',
-            city_rio: 'Rio de Janeiro',
-            hero_desc_rio: 'Welcome to the Marvelous City! Rio, a city of love and unmistakable beauty, welcomes you with open arms.',
-            tours_section_title: 'Our Experiences',
-            tours_other: 'Other Tours',
-            tours_paid: 'Paid Tours',
-            notice_title: 'Important Information',
-            notice_line1: 'To join our Free Tour you must reserve your spot.',
-            notice_line2: 'We follow all the sanitary measures required for this type of tour.',
-            notice_line3: 'Please pay attention to the available dates in the booking form.',
-            notice_line4: 'Your contribution is the guide’s compensation, be mindful.',
-            award_title: 'Special Recognition',
-            award_text: 'Did you know we were awarded as the best choice by TripAdvisor in 2021? 🥰',
-            btn_proceed: 'Proceed',
-            footer_info_title: 'INFORMATION',
-            footer_sobre_title: 'ABOUT',
-            footer_sobre: '<p>Rio by Foot Free Walking Tour is a company specialized in guided walking tours, offering authentic cultural experiences in Rio de Janeiro and other cities in Brazil. With years of experience in tourism, the company stands out for the excellence of its guides and the engaging way it presents the history, culture and curiosities of each destination.</p><p>Recognized by travelers from around the world, the company has received the Tripadvisor Travellers’ Choice Award, given to experiences that are among the top 10% rated on the Tripadvisor platform. This recognition reinforces the team’s commitment to offering high-quality tours and memorable experiences for visitors from different parts of the world.</p>',
-            footer_contato_title: 'CONTACT',
-            footer_contato: '<p>Contact us via WhatsApp, email or social media on the destination pages.</p><p><i class="fa fa-envelope" aria-hidden="true"></i> <a href="mailto:riobyfoottour@gmail.com">riobyfoottour@gmail.com</a></p>',
-            footer_ajuda_title: 'HELP',
-            footer_ajuda: '<p>If you need help, contact us via the channels below (WhatsApp, email or Instagram) and our team will respond as quickly as possible.</p>',
-
-            index_title: 'Travel the World',
-            index_desc: 'Welcome to the demo project. Use the menu to explore the site pages.',
-            index_sobre_title: 'About',
-            index_sobre_text: 'This site demonstrates a simple layout with support for multiple languages and static routes.',
-            index_contato_title: 'Contact',
-            index_contato_text: 'Contact us via WhatsApp or social media on the destination pages.',
-            index_ajuda_title: 'Help',
-            index_ajuda_text: 'If needed, open the browser developer tools to inspect console errors.',
-        },
-        fr: {
-            lang_label: 'Français',
-            nav_home: 'ACCUEIL',
-            nav_about: 'À PROPOS',
-            nav_contact: 'CONTACT',
-            nav_help: 'AIDE',
-            profile_login: 'Connexion',
-            profile_register: 'S\u0027inscrire',
-            login_title: 'Connexion',
-            login_email: 'Email',
-            login_password: 'Mot de passe',
-            login_button: 'Se connecter',
-            login_show: 'Montrer le mot de passe',
-            login_hide: 'Masquer le mot de passe',
-            login_forgot: 'Mot de passe oublié ?',
-            login_close: 'Fermer',
-            register_title: 'S\u0027inscrire',
-            register_first_name: 'Prénom',
-            register_last_name: 'Nom',
-            register_email: 'Email',
-            register_dob: 'Date de naissance',
-            register_phone: 'Téléphone',
-            register_country: 'Pays d\'origine',
-            register_password: 'Mot de passe',
-            register_confirm: 'Confirmer le mot de passe',
-            register_button: 'S\u0027inscrire',
-            register_close: 'Fermer',
-            register_fill_all: 'Veuillez remplir tous les champs.',
-            register_next: 'Suivant',
-            register_back: 'Retour',
-            register_gender: 'Genre',
-            register_gender_male: 'Masculin',
-            register_gender_female: 'Féminin',
-            register_gender_nonbinary: 'Non-binaire',
-            register_gender_prefer_not: 'Préfère ne pas dire',
-            register_gender_other: 'Autre',
-            register_mismatch: 'Les mots de passe ne correspondent pas.',
-            register_invalid_email: 'Veuillez entrer un email valide.',
-            register_invalid_phone: 'Veuillez entrer un numéro de téléphone valide.',
-            register_invalid_dob: 'Veuillez entrer une date de naissance valide (pas dans le futur et maximale 123 ans).',
-            register_invalid_code: 'Veuillez entrer le code de confirmation.',
-            register_resend_code: 'Renvoyer le code',
-            register_resend_wait: 'Renvoyer le code dans',
-            register_code_sent: 'Code envoyé.',
-            register_code: 'Code de confirmation',
-            btn_book: 'Découvrir les tours',
-            hero_title: 'Tour',
-            city_preposition: 'à',
-            city_rio: 'Rio de Janeiro',
-            hero_desc_rio: 'Bienvenue dans la Ville Merveilleuse ! Rio, ville d’amour et de beauté incomparable, vous accueille à bras ouverts.',
-            tours_section_title: 'Nos Expériences',
-            tours_other: 'Autres Tours',
-            tours_paid: 'Tours Payants',
-            notice_title: 'Informations Importantes',
-            notice_line1: 'Pour participer à notre Free Tour, vous devez réserver votre place.',
-            notice_line2: 'Nous respectons toutes les mesures sanitaires requises pour ce type de visite.',
-            notice_line3: 'Veuillez faire attention aux dates disponibles dans le formulaire de réservation.',
-            notice_line4: 'Votre contribution est la rémunération du guide, soyez conscient.',
-            award_title: 'Reconnaissance Spéciale',
-            award_text: 'Saviez-vous que nous avons été récompensés comme le meilleur choix par TripAdvisor en 2021 ? 🥰',
-            btn_proceed: 'Continuer',
-            footer_info_title: 'INFORMATIONS',
-            footer_sobre_title: 'À PROPOS',
-            footer_sobre: '<p>Rio by Foot Free Walking Tour est une entreprise spécialisée dans les visites guidées à pied, offrant des expériences culturelles authentiques à Rio de Janeiro et dans d\'autres villes du Brésil. Avec des années d\'expérience dans le tourisme, l\'entreprise se distingue par l\'excellence de ses guides et par la manière captivante dont elle présente l\'histoire, la culture et les curiosités de chaque destination.</p><p>Reconnu par des voyageurs du monde entier, l\'entreprise a reçu le prix Tripadvisor Travellers’ Choice Awards, décerné aux expériences figurant parmi les 10 % les mieux notées sur la plateforme Tripadvisor. Cette reconnaissance renforce l\'engagement de l\'équipe à offrir des visites de haute qualité et des expériences mémorables aux visiteurs de différentes régions du monde.</p>',
-            footer_contato_title: 'CONTACT',
-            footer_contato: '<p>WhatsApp: <a href="https://wa.me/5521970018590" target="_blank" rel="noopener">+5521970018590</a><br>Email : <a href="mailto:riobyfoottour@gmail.com">riobyfoottour@gmail.com</a><br>Adresse : Praça Cinelândia, Rio de Janeiro - RJ</p>',
-            footer_ajuda_title: 'AIDE',
-            footer_ajuda: '<p>Besoin d’aide ? Envoyez-nous un message sur WhatsApp ou consultez la FAQ.</p>',
-
-            index_title: 'Voyagez à Travers le Monde',
-            index_desc: 'Bienvenue sur le projet de démonstration. Utilisez le menu pour explorer les pages du site.',
-            index_sobre_title: 'À Propos',
-            index_sobre_text: 'Ce site démontre une mise en page simple avec prise en charge de plusieurs langues et de routes statiques.',
-            index_contato_title: 'Contact',
-            index_contato_text: 'Contactez-nous via WhatsApp ou les réseaux sociaux sur les pages de destination.',
-            index_ajuda_title: 'Aide',
-            index_ajuda_text: 'Si nécessaire, ouvrez les outils de développement du navigateur pour inspecter les erreurs de la console.',
-        },
-        es: {
-            lang_label: 'Español',
-            nav_home: 'INICIO',
-            nav_about: 'SOBRE',
-            nav_contact: 'CONTACTO',
-            nav_help: 'AYUDA',
-            profile_login: 'Iniciar sesión',
-            profile_register: 'Registrarse',
-            login_title: 'Iniciar sesión',
-            login_email: 'Email',
-            login_password: 'Contraseña',
-            login_button: 'Entrar',
-            login_show: 'Mostrar contraseña',
-            login_hide: 'Ocultar contraseña',
-            login_forgot: '¿Olvidaste tu contraseña?',
-            login_close: 'Cerrar',
-            register_title: 'Registrarse',
-            register_first_name: 'Nombre',
-            register_last_name: 'Apellido',
-            register_email: 'Email',
-            register_dob: 'Fecha de nacimiento',
-            register_phone: 'Celular',
-            register_country: 'País de origen',
-            register_password: 'Contraseña',
-            register_confirm: 'Confirmar contraseña',
-            register_button: 'Registrarse',
-            register_close: 'Cerrar',
-            register_fill_all: 'Por favor rellena todos los campos.',
-            register_next: 'Siguiente',
-            register_back: 'Atrás',
-            register_gender: 'Género',
-            register_gender_male: 'Masculino',
-            register_gender_female: 'Femenino',
-            register_gender_nonbinary: 'No binario',
-            register_gender_prefer_not: 'Prefiero no decir',
-            register_gender_other: 'Otro',
-            register_mismatch: 'Las contraseñas no coinciden.',
-            register_invalid_email: 'Por favor, ingrese un email válido.',
-            register_invalid_phone: 'Por favor, ingrese un número de celular válido.',
-            register_invalid_dob: 'Por favor, ingrese una fecha de nacimiento válida (no futura y menor de 123 años).',
-            register_invalid_code: 'Por favor, ingrese el código de confirmación.',
-            register_resend_code: 'Reenviar código',
-            register_resend_wait: 'Reenviar código en',
-            register_code_sent: 'Código enviado.',
-            register_code: 'Código de confirmación',
-            btn_book: 'Conocer Tours',
-            hero_title: 'Tour',
-            city_preposition: 'en',
-            city_rio: 'Río de Janeiro',
-            hero_desc_rio: '¡Bienvenido a la Ciudad Maravillosa! Río, ciudad de amores y de belleza inconfundible, te recibe con los brazos abiertos.',
-            tours_section_title: 'Nuestras Experiencias',
-            tours_free: 'Tours Gratis',
-            tours_other: 'Otros Tours',
-            tours_paid: 'Tours Pagos',
-            notice_title: 'Información Importante',
-            notice_line1: 'Para participar de nuestro Free Tour es necesario reservar tu plaza.',
-            notice_line2: 'Seguimos todas las medidas sanitarias exigidas para este tipo de paseo.',
-            notice_line3: 'Por favor presta atención a las fechas disponibles en el formulario de reserva.',
-            notice_line4: 'Tu contribución es la remuneración del guía, sé consciente.',
-            award_title: 'Reconocimiento Especial',
-            award_text: '¿Sabías que fuimos premiados como la mejor elección por TripAdvisor en 2021? 🥰',
-            btn_proceed: 'Continuar',
-            footer_info_title: 'INFORMACIÓN',
-            footer_sobre_title: 'SOBRE',
-            footer_sobre: '<p>Rio by Foot Free Walking Tour es una empresa especializada en recorridos guiados a pie, que ofrece experiencias culturales auténticas en Río de Janeiro y en otras ciudades de Brasil. Con años de trayectoria en el turismo, la empresa se destaca por la excelencia de sus guías y por la forma envolvente en que presenta la historia, la cultura y las curiosidades de cada destino.</p><p>Reconocida por viajeros de todo el mundo, la empresa ha recibido el premio Tripadvisor Travellers’ Choice Awards, otorgado a las experiencias que se encuentran entre el 10 % de las mejores atracciones valoradas en la plataforma Tripadvisor. Este reconocimiento refuerza el compromiso del equipo de ofrecer recorridos de alta calidad y experiencias memorables para visitantes de diferentes partes del mundo.</p>',
-            footer_contato_title: 'CONTACTO',
-            footer_contato: '<p>WhatsApp: <a href="https://wa.me/5521970018590" target="_blank" rel="noopener">+5521970018590</a><br>Email: <a href="mailto:riobyfoottour@gmail.com">riobyfoottour@gmail.com</a><br>Dirección: Praça Cinelândia, Río de Janeiro - RJ</p>',
-            footer_ajuda_title: 'AYUDA',
-            footer_ajuda: '<p>¿Necesitas ayuda? Envíanos un mensaje por WhatsApp o revisa la sección de preguntas frecuentes.</p>',
-
-            index_title: 'Viaja por el Mundo',
-            index_desc: 'Bienvenido al proyecto de demostración. Usa el menú para explorar las páginas del sitio.',
-            index_sobre_title: 'Sobre',
-            index_sobre_text: 'Este sitio demuestra un diseño simple con soporte para múltiples idiomas y rutas estáticas.',
-            index_contato_title: 'Contacto',
-            index_contato_text: 'Contáctanos por WhatsApp o redes sociales en las páginas de destino.',
-            index_ajuda_title: 'Ayuda',
-            index_ajuda_text: 'Si lo necesitas, abre las herramientas de desarrollador del navegador para inspeccionar errores de consola.',
-        },
-        it: {
-            lang_label: 'Italiano',
-            nav_home: 'INIZIO',
-            nav_about: 'SUL',
-            nav_contact: 'CONTATTO',
-            nav_help: 'AIUTO',
-            profile_login: 'Accedi',
-            profile_register: 'Registrati',
-            login_title: 'Accedi',
-            login_email: 'Email',
-            login_password: 'Password',
-            login_button: 'Accedi',
-            login_show: 'Mostra password',
-            login_hide: 'Nascondi password',
-            login_forgot: 'Hai dimenticato la password?',
-            login_close: 'Chiudi',
-            register_title: 'Registrati',
-            register_first_name: 'Nome',
-            register_last_name: 'Cognome',
-            register_email: 'Email',
-            register_dob: 'Data di nascita',
-            register_phone: 'Cellulare',
-            register_country: 'Paese di origine',
-            register_password: 'Password',
-            register_confirm: 'Conferma password',
-            register_button: 'Registrati',
-            register_close: 'Chiudi',
-            register_fill_all: 'Per favore completa tutti i campi.',
-            register_next: 'Avanti',
-            register_back: 'Indietro',
-            register_gender: 'Genere',
-            register_gender_male: 'Maschile',
-            register_gender_female: 'Femminile',
-            register_gender_nonbinary: 'Non binario',
-            register_gender_prefer_not: 'Preferisco non dire',
-            register_gender_other: 'Altro',
-            register_mismatch: 'Le password non corrispondono.',
-            register_invalid_email: 'Per favore inserisci un email valido.',
-            register_invalid_phone: 'Per favore inserisci un numero di cellulare valido.',
-            register_invalid_dob: 'Per favore inserisci una data di nascita valida (non futura e max 123 anni).',
-            register_invalid_code: 'Per favore inserisci il codice di conferma.',
-            register_resend_code: 'Reinvia codice',
-            register_resend_wait: 'Reinvia codice tra',
-            register_code_sent: 'Codice inviato.',
-            register_code: 'Codice di conferma',
-            btn_book: 'Scopri i Tour',
-            hero_title: 'Tour',
-            city_preposition: 'a',
-            city_rio: 'Rio de Janeiro',
-            hero_desc_rio: 'Benvenuto nella Città Meravigliosa! Rio, città dell’amore e dalla bellezza inconfondibile, ti accoglie a braccia aperte.',
-            tours_section_title: 'Le Nostre Esperienze',
-            tours_free: 'Tour Gratuiti',
-            tours_other: 'Altri Tour',
-            tours_paid: 'Tour a Pagamento',
-            notice_title: 'Informazioni Importanti',
-            notice_line1: 'Per partecipare al nostro Free Tour è necessario prenotare il tuo posto.',
-            notice_line2: 'Seguiamo tutte le misure sanitarie richieste per questo tipo di tour.',
-            notice_line3: 'Fai attenzione alle date disponibili nel modulo di prenotazione.',
-            notice_line4: 'Il tuo contributo è la retribuzione della guida, sii consapevole.',
-            award_title: 'Riconoscimento Speciale',
-            award_text: 'Sapevi che siamo stati premiati come la scelta migliore da TripAdvisor nel 2021? 🥰',
-            btn_proceed: 'Procedi',
-            footer_info_title: 'INFORMAZIONI',
-            footer_sobre_title: 'SUL',
-            footer_sobre: '<p>Rio by Foot Free Walking Tour è un\'azienda specializzata in tour guidati a piedi, che offre esperienze culturali autentiche a Rio de Janeiro e in altre città del Brasile. Con anni di esperienza nel turismo, l\'azienda si distingue per l\'eccellenza delle sue guide e per il modo coinvolgente in cui presenta la storia, la cultura e le curiosità di ogni destinazione.</p><p>Riconosciuta dai viaggiatori di tutto il mondo, l\'azienda ha ricevuto il Tripadvisor Travellers’ Choice Awards, assegnato alle esperienze che rientrano nel 10% delle attrazioni più votate sulla piattaforma Tripadvisor. Questo riconoscimento rafforza l\'impegno del team a offrire tour di alta qualità ed esperienze memorabili per i visitatori provenienti da diverse parti del mondo.</p>',
-            footer_contato_title: 'CONTATTO',
-            footer_contato: '<p>WhatsApp: <a href="https://wa.me/5521970018590" target="_blank" rel="noopener">+5521970018590</a><br>Email: <a href="mailto:riobyfoottour@gmail.com">riobyfoottour@gmail.com</a><br>Indirizzo: Praça Cinelândia, Rio de Janeiro - RJ</p>',
-            footer_ajuda_title: 'AIUTO',
-            footer_ajuda: '<p>Hai bisogno di aiuto? Inviaci un messaggio su WhatsApp o consulta la sezione FAQ.</p>',
-
-            index_title: 'Viaggia il Mondo',
-            index_desc: 'Benvenuto nel progetto dimostrativo. Usa il menu per esplorare le pagine del sito.',
-            index_sobre_title: 'Sul',
-            index_sobre_text: 'Questo sito dimostra un layout semplice con supporto per più lingue e percorsi statici.',
-            index_contato_title: 'Contatto',
-            index_contato_text: 'Contattaci tramite WhatsApp o social media nelle pagine di destinazione.',
-            index_ajuda_title: 'Aiuto',
-            index_ajuda_text: 'Se necessario, apri gli strumenti per sviluppatori del browser per ispezionare errori nella console.',
-        },
-        zh: {
-            lang_label: '中文(普通话)',
-            nav_home: '首页',
-            nav_about: '关于',
-            nav_contact: '联系',
-            nav_help: '帮助',
-            profile_login: '登录',
-            profile_register: '注册',
-            login_title: '登录',
-            login_email: '邮箱',
-            login_password: '密码',
-            login_button: '登录',
-            login_show: '显示密码',
-            login_hide: '隐藏密码',
-            login_forgot: '忘记密码？',
-            login_close: '关闭',
-            register_title: '注册',
-            register_first_name: '名字',
-            register_last_name: '姓氏',
-            register_email: '邮箱',
-            register_dob: '出生日期',
-            register_phone: '手机',
-            register_country: '原籍国家',
-            register_password: '密码',
-            register_confirm: '确认密码',
-            register_button: '注册',
-            register_close: '关闭',
-            register_fill_all: '请填写所有字段。',
-            register_next: '下一步',
-            register_back: '返回',
-            register_gender: '性别',
-            register_gender_male: '男性',
-            register_gender_female: '女性',
-            register_gender_nonbinary: '非二元',
-            register_gender_prefer_not: '不愿透露',
-            register_gender_other: '其他',
-            register_mismatch: '密码不匹配。',
-            register_invalid_email: '请输入有效的电子邮件地址。',
-            register_invalid_phone: '请输入有效的手机号码。',
-            register_invalid_dob: '请输入有效的出生日期（不能是将来日期，且不得超过123年）。',
-            register_invalid_code: '请输入确认代码。',
-            register_resend_code: '重新发送代码',
-            register_resend_wait: '在以下时间后重新发送代码',
-            register_code_sent: '代码已发送。',
-            register_code: '确认代码',
-            btn_book: '查看路线',
-            hero_title: 'Tour',
-            city_preposition: '在',
-            city_rio: '里约热内卢',
-            hero_desc_rio: '欢迎来到这座奇妙之城！里约，这座充满爱与独特之美的城市，正张开双臂欢迎你。',
-            tours_section_title: '我们的体验',
-            tours_free: '免费游',
-            tours_other: '其他游',
-            tours_paid: '付费游',
-            notice_title: '重要信息',
-            notice_line1: '要参加我们的免费徒步游，您必须预订位置。',
-            notice_line2: '我们遵守此类游览所需的所有卫生措施。',
-            notice_line3: '请注意预订表中的可用日期。',
-            notice_line4: '您的贡献是导游的报酬，请理性安排。',
-            award_title: '特别认可',
-            award_text: '您知道我们在2021年被TripAdvisor评为最佳选择吗？🥰',
-            btn_proceed: '继续',
-            footer_info_title: '信息',
-            footer_sobre_title: '关于',
-            footer_sobre: '<p>Rio by Foot Free Walking Tour是一家专注于徒步导览的公司，提供里约热内卢及巴西其他城市的真实文化体验。凭借多年旅游业经验，公司因其导游的专业素质以及呈现每个目的地历史、文化和趣闻的沉浸式方式而脱颖而出。</p><p>该公司已获得来自世界各地游客的认可，并荣获Tripadvisor旅行者选择奖（Travellers’ Choice Awards），该奖项颁给在Tripadvisor平台上评分位于前10%的体验。此项荣誉强化了团队提供高质量导览和难忘体验给来自世界各地访客的承诺。</p>',
-            footer_contato_title: '联系',
-            footer_contato: '<p>WhatsApp: <a href="https://wa.me/5521970018590" target="_blank" rel="noopener">+5521970018590</a><br>邮箱: <a href="mailto:riobyfoottour@gmail.com">riobyfoottour@gmail.com</a><br>地址: Praça Cinelândia, 里约热内卢 - RJ</p>',
-            footer_ajuda_title: '帮助',
-            footer_ajuda: '<p>需要帮助？通过WhatsApp给我们留言或查看常见问题部分。</p>',
-
-            index_title: '环游世界',
-            index_desc: '欢迎来到演示项目。使用菜单浏览网站页面。',
-            index_sobre_title: '关于',
-            index_sobre_text: '该网站演示了一个支持多语言和静态路由的简单布局。',
-            index_contato_title: '联系',
-            index_contato_text: '通过WhatsApp或社交媒体联系我们。',
-            index_ajuda_title: '帮助',
-            index_ajuda_text: '如有需要，请打开浏览器开发者工具检查控制台错误。',
-        }
-    };
+    const storageKey = window.translationConfig?.storageKey || 'preferredLanguage';
+    const supportedLangs = Array.isArray(window.translationConfig?.supportedLangs) ? window.translationConfig.supportedLangs : ['pt', 'en', 'fr', 'es', 'it', 'zh'];
+    const translations = window.uiTranslations || {};
 
     const getSavedLang = () => {
         try {
@@ -1746,12 +815,40 @@
 
     const applyTranslations = (lang) => {
         const strings = translations[lang] || translations.pt;
+
         document.querySelectorAll('[data-i18n]').forEach(el => {
             const key = el.getAttribute('data-i18n');
             if (!key) return;
             const value = strings[key];
             if (typeof value === 'string') {
                 el.textContent = value;
+            }
+        });
+
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+            const key = el.getAttribute('data-i18n-placeholder');
+            if (!key) return;
+            const value = strings[key];
+            if (typeof value === 'string') {
+                el.placeholder = value;
+            }
+        });
+
+        document.querySelectorAll('[data-i18n-value]').forEach(el => {
+            const key = el.getAttribute('data-i18n-value');
+            if (!key) return;
+            const value = strings[key];
+            if (typeof value === 'string') {
+                el.value = value;
+            }
+        });
+
+        document.querySelectorAll('[data-i18n-aria]').forEach(el => {
+            const key = el.getAttribute('data-i18n-aria');
+            if (!key) return;
+            const value = strings[key];
+            if (typeof value === 'string') {
+                el.setAttribute('aria-label', value);
             }
         });
     };
@@ -1789,7 +886,7 @@
         document.dispatchEvent(ev);
     };
 
-    // Expor para a primeira IIFE poder re-disparar após carregar tours do banco
+    // Expor para a primeira IIFE poder re-disparar apÃ³s carregar tours do banco
     window.dispatchLanguageChange = dispatchLanguageChange;
     window.getCurrentLang = getCurrentLang;
 
@@ -1962,10 +1059,16 @@
                     if (registerLink) registerLink.click();
                 } else if (action === 'my-reservations') {
                     closeMobileMenu();
-                    openMyReservationsModal();
+                    window.openMyReservationsModal?.();
                 } else if (action === 'my-data') {
                     closeMobileMenu();
-                    openUserDataModal();
+                    window.openUserDataModal?.();
+                } else if (action === 'manage') {
+                    closeMobileMenu();
+                    window.location.href = 'html/Gerenciamento.html';
+                } else if (action === 'principal') {
+                    closeMobileMenu();
+                    window.location.href = '../index.html';
                 } else if (action === 'logout') {
                     closeMobileMenu();
                     const logoutLink = document.querySelector('.profile-dropdown [data-profile-action="logout"]');
@@ -2099,7 +1202,7 @@
                         <input id="resetEmail" type="email" autocomplete="email" required />
                     </div>
                     <div class="login-modal__field">
-                        <label>Código de confirmação</label>
+                        <label>CÃ³digo de confirmaÃ§Ã£o</label>
                         <div class="register-code-group">
                             <input id="resetCode1" class="register-code-input reset-code-input" maxlength="1" inputmode="numeric" pattern="[0-9]*" required />
                             <input id="resetCode2" class="register-code-input reset-code-input" maxlength="1" inputmode="numeric" pattern="[0-9]*" required />
@@ -2316,7 +1419,7 @@
             const email = (loginEmailInput?.value || '').trim().toLowerCase();
 
             if (!email) {
-                alert('Informe seu e-mail para receber o código.');
+                alert(strings.reset_enter_email || 'Informe seu e-mail para receber o código.');
                 loginEmailInput?.focus();
                 return;
             }
@@ -2330,13 +1433,13 @@
 
                 const payload = await response.json().catch(() => ({}));
                 if (!response.ok || payload.success === false) {
-                    throw new Error(payload.message || 'Falha ao solicitar redefinição de senha.');
+                    throw new Error(payload.message || strings.reset_request_fail || 'Falha ao solicitar redefinição de senha.');
                 }
 
-                alert('Se o e-mail estiver cadastrado, você receberá um código de redefinição.');
+                alert(strings.reset_email_sent || 'Se o e-mail estiver cadastrado, você receberá um código de redefinição.');
                 showResetView(email);
             } catch (error) {
-                alert(error?.message || 'Não foi possível solicitar redefinição de senha.');
+                alert(error?.message || strings.reset_request_fail || 'Não foi possível solicitar redefinição de senha.');
             }
         });
 
@@ -2366,25 +1469,25 @@
             }
 
             if (!/^[0-9]{6}$/.test(code)) {
-                alert('Digite um código válido de 6 dígitos.');
+                alert('Digite um cÃ³digo vÃ¡lido de 6 dÃ­gitos.');
                 return;
             }
 
             if (!isResetCodeVerified) {
                 await maybeVerifyResetCode();
                 if (!isResetCodeVerified) {
-                    alert('Código de recuperação inválido ou expirado.');
+                    alert('CÃ³digo de recuperaÃ§Ã£o invÃ¡lido ou expirado.');
                     return;
                 }
             }
 
             if (newPassword.length < 6) {
-                alert('A nova senha deve ter no mínimo 6 caracteres.');
+                alert('A nova senha deve ter no mÃ­nimo 6 caracteres.');
                 return;
             }
 
             if (newPassword !== confirmPassword) {
-                alert('A confirmação da senha não confere.');
+                alert('A confirmaÃ§Ã£o da senha nÃ£o confere.');
                 return;
             }
 
@@ -2404,7 +1507,7 @@
                     throw new Error(payload.message || 'Falha ao redefinir senha.');
                 }
 
-                alert('Senha redefinida com sucesso. Faça login com a nova senha.');
+                alert('Senha redefinida com sucesso. FaÃ§a login com a nova senha.');
                 showLoginView();
 
                 const loginEmailInput = overlay.querySelector('#loginEmail');
@@ -2415,7 +1518,7 @@
                     loginPasswordInput.focus();
                 }
             } catch (error) {
-                alert(error?.message || 'Não foi possível redefinir a senha agora.');
+                alert(error?.message || 'NÃ£o foi possÃ­vel redefinir a senha agora.');
             }
         });
 
@@ -2490,7 +1593,7 @@
                         <div class="login-modal__field">
                             <label for="registerGender" data-i18n="register_gender">${strings.register_gender}</label>
                             <select id="registerGender" required>
-                                <option value="" selected disabled>—</option>
+                                <option value="" selected disabled>â€”</option>
                                 <option value="male" data-i18n="register_gender_male">${strings.register_gender_male}</option>
                                 <option value="female" data-i18n="register_gender_female">${strings.register_gender_female}</option>
                                 <option value="nonbinary" data-i18n="register_gender_nonbinary">${strings.register_gender_nonbinary}</option>
@@ -2594,7 +1697,7 @@
             try {
             const fetchFn = typeof apiFetch !== 'undefined' ? apiFetch : window.apiFetch;
             if (typeof fetchFn === 'undefined') {
-                throw new Error('apiFetch não encontrado.');
+                throw new Error('apiFetch nÃ£o encontrado.');
             }
 
             const apiBaseUrl = window.API_BASE_URL || 'http://127.0.0.1:5000';
@@ -2611,7 +1714,7 @@
             console.error('sendConfirmationCodeApi error:', error);
             return {
                 ok: false,
-                payload: { message: error.message || 'Falha de rede ou CORS na requisição' }
+                payload: { message: error.message || 'Falha de rede ou CORS na requisiÃ§Ã£o' }
             };
         }
         };
@@ -2619,7 +1722,7 @@
         const verifyConfirmationCodeApi = async (email, code) => {
             const fetchFn = typeof apiFetch !== 'undefined' ? apiFetch : window.apiFetch;
         if (typeof fetchFn === 'undefined') {
-            throw new Error('apiFetch não encontrado.');
+            throw new Error('apiFetch nÃ£o encontrado.');
         }
 
         const payload = await fetchFn('/verify_confirmation_code', {
@@ -2649,10 +1752,10 @@
             const statusTextEl = overlay.querySelector('.register-code-status');
             if (statusTextEl) {
                 if (state === 'valid') {
-                    statusTextEl.textContent = 'Código válido';
+                    statusTextEl.textContent = 'CÃ³digo vÃ¡lido';
                     statusTextEl.style.color = '#28a745';
                 } else if (state === 'invalid') {
-                    statusTextEl.textContent = 'Código inválido, verifique e tente novamente';
+                    statusTextEl.textContent = 'CÃ³digo invÃ¡lido, verifique e tente novamente';
                     statusTextEl.style.color = '#dc3545';
                 } else {
                     statusTextEl.textContent = '';
@@ -2753,7 +1856,7 @@
         const registerUserApi = async (userData) => {
             const fetchFn = typeof apiFetch !== 'undefined' ? apiFetch : window.apiFetch;
         if (typeof fetchFn === 'undefined') {
-            throw new Error('apiFetch não encontrado.');
+            throw new Error('apiFetch nÃ£o encontrado.');
         }
 
         const payload = await fetchFn('/register_user', {
@@ -2872,38 +1975,38 @@
             showStep(2);
             startResendCountdown(60);
 
-            // enviar async em background e não bloquear navegação
+            // enviar async em background e nÃ£o bloquear navegaÃ§Ã£o
             sendConfirmationCodeApi(emailValue)
                 .then(({ ok, payload }) => {
                     if (!ok || !payload?.success) {
-                        console.warn('Falha no envio do código:', payload);
+                        console.warn('Falha no envio do cÃ³digo:', payload);
                         return;
                     }
                 })
                 .catch((err) => {
-                    console.error('Erro ao enviar código de confirmação:', err);
+                    console.error('Erro ao enviar cÃ³digo de confirmaÃ§Ã£o:', err);
                 });
         });
 
         const resendBtn = overlay.querySelector('.register-resend-button');
         resendBtn?.addEventListener('click', () => {
             if (!pendingRegisterEmail) {
-                alert('E-mail não encontrado. Refaça o passo anterior.');
+                alert('E-mail nÃ£o encontrado. RefaÃ§a o passo anterior.');
                 return;
             }
 
             sendConfirmationCodeApi(pendingRegisterEmail)
                 .then(({ ok, payload }) => {
                     if (!ok) {
-                        alert(payload.message || 'Falha ao reenviar código.');
+                        alert(payload.message || 'Falha ao reenviar cÃ³digo.');
                         return;
                     }
                     alert(strings.register_code_sent);
                     startResendCountdown(60);
                 })
                 .catch((err) => {
-                    console.error('Erro ao reenviar código de confirmação:', err);
-                    alert('Erro ao reenviar código. Tente novamente.');
+                    console.error('Erro ao reenviar cÃ³digo de confirmaÃ§Ã£o:', err);
+                    alert('Erro ao reenviar cÃ³digo. Tente novamente.');
                 });
         });
 
@@ -2929,7 +2032,7 @@
             }
 
             if (!pendingRegisterEmail) {
-                alert('Email não confirmado. Volte ao primeiro passo.');
+                alert('Email nÃ£o confirmado. Volte ao primeiro passo.');
                 return;
             }
 
@@ -2937,15 +2040,15 @@
                 try {
                     const verify = await verifyConfirmationCodeApi(pendingRegisterEmail, code);
                     if (!verify.ok || !verify.payload?.success) {
-                        alert((verify.payload && verify.payload.message) || 'Código inválido.');
+                        alert((verify.payload && verify.payload.message) || 'CÃ³digo invÃ¡lido.');
                         return;
                     }
                     isCodeVerified = true;
                     setCodeInputsState('valid');
                     updateSubmitButtonState();
                 } catch (err) {
-                    console.error('Erro na verificação de código:', err);
-                    alert('Erro ao verificar o código. Tente novamente.');
+                    console.error('Erro na verificaÃ§Ã£o de cÃ³digo:', err);
+                    alert('Erro ao verificar o cÃ³digo. Tente novamente.');
                     return;
                 }
             }
@@ -2968,7 +2071,7 @@
                     return;
                 }
 
-                alert(result.payload.message || 'Cadastro concluído com sucesso!');
+                alert(result.payload.message || 'Cadastro concluÃ­do com sucesso!');
                 closeModal();
             } catch (err) {
                 console.error('Erro no cadastro:', err);
@@ -3177,7 +2280,7 @@
                         window.location.reload();
                     }
                 } catch (error) {
-                    console.error('Erro na conexão:', error);
+                    console.error('Erro na conexÃ£o:', error);
 
                     const isOnline = navigator.onLine;
                     const loginOverlay = document.querySelector('.login-modal-overlay');
@@ -3192,17 +2295,17 @@
                         document.body.classList.add('modal-open');
 
                         const bodyMessage = isOnline
-                            ? `Sentimos muito, o servidor está temporariamente inacessível.`
-                            : `Sem conexão com a internet. Verifique sua rede e tente novamente.`;
+                            ? `Sentimos muito, o servidor estÃ¡ temporariamente inacessÃ­vel.`
+                            : `Sem conexÃ£o com a internet. Verifique sua rede e tente novamente.`;
 
                         const actionMessage = isOnline
                             ? `Entre em contato com o nosso suporte via:`
-                            : `Quando estiver online, você poderá tentar novamente ou contatar suporte via:`;
+                            : `Quando estiver online, vocÃª poderÃ¡ tentar novamente ou contatar suporte via:`;
 
                         loginOverlay.innerHTML = `
-                            <div class="login-modal" role="alertdialog" aria-modal="true" aria-label="Suporte temporário">
+                            <div class="login-modal" role="alertdialog" aria-modal="true" aria-label="Suporte temporÃ¡rio">
                                 <div class="login-modal__header">
-                                    <h2 class="login-modal__title">Erro de conexão</h2>
+                                    <h2 class="login-modal__title">Erro de conexÃ£o</h2>
                                     <button type="button" class="login-modal__close" id="auth-support-overlay-close" aria-label="Fechar">&times;</button>
                                 </div>
                                 <div class="login-modal__body" style="padding:16px; color:#333; line-height:1.5;">
@@ -3210,7 +2313,7 @@
                                     <p>${actionMessage}</p>
                                     <p><a href="${whatsUrl}" target="_blank" rel="noopener" style="color:#007bff; text-decoration:underline;">WhatsApp</a> ou <a href="${mailUrl}" id="auth-support-email-link" style="color:#007bff; text-decoration:underline;">Email</a>.</p>
                                     <p style="margin-top:1rem;"><button id="auth-support-email-btn" style="padding:8px 12px;border:none;background:#007bff;color:#fff;border-radius:4px;cursor:pointer;">Abrir Email</button></p>
-                                    ${!isOnline ? `<p style="margin-top:0.5rem; color:#a00; font-weight:bold;">Conecte-se à internet e tente novamente.</p>` : ''}
+                                    ${!isOnline ? `<p style="margin-top:0.5rem; color:#a00; font-weight:bold;">Conecte-se Ã  internet e tente novamente.</p>` : ''}
                                 </div>
                             </div>
                         `;
@@ -3243,9 +2346,9 @@
                     }
 
                     if (!isOnline) {
-                        alert('Sem conexão com a internet. Verifique sua rede e tente novamente.');
+                        alert('Sem conexÃ£o com a internet. Verifique sua rede e tente novamente.');
                     } else {
-                        alert(`Sentimos muito, o servidor está temporariamente inacessível. Entre em contato via WhatsApp: ${whatsUrl} ou Email: ${mailUrl}`);
+                        alert(`Sentimos muito, o servidor estÃ¡ temporariamente inacessÃ­vel. Entre em contato via WhatsApp: ${whatsUrl} ou Email: ${mailUrl}`);
                     }
                 }
             });
@@ -3256,27 +2359,23 @@
     window.toggleMobileMenu = toggleMobileMenu;
     window.closeMobileMenu = closeMobileMenu;
 
-    const footerInfo = {
-        sobre: '<p>A Rio by Foot Free Walking Tour é uma empresa especializada em passeios guiados a pé, oferecendo experiências culturais autênticas no Rio de Janeiro e em outras cidades do Brasil. Com anos de atuação no turismo, a empresa se destaca pela excelência dos seus guias e pela forma envolvente de apresentar a história, a cultura e as curiosidades de cada destino.</p><p>Reconhecida por viajantes do mundo inteiro, a empresa já recebeu o prêmio Tripadvisor Travellers’ Choice Awards, concedido às experiências que estão entre as 10% melhores atrações avaliadas na plataforma Tripadvisor. Esse reconhecimento reforça o compromisso da equipe em oferecer passeios de alta qualidade e experiências memoráveis para visitantes de diferentes partes do mundo.</p>',
-        contato: '<p>Entre em contato via WhatsApp, email ou redes sociais nas páginas de destino.</p><p><i class="fa fa-envelope" aria-hidden="true"></i> <a href="mailto:riobyfoottour@gmail.com">riobyfoottour@gmail.com</a></p>',
-        ajuda: '<p>Se precisar de ajuda, entre em contato pelos canais abaixo (WhatsApp, email ou Instagram) e nossa equipe responderá o mais rápido possível.</p>'
-    };
-
     const updateFooterInfo = (key) => {
         const lang = getCurrentLang();
         const strings = translations[lang] || translations.pt;
+        const fallbackFooterInfoTitle = window.translationCatalog?.fallbackTexts?.footerInfoTitle || 'Informações';
+        const fallbackFooterInfoBody = window.translationCatalog?.fallbackTexts?.footerInfoBody || '<p>Selecione uma opÃ§Ã£o para ver mais informações.</p>';
         const titleEl = document.querySelector('.footer-info-title') || document.querySelector('.rio-footer-card-title');
         const body = document.getElementById('footerInfoBody') || document.getElementById('rioFooterCardBody');
 
         if (titleEl) {
             const titleKey = `footer_${key}_title`;
-            titleEl.textContent = strings[titleKey] || strings.footer_info_title || 'Informações';
+            titleEl.textContent = strings[titleKey] || strings.footer_info_title || fallbackFooterInfoTitle;
         }
 
         if (!body) return;
 
         const bodyKey = `footer_${key}`;
-        body.innerHTML = strings[bodyKey] || '<p>Selecione uma opção para ver mais informações.</p>';
+        body.innerHTML = strings[bodyKey] || fallbackFooterInfoBody;
     };
 
     const getReservations = () => {
@@ -3419,7 +2518,7 @@
         overlay.innerHTML = `
             <div class="app-notification" role="status" aria-live="polite" aria-atomic="true">
                 <button type="button" class="app-notification__close" aria-label="Fechar">&times;</button>
-                <div class="app-notification__title">Notificação</div>
+                <div class="app-notification__title">NotificaÃ§Ã£o</div>
                 <div class="app-notification__media" hidden></div>
                 <div class="app-notification__message"></div>
                 <div class="app-notification__details" hidden></div>
@@ -3475,7 +2574,7 @@
                 title.hidden = true;
             } else {
                 title.hidden = false;
-                title.textContent = titleText || (type === 'success' ? 'Sucesso' : (type === 'error' ? 'Atenção' : 'Notificação'));
+                title.textContent = titleText || (type === 'success' ? 'Sucesso' : (type === 'error' ? 'AtenÃ§Ã£o' : 'NotificaÃ§Ã£o'));
             }
         }
         if (body) {
@@ -3496,7 +2595,7 @@
                         ></video>
                     `;
                 } else {
-                    media.innerHTML = `<img src="${escapeHtml(gifUrl)}" alt="Confirmação" loading="lazy">`;
+                    media.innerHTML = `<img src="${escapeHtml(gifUrl)}" alt="ConfirmaÃ§Ã£o" loading="lazy">`;
                 }
                 media.hidden = false;
             } else {
@@ -3524,7 +2623,7 @@
     const openMyReservationsModal = async () => {
         const tabs = (getCurrentRolePermissions()?.tabs || []).map(tab => String(tab).toUpperCase());
         if (!tabs.includes('MINHAS RESERVAS')) {
-            showGlobalNotification('Seu perfil não tem permissão para acessar Minhas Reservas.', 'error');
+            showGlobalNotification('Seu perfil nÃ£o tem permissÃ£o para acessar Minhas Reservas.', 'error');
             return;
         }
 
@@ -3560,20 +2659,30 @@
 
         listEl.innerHTML = '<p class="my-reservations-empty">Carregando reservas...</p>';
 
-        const email = localStorage.getItem('userEmail');
-        if (!email) {
-            listEl.innerHTML = '<p class="my-reservations-empty">Não foi possível identificar o usuário.</p>';
+        const email = (localStorage.getItem('userEmail') || '').trim();
+        const normalizedEmail = email.toLowerCase();
+        if (!normalizedEmail) {
+            listEl.innerHTML = '<p class="my-reservations-empty">NÃ£o foi possÃ­vel identificar o usuÃ¡rio.</p>';
             return;
         }
 
-        const endpoints = [
-            `${API_BASE_URL}/get_meus_agendamentos`,
-            'http://127.0.0.1:5000/get_meus_agendamentos',
-            'https://api.exksvol.com/get_meus_agendamentos'
+        const endpointGroups = [
+            [
+                `${API_BASE_URL}/get_meus_agendamentos`,
+                'http://127.0.0.1:5000/get_meus_agendamentos',
+                'https://api.exksvol.com/get_meus_agendamentos'
+            ],
+            [
+                `${API_BASE_URL}/get_agendamentos`,
+                'http://127.0.0.1:5000/get_agendamentos',
+                'https://api.exksvol.com/get_agendamentos'
+            ]
         ];
 
         let data = null;
-        for (const endpoint of endpoints) {
+        for (const endpoints of endpointGroups) {
+            if (data) break;
+            for (const endpoint of endpoints) {
             try {
                 const res = await fetch(`${endpoint}?email=${encodeURIComponent(email)}`);
                 if (res.ok) {
@@ -3581,31 +2690,44 @@
                     break;
                 }
             } catch {
-                // tenta próximo endpoint
+                // tenta prÃ³ximo endpoint
+            }
             }
         }
 
         if (!data) {
-            listEl.innerHTML = '<p class="my-reservations-empty">Não foi possível carregar as reservas. Tente novamente mais tarde.</p>';
+            listEl.innerHTML = '<p class="my-reservations-empty">NÃ£o foi possÃ­vel carregar as reservas. Tente novamente mais tarde.</p>';
             return;
         }
 
-        if (!Array.isArray(data) || !data.length) {
+        const rawReservations = Array.isArray(data)
+            ? data
+            : (Array.isArray(data?.agendamentos) ? data.agendamentos : []);
+
+        // SeguranÃ§a extra no frontend: garante exibiÃ§Ã£o apenas das reservas do usuÃ¡rio atual.
+        const userReservations = rawReservations.filter((reservation) => {
+            const reservationEmail = String(
+                reservation?.email || reservation?.cliente_email || reservation?.user_email || ''
+            ).trim().toLowerCase();
+            return !reservationEmail || reservationEmail === normalizedEmail;
+        });
+
+        if (!userReservations.length) {
             listEl.innerHTML = '<p class="my-reservations-empty">Nenhuma reserva encontrada.</p>';
             return;
         }
 
-        listEl.innerHTML = data.map((r) => {
+        listEl.innerHTML = userReservations.map((r) => {
             const statusRaw = String(r.status || 'Pendente').trim();
             const statusKey = statusRaw.toLowerCase();
             const statusLabel = statusKey.includes('pendente')
-                ? 'Status: Confirmação pendente'
+                ? 'Status: ConfirmaÃ§Ã£o pendente'
                 : `Status: ${escapeHtml(statusRaw)}`;
             const showActions = true;
             return `
             <div class="my-reservations-item" data-reservation-id="${escapeHtml(String(r.id || ''))}">
-                <strong class="my-reservations-tour">${escapeHtml(r.tour || '—')}</strong>
-                <span class="my-reservations-date">Data: ${escapeHtml(r.data || '—')}</span>
+                <strong class="my-reservations-tour">${escapeHtml(r.tour || 'â€”')}</strong>
+                <span class="my-reservations-date">Data: ${escapeHtml(r.data || 'â€”')}</span>
                 ${r.hora ? `<span class="my-reservations-detail">Hora: ${escapeHtml(r.hora)}</span>` : ''}
                 ${r.idioma ? `<span class="my-reservations-detail">Idioma: ${escapeHtml(r.idioma)}</span>` : ''}
                 ${r.qtd ? `<span class="my-reservations-detail">Pessoas: ${escapeHtml(String(r.qtd))}</span>` : ''}
@@ -3658,7 +2780,7 @@
                         </label>
                         <div class="reservation-edit-actions">
                             <button type="button" class="reservation-edit-cancel">Cancelar</button>
-                            <button type="submit" class="reservation-edit-save">Salvar alterações</button>
+                            <button type="submit" class="reservation-edit-save">Salvar alteraÃ§Ãµes</button>
                         </div>
                     </form>
                 </div>
@@ -3680,7 +2802,7 @@
                 const quantas_pessoas = Number(formEl.elements.people.value || 0);
 
                 if (!id || !data || !hora || !quantas_pessoas || quantas_pessoas < 1) {
-                    showGlobalNotification('Preencha os dados de edição corretamente.', 'error');
+                    showGlobalNotification('Preencha os dados de ediÃ§Ã£o corretamente.', 'error');
                     return;
                 }
 
@@ -3707,7 +2829,7 @@
                             }
                         }
                     } catch (err) {
-                        console.warn('Atualização falhou em', endpoint, err);
+                        console.warn('AtualizaÃ§Ã£o falhou em', endpoint, err);
                     }
                 }
 
@@ -3716,7 +2838,7 @@
                     showGlobalNotification('Reserva atualizada com sucesso.', 'success');
                     openMyReservationsModal();
                 } else {
-                    showGlobalNotification('Não foi possível atualizar a reserva. Tente novamente.', 'error');
+                    showGlobalNotification('NÃ£o foi possÃ­vel atualizar a reserva. Tente novamente.', 'error');
                 }
             });
 
@@ -3724,7 +2846,7 @@
             return overlayEl;
         };
 
-        // Ações de edição e cancelamento de reservas
+        // AÃ§Ãµes de ediÃ§Ã£o e cancelamento de reservas
         listEl.querySelectorAll('.btn-cancel-reservation').forEach((button) => {
             button.addEventListener('click', async (e) => {
                 e.stopPropagation();
@@ -3763,7 +2885,7 @@
                     showGlobalNotification('Reserva cancelada com sucesso.', 'success');
                     openMyReservationsModal();
                 } else {
-                    showGlobalNotification('Não foi possível cancelar a reserva. Tente novamente.', 'error');
+                    showGlobalNotification('NÃ£o foi possÃ­vel cancelar a reserva. Tente novamente.', 'error');
                 }
             });
         });
@@ -3792,32 +2914,40 @@
         });
     };
 
+    window.openMyReservationsModal = openMyReservationsModal;
+
     const openUserDataModal = async () => {
         const tabs = (getCurrentRolePermissions()?.tabs || []).map(tab => String(tab).toUpperCase());
         if (!tabs.includes('MEUS DADOS')) {
-            showGlobalNotification('Seu perfil não tem permissão para acessar Meus Dados.', 'error');
+            showGlobalNotification('Seu perfil nÃ£o tem permissÃ£o para acessar Meus Dados.', 'error');
             return;
         }
 
         let modal = document.getElementById('userDataModal');
         if (!modal) {
+            const lang = (typeof window.getCurrentLang === 'function'
+                ? window.getCurrentLang()
+                : (document.documentElement.lang || 'pt').slice(0, 2)
+            ).split('-')[0] || 'pt';
+            const strings = window.uiTranslations?.[lang] || window.uiTranslations?.pt || {};
+
             modal = document.createElement('div');
             modal.id = 'userDataModal';
             modal.className = 'user-data-overlay';
             modal.innerHTML = `
-                <div class="user-data-modal" role="dialog" aria-modal="true" aria-label="Meus dados">
-                    <button type="button" class="user-data-close" aria-label="Fechar">&times;</button>
-                    <h3>Meus Dados</h3>
-                    <div class="user-data-loading" hidden>Carregando dados...</div>
+                <div class="user-data-modal" role="dialog" aria-modal="true" aria-label="${strings.user_data_title || 'Meus Dados'}">
+                    <button type="button" class="user-data-close" aria-label="${strings.user_data_cancel || 'Fechar'}">&times;</button>
+                    <h3 data-i18n="user_data_title">${strings.user_data_title || 'Meus Dados'}</h3>
+                    <div class="user-data-loading" hidden data-i18n="user_data_loading">${strings.user_data_loading || 'Carregando dados...'}</div>
                     <form class="user-data-form">
-                        <label>Nome<input name="nome" required /></label>
-                        <label>Sobrenome<input name="sobrenome" required /></label>
-                        <label>Telefone<input name="celular" /></label>
-                        <label>País<input name="pais_origem" /></label>
-                        <label>Gênero<input name="genero" /></label>
+                        <label><span data-i18n="user_data_name">${strings.user_data_name || 'Nome'}</span><input name="nome" required /></label>
+                        <label><span data-i18n="user_data_surname">${strings.user_data_surname || 'Sobrenome'}</span><input name="sobrenome" required /></label>
+                        <label><span data-i18n="user_data_phone">${strings.user_data_phone || 'Telefone'}</span><input name="celular" /></label>
+                        <label><span data-i18n="user_data_country">${strings.user_data_country || 'País'}</span><input name="pais_origem" /></label>
+                        <label><span data-i18n="user_data_gender">${strings.user_data_gender || 'Gênero'}</span><input name="genero" /></label>
                         <div class="user-data-actions">
-                            <button type="button" class="user-data-cancel">Cancelar</button>
-                            <button type="submit" class="user-data-save">Salvar</button>
+                            <button type="button" class="user-data-cancel" data-i18n="user_data_cancel">${strings.user_data_cancel || 'Cancelar'}</button>
+                            <button type="submit" class="user-data-save" data-i18n="user_data_save">${strings.user_data_save || 'Salvar'}</button>
                         </div>
                     </form>
                 </div>
@@ -3838,7 +2968,7 @@
                 event.preventDefault();
                 const email = localStorage.getItem('userEmail');
                 if (!email) {
-                    showGlobalNotification('Erro: usuário não identificado.', 'error');
+                    showGlobalNotification('Erro: usuÃ¡rio nÃ£o identificado.', 'error');
                     return;
                 }
 
@@ -3889,7 +3019,7 @@
                     }
                     close();
                 } else {
-                    showGlobalNotification('Não foi possível atualizar seus dados.', 'error');
+                    showGlobalNotification('NÃ£o foi possÃ­vel atualizar seus dados.', 'error');
                 }
             });
 
@@ -3951,12 +3081,14 @@
                     }
                     break;
                 } catch (err) {
-                    console.warn('Leitura de dados do usuário falhou em', endpoint, err);
+                    console.warn('Leitura de dados do usuÃ¡rio falhou em', endpoint, err);
                 }
             }
         }
         setLoading(false);
     };
+
+    window.openUserDataModal = openUserDataModal;
 
     const initReservationTracking = () => {
         const reservationModal = document.getElementById('reservationModal');
@@ -3984,7 +3116,7 @@
             const userPhone = localStorage.getItem('userPhone');
 
             if (!userRole || !userEmail) {
-                showGlobalNotification('É necessário realizar login para fazer uma reserva.', 'error');
+                showGlobalNotification('Ã‰ necessÃ¡rio realizar login para fazer uma reserva.', 'error');
                 return;
             }
 
@@ -3996,13 +3128,20 @@
             reservationEmail.value = userEmail || '';
             selectedMeetingPoint = (meetingPoint || '').trim();
 
+            const strings = window.uiTranslations?.[window.getCurrentLang?.() || (document.documentElement.lang || 'pt').slice(0, 2)] || window.uiTranslations?.pt || {};
             const langs = (languageText || '').split(/[,;]+|\s+e\s+/i)
                 .map(s => s.trim())
                 .filter(Boolean)
                 .filter((v, i, arr) => arr.indexOf(v) === i);
 
             if (reservationLanguage) {
-                reservationLanguage.innerHTML = '<option value="">Selecione um idioma</option>';
+                reservationLanguage.innerHTML = '';
+                const defaultOption = document.createElement('option');
+                defaultOption.value = '';
+                defaultOption.setAttribute('data-i18n', 'reservation_language_placeholder');
+                defaultOption.textContent = strings.reservation_language_placeholder || 'Selecione um idioma';
+                reservationLanguage.appendChild(defaultOption);
+
                 langs.forEach(lang => {
                     const option = document.createElement('option');
                     option.value = lang;
@@ -4067,13 +3206,13 @@
                 const modality = 'privado';
 
                 if (!tour || !clientName || !date || !quantity || !language || !phone || !email) {
-                    showGlobalNotification('Preencha todos os campos obrigatórios para concluir a reserva.', 'error');
+                    showGlobalNotification('Preencha todos os campos obrigatÃ³rios para concluir a reserva.', 'error');
                     return;
                 }
 
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 if (!emailRegex.test(email)) {
-                    showGlobalNotification('Por favor, insira um email válido.', 'error');
+                    showGlobalNotification('Por favor, insira um email vÃ¡lido.', 'error');
                     return;
                 }
 
@@ -4084,7 +3223,7 @@
 
                 const phoneRegex = /^[0-9()+\-\s]+$/;
                 if (!phoneRegex.test(phone)) {
-                    showGlobalNotification('O campo celular só permite números, +, -, ( ) e espaços.', 'error');
+                    showGlobalNotification('O campo celular sÃ³ permite nÃºmeros, +, -, ( ) e espaÃ§os.', 'error');
                     return;
                 }
 
@@ -4134,7 +3273,7 @@
                         await sendReservationToApi(endpoint);
                         const [yyyy, mm, dd] = date.split('-');
                         const formattedDate = (dd && mm && yyyy) ? `${dd}/${mm}/${yyyy}` : date;
-                        const safeMeetingPoint = escapeHtml(selectedMeetingPoint || 'Conforme descrição do tour');
+                        const safeMeetingPoint = escapeHtml(selectedMeetingPoint || 'Conforme descriÃ§Ã£o do tour');
                         const safeDate = escapeHtml(formattedDate);
                         const safeTime = escapeHtml(defaultTime);
                         const detailsHtml = `
@@ -4143,10 +3282,10 @@
                                 <li><strong>Hora:</strong> ${safeTime}</li>
                                 <li><strong>Local de encontro:</strong> ${safeMeetingPoint}</li>
                             </ul>
-                            <p class="app-notification__hint">Fique atento ao meio de contato cadastrado. Nossa equipe entrará em contato para confirmar.</p>
+                            <p class="app-notification__hint">Fique atento ao meio de contato cadastrado. Nossa equipe entrarÃ¡ em contato para confirmar.</p>
                         `;
 
-                        showGlobalNotification('Reserva concluída com sucesso.', 'success', {
+                        showGlobalNotification('Reserva concluÃ­da com sucesso.', 'success', {
                             titleText: '',
                             gifUrl: 'imagem/assets/certo.mp4',
                             detailsHtml
@@ -4162,7 +3301,7 @@
 
                 if (!saved) {
                     console.error('Todos endpoints falharam:', firstError);
-                    showGlobalNotification('Não foi possível enviar a reserva ao servidor. Por favor, tente novamente mais tarde.', 'error');
+                    showGlobalNotification('NÃ£o foi possÃ­vel enviar a reserva ao servidor. Por favor, tente novamente mais tarde.', 'error');
                 }
             });
         }
@@ -4215,3 +3354,5 @@
         dispatchLanguageChange(getCurrentLang());
     });
 })();
+
+

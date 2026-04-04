@@ -223,11 +223,11 @@ body {
 .mobile-lang-list li {
   display: block;
   padding: 0.75rem 0.6rem;
-}
-
-@media (min-width: 1024px) {
-  #rolesManager strong {
-    color: #0f3a7a !important;
+    border-radius: 8px;
+    color: #234160;
+    text-decoration: none;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
   }
 
   .gerenciamento-header h1 {
@@ -249,6 +249,14 @@ body {
   /* text colors for big screens */
   #pageManagementSection h3,
   .profile-user-info > div:first-child {
+    color: #0f3a7a !important;
+  }
+
+  .profile-dropdown .profile-user-info,
+  .profile-dropdown .profile-user-info > div:first-child span[data-i18n="profile_hello"],
+  .profile-dropdown .profile-user-info > span[data-i18n="profile_hello"],
+  .profile-user-info > div:first-child span[data-i18n="profile_hello"],
+  .profile-user-info > span[data-i18n="profile_hello"] {
     color: #0f3a7a !important;
   }
 
@@ -274,16 +282,6 @@ body {
     margin-top: 0.5rem;
     align-self: stretch;
   }
-}
-
-
-
-  border-radius: 8px;
-  color: #234160;
-  text-decoration: none;
-  font-weight: 600;
-  margin-bottom: 0.2rem;
-}
 
 .mobile-menu-view a:hover,
 .mobile-lang-list li:hover,
@@ -903,6 +901,48 @@ body {
   transition: background 0.2s ease;
 }
 
+.currency-converter {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(11, 77, 139, 0.15);
+  border-radius: 14px;
+  padding: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.currency-converter h3 {
+  margin: 0 0 0.8rem;
+  font-size: 1rem;
+  color: #0b3c6d;
+}
+
+.currency-converter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.8rem;
+}
+
+.currency-converter-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  color: #374151;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.currency-converter-grid input {
+  padding: 0.65rem;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+  font-size: 0.9rem;
+}
+
+.currency-converter-actions {
+  margin-top: 0.8rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
 /* Status badges */
 .status-badge {
   display: inline-block;
@@ -1068,10 +1108,8 @@ body {
     gap: 0.35rem;
     margin: 0;
     font-weight: 400;
+    border-color: #011e4b;
   }
-
-  border-color: #3b82f6;
-}
 
 .phone-input-wrapper {
   position: relative;

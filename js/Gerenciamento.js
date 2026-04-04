@@ -1,9 +1,9 @@
-// version 1.0
+﻿// version 1.0
 
 const isLocalHost = ['localhost', '127.0.0.1'].includes(window.location.hostname);
 
-// Em ambiente local, tenta API local primeiro e depois endpoints públicos.
-// Em produção, tenta os endpoints públicos e mantém localhost como fallback de debug.
+// Em ambiente local, tenta API local primeiro e depois endpoints pÃºblicos.
+// Em produÃ§Ã£o, tenta os endpoints pÃºblicos e mantÃ©m localhost como fallback de debug.
 const API_ENDPOINTS = isLocalHost
   ? [
       'https://api-tour.exksvol.com',
@@ -30,7 +30,7 @@ const fetchWithApiFallback = async (path, options = {}) => {
       }
 
       lastResponse = response;
-      console.warn('Endpoint respondeu com erro HTTP, tentando próximo:', {
+      console.warn('Endpoint respondeu com erro HTTP, tentando prÃ³ximo:', {
         base,
         status: response.status,
         statusText: response.statusText,
@@ -50,12 +50,12 @@ const fetchWithApiFallback = async (path, options = {}) => {
   throw lastError || new Error(`Nenhum endpoint da API respondeu. Endpoints testados: ${attempted}`);
 };
 
-let pendingUpdateId = null; // id do agendamento que está entrando no modo editar
-let currentlyEditingAccount = null; // id do usuário de acesso que está sendo editado
-let selectedRoleName = null; // role atual selecionada no painel de níveis
-let currentRolesConfig = {}; // guarda as permissões atuais carregadas
-let currentUserPermissions = null; // permissões do usuário logado
-let currentReservations = []; // lista de reservas carregadas para gerenciamento da página
+let pendingUpdateId = null; // id do agendamento que estÃ¡ entrando no modo editar
+let currentlyEditingAccount = null; // id do usuÃ¡rio de acesso que estÃ¡ sendo editado
+let selectedRoleName = null; // role atual selecionada no painel de nÃ­veis
+let currentRolesConfig = {}; // guarda as permissÃµes atuais carregadas
+let currentUserPermissions = null; // permissÃµes do usuÃ¡rio logado
+let currentReservations = []; // lista de reservas carregadas para gerenciamento da pÃ¡gina
 
 const normalizeRoleName = (role) => {
   const normalized = String(role || 'cliente_user').toLowerCase();
@@ -147,15 +147,20 @@ const updateProfileMenuByPermissions = (perms) => {
 
   const canShowMyReservations = tabs.includes('Minhas Reservas');
   const canShowMyData = tabs.includes('Meus Dados');
+  const isManagementPage = window.location.pathname.endsWith('/html/Gerenciamento.html') || window.location.pathname.endsWith('Gerenciamento.html');
+  const showManagement = typeof canAccessManagement === 'function' ? canAccessManagement() : false;
+  const managementAction = isManagementPage ? 'principal' : 'manage';
+  const managementLabel = isManagementPage ? 'Principal' : 'Gerenciamento';
 
   profileDropdown.innerHTML = `
     <div class="profile-user-info" style="padding:8px 12px; border-bottom:1px solid #e5e7eb;">
-      <div style="font-weight:700; color:#111827;">${userName}</div>
-      <div style="font-size:0.8rem; color:#6b7280;">Nível de acesso: ${formatRoleLabel(userRole)}</div>
+      <div style="font-weight:700; color:#111827;"><span data-i18n="profile_hello">Olá</span>, ${userName}</div>
+      <div style="font-size:0.8rem; color:#6b7280;">NÃ­vel de acesso: ${formatRoleLabel(userRole)}</div>
     </div>
-    ${canShowMyReservations ? '<a href="#" class="profile-item" data-profile-action="my-reservations">Minhas Reservas</a>' : ''}
-    ${canShowMyData ? '<a href="#" class="profile-item" data-profile-action="my-data">Meus Dados</a>' : ''}
-    <a href="#" class="profile-item" data-profile-action="logout">Sair</a>
+    ${showManagement ? `<a href="#" class="profile-item profile-item--admin" data-profile-action="${managementAction}">${managementLabel}</a>` : ''}
+    ${canShowMyReservations ? '<a href="#" class="profile-item" data-profile-action="my-reservations" data-i18n="profile_my_reservations">Minhas Reservas</a>' : ''}
+    ${canShowMyData ? '<a href="#" class="profile-item" data-profile-action="my-data" data-i18n="profile_my_data">Meus Dados</a>' : ''}
+    <a href="#" class="profile-item" data-profile-action="logout" data-i18n="profile_logout">Sair</a>
   `;
 };
 
@@ -183,7 +188,7 @@ const applyAccessControls = (perms) => {
     link.style.display = tabs.includes(tabName) ? '' : 'none';
   });
 
-  // Seções do painel
+  // SeÃ§Ãµes do painel
   const pageManagement = document.getElementById('pageManagementSection');
   const reservationsStats = document.getElementById('reservationsStatsSection');
   const mainSection = document.getElementById('reservationsTableSection');
@@ -219,7 +224,7 @@ const applyAccessControls = (perms) => {
     el.style.display = tabs.includes(key) ? '' : 'none';
   });
 
-  // Permissões de recursos funcionais (manage*, etc)
+  // PermissÃµes de recursos funcionais (manage*, etc)
   if (!perms.manageReservas) {
     document.querySelectorAll('.btn-reserve, .btn-edit-reservation, .btn-cancel-reservation').forEach(el => el?.remove?.());
   }
@@ -227,11 +232,11 @@ const applyAccessControls = (perms) => {
     document.querySelectorAll('.btn-edit-account, .btn-delete-account').forEach(el => el?.remove?.());
   }
   if (!perms.managePerfis) {
-    // Se não pode gerenciar perfis, esconda a seção de níveis e formulários de role
+    // Se nÃ£o pode gerenciar perfis, esconda a seÃ§Ã£o de nÃ­veis e formulÃ¡rios de role
     document.querySelectorAll('.role-management-panel, #rolePermissionsSection, #rolesManager').forEach(el => { if (el) el.style.display = 'none'; });
   }
 
-  // Controle de edição
+  // Controle de ediÃ§Ã£o
   if (!perms.manageSelfEdit) {
     document.querySelectorAll('.btn-edit-self').forEach(el => { if (el) el.style.display = 'none'; });
   }
@@ -243,7 +248,7 @@ const applyAccessControls = (perms) => {
   }
 
   if (!perms.loadAllReservas) {
-    // exibe apenas reservas do usuário se o recurso não estiver disponível
+    // exibe apenas reservas do usuÃ¡rio se o recurso nÃ£o estiver disponÃ­vel
     const rows = document.querySelectorAll('#reservationsTable tbody tr');
     const userEmail = localStorage.getItem('userEmail');
     if (userEmail) {
@@ -256,7 +261,7 @@ const applyAccessControls = (perms) => {
     }
   }
 
-  // Atualiza o menu de usuário para exibir apenas dados/acoes permitidas.
+  // Atualiza o menu de usuÃ¡rio para exibir apenas dados/acoes permitidas.
   updateProfileMenuByPermissions(perms);
 };
 
@@ -318,7 +323,7 @@ const fetchPageToursFromBackend = async () => {
     setPageTours(mapped);
     return mapped;
   } catch (error) {
-    console.warn('Erro ao buscar tours_pagina. Fallback local será usado.', error);
+    console.warn('Erro ao buscar tours_pagina. Fallback local serÃ¡ usado.', error);
     return null;
   }
 };
@@ -341,8 +346,8 @@ const parseTourLanguages = (value) => {
 
 const setTourModalLanguages = (value) => {
   const selected = parseTourLanguages(value);
-  document.getElementById('tourModalLanguagePt').checked = selected.includes('Português');
-  document.getElementById('tourModalLanguageEn').checked = selected.includes('Inglês');
+  document.getElementById('tourModalLanguagePt').checked = selected.includes('PortuguÃªs');
+  document.getElementById('tourModalLanguageEn').checked = selected.includes('InglÃªs');
   document.getElementById('tourModalLanguageEs').checked = selected.includes('Espanhol');
 };
 
@@ -476,7 +481,7 @@ const saveTourEditModal = async () => {
     alert('Tour atualizado com sucesso.');
   } catch (error) {
     console.error('Erro ao salvar tour:', error);
-    alert('Erro ao salvar tour. Verifique sua conexão e tente novamente.');
+    alert('Erro ao salvar tour. Verifique sua conexÃ£o e tente novamente.');
   }
 };
 
@@ -728,7 +733,7 @@ const setupRoleCheckboxHandlers = () => {
 };
 
 // ********************************************************************
-// função get_agendamentos (fetch do backend)
+// funÃ§Ã£o get_agendamentos (fetch do backend)
 // ********************************************************************
 const carregarAgendamentosDoBanco = async () => {
   const tableBodyElement = document.getElementById('reservationsBody');
@@ -744,32 +749,32 @@ const carregarAgendamentosDoBanco = async () => {
   currentUserPermissions = currentUserPermissions || currentRolesConfig[role] || DEFAULT_ROLE_PERMISSIONS[role] || DEFAULT_ROLE_PERMISSIONS.cliente_user;
 
   if (!currentUserPermissions.manageReservas) {
-    tableBodyElement.innerHTML = '<tr><td colspan="8" style="padding:0.75rem;">Verificando permissão no servidor...</td></tr>';
+    tableBodyElement.innerHTML = '<tr><td colspan="8" style="padding:0.75rem;">Verificando permissÃ£o no servidor...</td></tr>';
 
     try {
       const response = await fetchWithApiFallback(`/check_permission?email=${encodeURIComponent(userEmail)}&permission=manageReservas`);
       if (!response.ok) {
         const reasonData = await response.json().catch(() => ({}));
-        tableBodyElement.innerHTML = `<tr><td colspan="8" style="padding:0.75rem;">Acesso negado no servidor: ${reasonData.reason || reasonData.message || 'sem razão'}.</td></tr>`;
+        tableBodyElement.innerHTML = `<tr><td colspan="8" style="padding:0.75rem;">Acesso negado no servidor: ${reasonData.reason || reasonData.message || 'sem razÃ£o'}.</td></tr>`;
         return;
       }
 
       const result = await response.json();
       if (!result.allowed) {
-        tableBodyElement.innerHTML = `<tr><td colspan="8" style="padding:0.75rem;">Acesso negado ao Gerenciamento de reservas: ${result.reason || 'não autorizado'}.</td></tr>`;
+        tableBodyElement.innerHTML = `<tr><td colspan="8" style="padding:0.75rem;">Acesso negado ao Gerenciamento de reservas: ${result.reason || 'nÃ£o autorizado'}.</td></tr>`;
         return;
       }
 
-      // Se servidor permitir, atualize permissão local para evitar rechecagem repetida
+      // Se servidor permitir, atualize permissÃ£o local para evitar rechecagem repetida
       currentUserPermissions.manageReservas = true;
     } catch (error) {
-      console.warn('Falha ao verificar permissão no servidor:', error);
-      tableBodyElement.innerHTML = '<tr><td colspan="8" style="padding:0.75rem;">Erro de verificação de permissões. Tente novamente mais tarde.</td></tr>';
+      console.warn('Falha ao verificar permissÃ£o no servidor:', error);
+      tableBodyElement.innerHTML = '<tr><td colspan="8" style="padding:0.75rem;">Erro de verificaÃ§Ã£o de permissÃµes. Tente novamente mais tarde.</td></tr>';
       return;
     }
   }
 
-  // filtros aplicados na própria tabela de backend
+  // filtros aplicados na prÃ³pria tabela de backend
   const filterFrom = document.getElementById('filterFrom');
   const filterTo = document.getElementById('filterTo');
   const filterTour = document.getElementById('filterTour');
@@ -786,8 +791,8 @@ const carregarAgendamentosDoBanco = async () => {
     const response = await fetchWithApiFallback(`/get_agendamentos?email=${encodeURIComponent(userEmail)}`);
 
     if (response.status === 403) {
-      alert('Erro: Você não tem permissão de Administrador para ver esta página.');
-      tableBodyElement.innerHTML = '<tr><td colspan="8" style="padding:0.75rem;">Sem permissão para visualizar reservas.</td></tr>';
+      alert('Erro: VocÃª nÃ£o tem permissÃ£o de Administrador para ver esta pÃ¡gina.');
+      tableBodyElement.innerHTML = '<tr><td colspan="8" style="padding:0.75rem;">Sem permissÃ£o para visualizar reservas.</td></tr>';
       return;
     }
 
@@ -831,7 +836,7 @@ const carregarAgendamentosDoBanco = async () => {
       tableBodyElement.innerHTML = '<tr><td colspan="8" style="padding:0.75rem;">Nenhuma reserva encontrada.</td></tr>';
     }
 
-    // Salva reservas para uso na aba Gerenciamento da página
+    // Salva reservas para uso na aba Gerenciamento da pÃ¡gina
     currentReservations = filtered.slice();
 
     // Exibir registros mais recentes primeiro (id maior primeiro)
@@ -924,7 +929,7 @@ const carregarAgendamentosDoBanco = async () => {
       } else {
         const dateStr = nextDateTime.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
         const timeStr = nextDateTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-        statNext.textContent = `${dateStr} ${timeStr} (${allNextDateTime.length} próximo${allNextDateTime.length !== 1 ? 's' : ''})`;
+        statNext.textContent = `${dateStr} ${timeStr} (${allNextDateTime.length} prÃ³ximo${allNextDateTime.length !== 1 ? 's' : ''})`;
       }
     }
 
@@ -953,7 +958,7 @@ const carregarAgendamentosDoBanco = async () => {
 
     const nextTours = Object.values(grouped);
 
-    // statNext já foi atualizado acima com allNextDateTime.length, garantindo contagem total de reservas.
+    // statNext jÃ¡ foi atualizado acima com allNextDateTime.length, garantindo contagem total de reservas.
     const nextTourDetails = document.getElementById('nextTourDetails');
 
     if (nextTourDetails) {
@@ -970,7 +975,7 @@ const carregarAgendamentosDoBanco = async () => {
       }
 
       if (nextTours.length === 0) {
-        tourListContainer.innerHTML = '<div style="color:#6b7280;">Nenhum próximo tour confirmado.</div>';
+        tourListContainer.innerHTML = '<div style="color:#6b7280;">Nenhum prÃ³ximo tour confirmado.</div>';
       } else {
         const totalPeople = nextTours.reduce((sum, group) => sum + (group.pessoas || 0), 0);
         const tourGuides = [...new Set(nextTours.map(group => group.guia || '-'))].join(', ');
@@ -1003,16 +1008,16 @@ const carregarAgendamentosDoBanco = async () => {
         nextToggle.setAttribute('aria-expanded', String(expanded));
         nextToggle.classList.toggle('open', expanded);
         nextDetails.style.display = expanded ? 'block' : 'none';
-        nextToggle.textContent = expanded ? '▴' : '▾';
+        nextToggle.textContent = expanded ? 'â–´' : 'â–¾';
       });
     }
 
     carregarGerenciamentoPagina();
     console.log('Tabela atualizada com sucesso!');
   } catch (error) {
-    console.error('Erro de conexão ao carregar tabela:', error);
+    console.error('Erro de conexÃ£o ao carregar tabela:', error);
     const detail = (error && error.message) ? ` Detalhe: ${error.message}` : '';
-    tableBodyElement.innerHTML = `<tr><td colspan="8" style="padding:0.75rem;">Erro de conexão com a API ao carregar reservas.${detail}</td></tr>`;
+    tableBodyElement.innerHTML = `<tr><td colspan="8" style="padding:0.75rem;">Erro de conexÃ£o com a API ao carregar reservas.${detail}</td></tr>`;
   }
 };
 
@@ -1034,6 +1039,7 @@ const mostrarSecao = (secao) => {
   const reservationTable = document.getElementById('reservationsTableSection');
   const accounts = document.getElementById('accountsSection');
   const pageManagement = document.getElementById('pageManagementSection');
+  const pageManagementTours = document.getElementById('pageManagementToursSection');
 
   reservations.forEach((el) => {
     if (el) el.style.display = secao === 'reservas' ? 'block' : 'none';
@@ -1051,11 +1057,27 @@ const mostrarSecao = (secao) => {
   }
 
   if (pageManagement) {
-    pageManagement.style.display = secao === 'gerenciamento' ? 'block' : 'none';
+    pageManagement.style.display = (secao === 'gerenciamento' || secao === 'financeiro') ? 'block' : 'none';
   }
 
-  if (secao !== 'reservas' && secao !== 'contas' && secao !== 'gerenciamento') {
-    console.warn('Secão desconhecida:', secao);
+  if (pageManagementTours) {
+    pageManagementTours.style.display = secao === 'gerenciamento' ? 'block' : 'none';
+  }
+
+  if (secao === 'financeiro') {
+    fetchCurrentUsdBrlRate().then(() => {
+      if (typeof window.convertCurrency === 'function') {
+        window.convertCurrency();
+      }
+    }).catch(() => {
+      if (typeof window.convertCurrency === 'function') {
+        window.convertCurrency();
+      }
+    });
+  }
+
+  if (secao !== 'reservas' && secao !== 'contas' && secao !== 'gerenciamento' && secao !== 'financeiro') {
+    console.warn('SecÃ£o desconhecida:', secao);
   }
 
   const links = document.querySelectorAll('.gerenciamento-nav .nav-link[data-section]');
@@ -1070,8 +1092,9 @@ const mostrarSecao = (secao) => {
   const titleMap = {
     reservas: 'Reservas',
     contas: 'Contas',
-    perfis: 'Gerenciamento da página',
-    gerenciamento: 'Gerenciamento da página'
+    perfis: 'Gerenciamento da pÃ¡gina',
+    gerenciamento: 'Gerenciamento da pÃ¡gina',
+    financeiro: 'Financeiro'
   };
 
   const titleEle = document.querySelector('.gerenciamento-header h1');
@@ -1079,7 +1102,7 @@ const mostrarSecao = (secao) => {
     titleEle.textContent = titleMap[secao] || 'Reservas';
   }
 
-  // Verifica permissão para seção solicitada
+  // Verifica permissÃ£o para seÃ§Ã£o solicitada
   if (!currentUserPermissions) {
     const role = normalizeRoleName(localStorage.getItem('userRole'));
     currentUserPermissions = DEFAULT_ROLE_PERMISSIONS[role] || DEFAULT_ROLE_PERMISSIONS.cliente_user;
@@ -1088,14 +1111,15 @@ const mostrarSecao = (secao) => {
   const sectionToTab = {
     reservas: 'Reservas',
     contas: 'Contas',
-    gerenciamento: 'Gerenciamento'
+    gerenciamento: 'Gerenciamento',
+    financeiro: 'Financeiro'
   };
 
   const allowedTabs = currentUserPermissions.tabs || [];
   const requestedTab = sectionToTab[secao] || 'Reservas';
 
   if (!allowedTabs.includes(requestedTab)) {
-    alert('Acesso negado à seção solicitada com seu nível de acesso.');
+    alert('Acesso negado Ã  seÃ§Ã£o solicitada com seu nÃ­vel de acesso.');
     const fallbackTab = allowedTabs[0] || 'Principal';
     if (fallbackTab === 'Reservas') {
       mostrarSecao('reservas');
@@ -1147,7 +1171,7 @@ const toggleReservaPausada = async (id, currentStatus) => {
     carregarGerenciamentoPagina();
   } catch (error) {
     console.error(error);
-    alert('Não foi possível atualizar o status da reserva.');
+    alert('NÃ£o foi possÃ­vel atualizar o status da reserva.');
   }
 };
 
@@ -1179,7 +1203,7 @@ const excluirReservaAgendamento = async (id) => {
     carregarGerenciamentoPagina();
   } catch (error) {
     console.error(error);
-    alert('Não foi possível excluir a reserva.');
+    alert('NÃ£o foi possÃ­vel excluir a reserva.');
   }
 };
 
@@ -1189,7 +1213,7 @@ const carregarGerenciamentoPagina = () => {
 
   const reservations = getCurrentReservationsForManagement();
   if (!reservations.length) {
-    tableBody.innerHTML = '<tr><td colspan="7" style="padding:0.75rem;">Nenhuma reserva disponível para gerenciamento.</td></tr>';
+    tableBody.innerHTML = '<tr><td colspan="7" style="padding:0.75rem;">Nenhuma reserva disponÃ­vel para gerenciamento.</td></tr>';
     return;
   }
 
@@ -1209,7 +1233,7 @@ const carregarGerenciamentoPagina = () => {
       <td data-label="Data">${ag.data || '-'}</td>
       <td data-label="Hora">${ag.hora || '-'}</td>
       <td data-label="Pessoas">${ag.qtd ?? ag.qtd_pessoas ?? '-'}</td>
-      <td data-label="Ações">-</td>
+      <td data-label="AÃ§Ãµes">-</td>
     `;
 
     tableBody.appendChild(row);
@@ -1224,7 +1248,7 @@ const carregarContasDoBanco = async () => {
   currentUserPermissions = currentUserPermissions || currentRolesConfig[role] || DEFAULT_ROLE_PERMISSIONS[role] || DEFAULT_ROLE_PERMISSIONS.cliente_user;
 
   if (!currentUserPermissions.manageContas) {
-    tableBody.innerHTML = '<tr><td colspan="9" style="padding:0.75rem;">Sem permissão para visualizar tabela de acessos.</td></tr>';
+    tableBody.innerHTML = '<tr><td colspan="9" style="padding:0.75rem;">Sem permissÃ£o para visualizar tabela de acessos.</td></tr>';
     const rolesManager = document.getElementById('rolesManager');
     if (rolesManager) rolesManager.style.display = 'none';
     return;
@@ -1232,7 +1256,7 @@ const carregarContasDoBanco = async () => {
 
   const currentUserEmail = localStorage.getItem('userEmail');
   if (!currentUserEmail) {
-    alert('Sessão expirada. Faça login novamente.');
+    alert('SessÃ£o expirada. FaÃ§a login novamente.');
     window.location.href = 'login.html';
     return;
   }
@@ -1243,7 +1267,7 @@ const carregarContasDoBanco = async () => {
     const response = await fetchWithApiFallback(`/get_acessos?email=${encodeURIComponent(currentUserEmail)}`);
 
     if (response.status === 403) {
-      tableBody.innerHTML = '<tr><td colspan="9" style="padding:0.75rem;">Acesso negado — somente admin/super_admin.</td></tr>';
+      tableBody.innerHTML = '<tr><td colspan="9" style="padding:0.75rem;">Acesso negado â€” somente admin/super_admin.</td></tr>';
       return;
     }
 
@@ -1270,9 +1294,9 @@ const carregarContasDoBanco = async () => {
         <td data-label="Sobrenome">${account.sobrenome}</td>
         <td data-label="Celular">${account.celular}</td>
         <td data-label="Role">${account.role}</td>
-        <td data-label="País">${account.pais_origem}</td>
-        <td data-label="Gênero">${account.genero}</td>
-        <td data-label="Ações">
+        <td data-label="PaÃ­s">${account.pais_origem}</td>
+        <td data-label="GÃªnero">${account.genero}</td>
+        <td data-label="AÃ§Ãµes">
           <button class="btn-book btn-edit-account" type="button">Editar</button>
           <button class="btn-book btn-danger btn-delete-account" type="button">Excluir</button>
         </td>
@@ -1285,13 +1309,13 @@ const carregarContasDoBanco = async () => {
       if (!canEditOthers) {
         if (editBtn) {
           editBtn.disabled = true;
-          editBtn.title = 'Sem permissão para alterar outros perfis';
+          editBtn.title = 'Sem permissÃ£o para alterar outros perfis';
           editBtn.style.opacity = '0.5';
           editBtn.style.cursor = 'not-allowed';
         }
         if (deleteBtn) {
           deleteBtn.disabled = true;
-          deleteBtn.title = 'Sem permissão para excluir outros perfis';
+          deleteBtn.title = 'Sem permissÃ£o para excluir outros perfis';
           deleteBtn.style.opacity = '0.5';
           deleteBtn.style.cursor = 'not-allowed';
         }
@@ -1311,11 +1335,11 @@ const carregarContasDoBanco = async () => {
 
           if (!deleteResp.ok) {
             const errorText = await deleteResp.text().catch(() => '');
-            alert(`Falha ao excluir usuário: ${deleteResp.status} ${errorText}`);
+            alert(`Falha ao excluir usuÃ¡rio: ${deleteResp.status} ${errorText}`);
             return;
           }
 
-          alert('Conta excluída com sucesso.');
+          alert('Conta excluÃ­da com sucesso.');
           carregarContasDoBanco();
         });
       }
@@ -1323,10 +1347,10 @@ const carregarContasDoBanco = async () => {
       tableBody.appendChild(row);
     });
 
-    // Atualiza gráfico de países com base no cadastro de contas
+    // Atualiza grÃ¡fico de paÃ­ses com base no cadastro de contas
     updateCountryPie(accounts);
 
-    // Apenas quem pode gerenciar perfis deve visualizar/editar níveis de acesso.
+    // Apenas quem pode gerenciar perfis deve visualizar/editar nÃ­veis de acesso.
     if (currentUserPermissions.managePerfis) {
       carregarNiveisDeAcesso();
     } else {
@@ -1335,23 +1359,23 @@ const carregarContasDoBanco = async () => {
     }
   } catch (error) {
     console.error('Erro ao carregar contas:', error);
-    tableBody.innerHTML = `<tr><td colspan="9" style="padding:0.75rem;">Erro de conexão: ${error.message || error}</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="9" style="padding:0.75rem;">Erro de conexÃ£o: ${error.message || error}</td></tr>`;
   }
 };
 
 const renderRolesTable = (permissions) => {
-  // Não usa mais tabela options internas (apenas select + checkboxes)
+  // NÃ£o usa mais tabela options internas (apenas select + checkboxes)
   currentRolesConfig = permissions;
 };
 
 const renderRoleDetails = (role, perms) => {
-  // Não necessário; o select + checkboxes são usados em vez de painel separado.
+  // NÃ£o necessÃ¡rio; o select + checkboxes sÃ£o usados em vez de painel separado.
 };
 
 const carregarNiveisDeAcesso = async () => {
   const currentUserEmail = localStorage.getItem('userEmail');
   if (!currentUserEmail) {
-    alert('Sessão expirada. Faça login novamente.');
+    alert('SessÃ£o expirada. FaÃ§a login novamente.');
     window.location.href = 'login.html';
     return;
   }
@@ -1359,11 +1383,11 @@ const carregarNiveisDeAcesso = async () => {
   try {
     const response = await fetchWithApiFallback(`/get_role_permissions?email=${encodeURIComponent(currentUserEmail)}`);
     if (response.status === 403) {
-      console.warn('Acesso negado para get_role_permissions, usando padrão local.');
+      console.warn('Acesso negado para get_role_permissions, usando padrÃ£o local.');
       currentRolesConfig = DEFAULT_ROLE_PERMISSIONS;
     } else if (!response.ok) {
       const errorText = await response.text().catch(() => '');
-      console.error('Erro ao buscar níveis de acesso', response.status, response.statusText, errorText);
+      console.error('Erro ao buscar nÃ­veis de acesso', response.status, response.statusText, errorText);
       currentRolesConfig = DEFAULT_ROLE_PERMISSIONS;
     } else {
       const payload = await response.json();
@@ -1378,22 +1402,22 @@ const carregarNiveisDeAcesso = async () => {
   applyAccessControls(currentUserPermissions);
 
   if (!Array.isArray(currentUserPermissions.pages) || !currentUserPermissions.pages.includes('Gerenciamento')) {
-    alert('Seu nível de acesso não permite abrir esta página.');
+    alert('Seu nÃ­vel de acesso nÃ£o permite abrir esta pÃ¡gina.');
     window.location.href = '../index.html';
     return;
   }
 
   selectRole(Object.keys(currentRolesConfig)[0] || 'cliente_user');
   } catch (error) {
-    console.error('Erro ao carregar níveis de acesso:', error);
-    rolesBody.innerHTML = `<tr><td colspan="4" style="padding:0.75rem;">Erro de conexão: ${error.message || error}</td></tr>`;
+    console.error('Erro ao carregar nÃ­veis de acesso:', error);
+    rolesBody.innerHTML = `<tr><td colspan="4" style="padding:0.75rem;">Erro de conexÃ£o: ${error.message || error}</td></tr>`;
   }
 };
 
 const salvarNiveisDeAcesso = async () => {
   const currentUserEmail = localStorage.getItem('userEmail');
   if (!currentUserEmail) {
-    alert('Sessão expirada. Faça login novamente.');
+    alert('SessÃ£o expirada. FaÃ§a login novamente.');
     window.location.href = 'login.html';
     return;
   }
@@ -1409,18 +1433,18 @@ const salvarNiveisDeAcesso = async () => {
 
     if (!response.ok) {
       const errorText = await response.text().catch(() => '');
-      alert(`Falha ao salvar níveis: ${response.status} ${errorText}`);
+      alert(`Falha ao salvar nÃ­veis: ${response.status} ${errorText}`);
       return;
     }
 
     const data = await response.json();
-    alert('Níveis de acesso salvos com sucesso.');
+    alert('NÃ­veis de acesso salvos com sucesso.');
     if (data.permissions) {
       carregarNiveisDeAcesso();
     }
   } catch (error) {
-    console.error('Erro ao salvar níveis de acesso:', error);
-    alert('Erro ao salvar níveis de acesso.');
+    console.error('Erro ao salvar nÃ­veis de acesso:', error);
+    alert('Erro ao salvar nÃ­veis de acesso.');
   }
 };
 
@@ -1433,7 +1457,7 @@ const resetarNiveisDeAcesso = async () => {
 
   const currentUserEmail = localStorage.getItem('userEmail');
   if (!currentUserEmail) {
-    alert('Sessão expirada. Faça login novamente.');
+    alert('SessÃ£o expirada. FaÃ§a login novamente.');
     window.location.href = 'login.html';
     return;
   }
@@ -1447,19 +1471,19 @@ const resetarNiveisDeAcesso = async () => {
 
     if (!response.ok) {
       const errorText = await response.text().catch(() => '');
-      alert(`Falha ao resetar níveis: ${response.status} ${errorText}`);
+      alert(`Falha ao resetar nÃ­veis: ${response.status} ${errorText}`);
       return;
     }
 
-    alert('Níveis resetados para padrão.');
+    alert('NÃ­veis resetados para padrÃ£o.');
     carregarNiveisDeAcesso();
   } catch (error) {
-    console.error('Erro ao resetar níveis de acesso:', error);
-    alert('Erro ao resetar níveis de acesso.');
+    console.error('Erro ao resetar nÃ­veis de acesso:', error);
+    alert('Erro ao resetar nÃ­veis de acesso.');
   }
 };
 
-// roleToPerms / permsToRole usadps no modal de edição de perfil
+// roleToPerms / permsToRole usadps no modal de ediÃ§Ã£o de perfil
 const roleToPerms = (role) => {
   const base = currentRolesConfig[role] || DEFAULT_ROLE_PERMISSIONS[role] || {
     manageReservas: false,
@@ -1585,7 +1609,7 @@ const setupAccountModalEvents = () => {
 
       const currentUserEmail = localStorage.getItem('userEmail');
       if (!currentUserEmail) {
-        alert('Sessão expirada. Faça login novamente.');
+        alert('SessÃ£o expirada. FaÃ§a login novamente.');
         window.location.href = 'login.html';
         return;
       }
@@ -1602,7 +1626,7 @@ const setupAccountModalEvents = () => {
         return;
       }
 
-      alert('Perfil excluído com sucesso.');
+      alert('Perfil excluÃ­do com sucesso.');
       closeAccountModal();
       carregarContasDoBanco();
     });
@@ -1647,19 +1671,22 @@ const attachSectionLinks = () => {
 
       if (rawSection === 'contas' || rawSection === 'conta') {
         section = 'contas';
-      } else if (rawSection === 'gerenciamento' || rawSection === 'perfis' || rawSection === 'gerenciamento da página') {
+      } else if (rawSection === 'gerenciamento' || rawSection === 'perfis' || rawSection === 'gerenciamento da pÃ¡gina') {
         section = 'gerenciamento';
+      } else if (rawSection === 'financeiro') {
+        section = 'financeiro';
       }
 
-      console.log('[Gerenciamento] Seção escolhida:', rawSection, '->', section);
+      console.log('[Gerenciamento] SeÃ§Ã£o escolhida:', rawSection, '->', section);
 
       const requiredTab = section === 'reservas' ? 'Reservas'
         : section === 'contas' ? 'Contas'
         : section === 'gerenciamento' ? 'Gerenciamento'
+        : section === 'financeiro' ? 'Financeiro'
         : null;
 
       if (requiredTab && !(currentUserPermissions?.tabs || []).includes(requiredTab)) {
-        alert('Acesso bloqueado para esta aba com base no seu nível de acesso.');
+        alert('Acesso bloqueado para esta aba com base no seu nÃ­vel de acesso.');
         return;
       }
 
@@ -1670,6 +1697,8 @@ const attachSectionLinks = () => {
       } else if (section === 'gerenciamento') {
         mostrarSecao('gerenciamento');
         carregarAgendamentosDoBanco();
+      } else if (section === 'financeiro') {
+        mostrarSecao('financeiro');
       } else {
         mostrarSecao('reservas');
         carregarAgendamentosDoBanco();
@@ -1695,12 +1724,12 @@ const setupRolesControls = () => {
   const addRoleBtn = document.getElementById('addRoleBtn');
   if (addRoleBtn) {
     addRoleBtn.addEventListener('click', () => {
-      const roleName = prompt('Novo nível de acesso (role name):');
+      const roleName = prompt('Novo nÃ­vel de acesso (role name):');
       if (!roleName) return;
       const normalized = String(roleName).trim();
       if (!normalized) return;
       if (currentRolesConfig[normalized]) {
-        alert('Role já existe.');
+        alert('Role jÃ¡ existe.');
         return;
       }
 
@@ -1716,11 +1745,11 @@ const setupRolesControls = () => {
 
 const openEditModalFromBackend = (ag) => {
   if (!currentUserPermissions?.manageReservas) {
-    console.warn('Permissão negada para editar reservas:', ag?.id);
+    console.warn('PermissÃ£o negada para editar reservas:', ag?.id);
     return;
   }
 
-  // Abre o modal de edição usando os dados retornados do backend
+  // Abre o modal de ediÃ§Ã£o usando os dados retornados do backend
   const modal = document.getElementById('reservationModal');
   if (!modal) return;
 
@@ -1738,12 +1767,12 @@ const openEditModalFromBackend = (ag) => {
   const modalDelete = document.getElementById('modalDelete');
 
   if (modalTour) {
-    // carregar opções de tour (mesmo conjunto usado em openEditModal)
+    // carregar opÃ§Ãµes de tour (mesmo conjunto usado em openEditModal)
     const localTours = getReservations().map(r => r.tour).filter(Boolean);
     const baseTours = [
-      'Centro Histórico',
+      'Centro HistÃ³rico',
       'Santa Teresa',
-      'Pedra do Sal: Samba e Herança Afrobrasileira',
+      'Pedra do Sal: Samba e HeranÃ§a Afrobrasileira',
       'Copacabana e Ipanema',
       'Favela Tour (Morro Dona Marta)',
       'Tour das Praias',
@@ -1766,9 +1795,9 @@ const openEditModalFromBackend = (ag) => {
   }
   if (modalTime && ag.hora) modalTime.value = ag.hora;
 
-  // garantir idiomas padrões disponíveis na seleção e marcar idioma atual
+  // garantir idiomas padrÃµes disponÃ­veis na seleÃ§Ã£o e marcar idioma atual
   if (modalLanguage) {
-    const baseLanguages = ['Português', 'Inglês', 'Espanhol'];
+    const baseLanguages = ['PortuguÃªs', 'InglÃªs', 'Espanhol'];
     const otherLanguages = getReservations().flatMap(r => (r.language || '').split(/[,;]+/).map(l => l.trim()).filter(Boolean));
     const languages = [...new Set([...baseLanguages, ...otherLanguages, ag.idioma].filter(Boolean))];
     const selectedLanguage = ag.idioma || '';
@@ -1827,7 +1856,7 @@ const initReservationManagement = () => {
     whatsappLinkBtn.addEventListener('click', () => {
       const number = normalizeWhatsappNumber(modalPhone?.value || '');
       if (!number) {
-        window.alert('Informe um número de celular válido para abrir no WhatsApp.');
+        window.alert('Informe um nÃºmero de celular vÃ¡lido para abrir no WhatsApp.');
         return;
       }
       window.open(`https://wa.me/${number}`, '_blank');
@@ -1849,8 +1878,8 @@ const initReservationManagement = () => {
     return { from, to, status, tour, modality };
   };
 
-  // Não aplica filtro de data automático na abertura.
-  // O usuário define o período manualmente quando desejar.
+  // NÃ£o aplica filtro de data automÃ¡tico na abertura.
+  // O usuÃ¡rio define o perÃ­odo manualmente quando desejar.
 
   // Ensure default filter options are set
   if (filterStatus) filterStatus.value = 'all';
@@ -1871,7 +1900,7 @@ const initReservationManagement = () => {
   const parseLanguages = (text) => {
     if (!text) return [];
     return text
-      .split(/[,;]+/) // separa por vírgula ou ponto-e-vírgula
+      .split(/[,;]+/) // separa por vÃ­rgula ou ponto-e-vÃ­rgula
       .map(t => t.trim())
       .filter(Boolean);
   };
@@ -1887,8 +1916,8 @@ const initReservationManagement = () => {
       digits = digits.replace(/^0+/, '');
     }
 
-    // Se já veio com DDI (ex: 55, 1, 44), mantém como está
-    // Se for um número local curto (até 11 dígitos), assume Brasil (55)
+    // Se jÃ¡ veio com DDI (ex: 55, 1, 44), mantÃ©m como estÃ¡
+    // Se for um nÃºmero local curto (atÃ© 11 dÃ­gitos), assume Brasil (55)
     if (digits.length <= 11) {
       digits = digits.replace(/^0+/, '');
       if (!digits.startsWith('55')) {
@@ -1903,16 +1932,16 @@ const initReservationManagement = () => {
     const reservations = getReservations();
 
     const indexTours = [
-      'Centro Histórico',
+      'Centro HistÃ³rico',
       'Santa Teresa',
-      'Pedra do Sal: Samba e Herança Afrobrasileira',
+      'Pedra do Sal: Samba e HeranÃ§a Afrobrasileira',
       'Copacabana e Ipanema',
       'Favela Tour (Morro Dona Marta)',
       'Tour das Praias',
       'Tour Cultural do Centro'
     ];
 
-    const indexLanguages = ['Português', 'Inglês', 'Espanhol'];
+    const indexLanguages = ['PortuguÃªs', 'InglÃªs', 'Espanhol'];
 
     const reservationTours = [...new Set(reservations.map(r => r.tour).filter(Boolean))];
     const tours = [...new Set([...indexTours, ...reservationTours])].sort();
@@ -2011,7 +2040,7 @@ const initReservationManagement = () => {
 
     const when = new Date(`${dateStr}T${timeStr}`);
     if (Number.isNaN(when.getTime())) {
-      window.alert('Data/hora inválida. Use AAAA-MM-DD e HH:MM.');
+      window.alert('Data/hora invÃ¡lida. Use AAAA-MM-DD e HH:MM.');
       return;
     }
 
@@ -2048,15 +2077,15 @@ const initReservationManagement = () => {
         body: JSON.stringify(novaReserva)
       });
 
-      const result = await response.json().catch(() => ({ message: 'Resposta não JSON' }));
+      const result = await response.json().catch(() => ({ message: 'Resposta nÃ£o JSON' }));
 
       if (response.ok) {
         alert('Reserva salva no banco de dados com sucesso!');
 
-        // Atualiza tabela do backend após inclusão
+        // Atualiza tabela do backend apÃ³s inclusÃ£o
         carregarAgendamentosDoBanco();
 
-        // Sincroniza localmente também (opcional)
+        // Sincroniza localmente tambÃ©m (opcional)
         const reservations = getReservations();
         const reservationData = {
           tour: novaReserva.tour,
@@ -2084,14 +2113,14 @@ const initReservationManagement = () => {
         setReservations(reservations);
         closeModal();
         render();
-        // Não forçar reload para a atualização instantânea já ser feita pelo carregarAgendamentosDoBanco
+        // NÃ£o forÃ§ar reload para a atualizaÃ§Ã£o instantÃ¢nea jÃ¡ ser feita pelo carregarAgendamentosDoBanco
       } else {
         const message = result?.message || `Status ${response.status}`;
         alert('Erro ao salvar: ' + message);
       }
     } catch (error) {
-      console.error('Erro na requisição:', error);
-      alert('Não foi possível conectar ao servidor. ' + (error.message || ''));       
+      console.error('Erro na requisiÃ§Ã£o:', error);
+      alert('NÃ£o foi possÃ­vel conectar ao servidor. ' + (error.message || ''));       
     }
   };
 
@@ -2113,7 +2142,7 @@ const initReservationManagement = () => {
         if (!response.ok) {
           const result = await response.json().catch(() => ({}));
           const msg = result?.message || `Status ${response.status}`;
-          alert('Não foi possível excluir no servidor: ' + msg);
+          alert('NÃ£o foi possÃ­vel excluir no servidor: ' + msg);
           return;
         }
 
@@ -2121,10 +2150,10 @@ const initReservationManagement = () => {
         pendingUpdateId = null;
         activeEditIndex = null;
 
-        // Recarrega do backend para garantir consistência
+        // Recarrega do backend para garantir consistÃªncia
         carregarAgendamentosDoBanco();
       } catch (error) {
-        console.error('Erro de exclusão:', error);
+        console.error('Erro de exclusÃ£o:', error);
         alert('Erro ao excluir no servidor: ' + (error.message || ''));        
       }
     } else {
@@ -2145,7 +2174,7 @@ const initReservationManagement = () => {
     deleteConfirmation.classList.remove('hidden');
     deleteConfirmation.style.display = 'block';
     deleteSlider.value = '0';
-    deleteSliderLabel.textContent = 'Arraste até o final';
+    deleteSliderLabel.textContent = 'Arraste atÃ© o final';
     modalDeleteConfirm.disabled = true;
   };
 
@@ -2172,7 +2201,7 @@ const initReservationManagement = () => {
         deleteSliderLabel.textContent = 'Solte para confirmar';
         if (modalDeleteConfirm) modalDeleteConfirm.disabled = false;
       } else {
-        deleteSliderLabel.textContent = 'Arraste até o final';
+        deleteSliderLabel.textContent = 'Arraste atÃ© o final';
         if (modalDeleteConfirm) modalDeleteConfirm.disabled = true;
       }
     });
@@ -2421,12 +2450,124 @@ const initReservationManagement = () => {
   render();
 };
 
+const fetchCurrentUsdBrlRate = async () => {
+  const rateInput = document.getElementById('usdRate');
+  if (!rateInput) return null;
+
+  const endpoints = [
+    'https://open.er-api.com/v6/latest/USD',
+    'https://api.exchangerate-api.com/v4/latest/USD'
+  ];
+
+  for (const url of endpoints) {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+      const rate = Number(data?.rates?.BRL);
+      if (!Number.isFinite(rate) || rate <= 0) {
+        throw new Error('CotaÃ§Ã£o invÃ¡lida recebida');
+      }
+
+      rateInput.value = rate.toFixed(4);
+      return rate;
+    } catch (error) {
+      console.warn('[Gerenciamento] Falha ao buscar cotaÃ§Ã£o USD/BRL em', url, error);
+    }
+  }
+
+  if (rateInput) {
+    rateInput.value = '5.0000';
+  }
+  return 5.0;
+};
+
+const initCurrencyConverter = () => {
+  const brlInput = document.getElementById('brlAmount');
+  const rateInput = document.getElementById('usdRate');
+  const resultInput = document.getElementById('usdResult');
+
+  if (!brlInput || !rateInput || !resultInput) return;
+
+  let lastEdited = 'brl';
+
+  const parseValue = (value) => {
+    const normalized = String(value || '')
+      .replace(/\s/g, '')
+      .replace(',', '.')
+      .replace(/[^0-9.\-]/g, '');
+    return Number(normalized);
+  };
+
+  const convertToUsd = () => {
+    if (String(brlInput.value || '').trim() === '') {
+      resultInput.value = '';
+      return;
+    }
+
+    const brlValue = parseValue(brlInput.value);
+    const rateValue = parseValue(rateInput.value);
+
+    if (!Number.isFinite(brlValue) || brlValue < 0 || !Number.isFinite(rateValue) || rateValue <= 0) {
+      resultInput.value = '';
+      return;
+    }
+
+    const usdValue = brlValue / rateValue;
+    resultInput.value = usdValue.toFixed(2);
+  };
+
+  const convertToBrl = () => {
+    const usdValue = parseValue(resultInput.value);
+    const rateValue = parseValue(rateInput.value);
+
+    if (!Number.isFinite(usdValue) || usdValue < 0 || !Number.isFinite(rateValue) || rateValue <= 0) {
+      brlInput.value = '';
+      return;
+    }
+
+    const brlValue = usdValue * rateValue;
+    brlInput.value = brlValue.toFixed(2);
+  };
+
+  const convert = () => {
+    if (lastEdited === 'usd') {
+      convertToBrl();
+    } else {
+      convertToUsd();
+    }
+  };
+
+  window.convertCurrency = convert;
+
+  brlInput.addEventListener('input', () => {
+    lastEdited = 'brl';
+    convertToUsd();
+  });
+  resultInput.addEventListener('input', () => {
+    lastEdited = 'usd';
+    convertToBrl();
+  });
+  rateInput.addEventListener('input', () => {
+    if (lastEdited === 'usd') {
+      convertToBrl();
+    } else {
+      convertToUsd();
+    }
+  });
+
+  fetchCurrentUsdBrlRate().then(() => convert()).catch(() => convert());
+};
+
 window.addEventListener('DOMContentLoaded', () => {
   const role = localStorage.getItem('userRole');
   currentUserPermissions = getEffectivePermissionsForRole(role);
 
   if (!currentUserPermissions?.manageReservas) {
-    alert('Acesso negado: sua conta não possui permissão para gerenciar reservas.');
+    alert('Acesso negado: sua conta nÃ£o possui permissÃ£o para gerenciar reservas.');
     window.location.href = '/';
     return;
   }
@@ -2435,11 +2576,12 @@ window.addEventListener('DOMContentLoaded', () => {
 
   if (document.getElementById('reservationsBody')) {
     initReservationManagement();
+    initCurrencyConverter();
     attachSectionLinks();
     setupAccountModalEvents();
     setupRolesControls();
 
-    // Inicialmente carregamos apenas a aba de reservas (sem pré-carregar contas ou gerenciamento)
+    // Inicialmente carregamos apenas a aba de reservas (sem prÃ©-carregar contas ou gerenciamento)
     mostrarSecao('reservas');
     carregarAgendamentosDoBanco();
   }
@@ -2534,7 +2676,7 @@ window.addEventListener('DOMContentLoaded', () => {
         if (rawSection === 'contas' || rawSection === 'conta') {
           mostrarSecao('contas');
           carregarContasDoBanco();
-        } else if (rawSection === 'gerenciamento' || rawSection === 'perfis' || rawSection === 'gerenciamento da página') {
+        } else if (rawSection === 'gerenciamento' || rawSection === 'perfis' || rawSection === 'gerenciamento da pÃ¡gina') {
           mostrarSecao('gerenciamento');
           carregarAgendamentosDoBanco();
         } else {
@@ -2584,6 +2726,9 @@ window.addEventListener('DOMContentLoaded', () => {
             closeMobileMenu();
             window.location.href = '../index.html';
           } else if (action === 'my-data') {
+            closeMobileMenu();
+            window.location.href = '../index.html';
+          } else if (action === 'principal' || action === 'manage') {
             closeMobileMenu();
             window.location.href = '../index.html';
           } else if (action === 'logout') {
@@ -2735,12 +2880,18 @@ window.addEventListener('DOMContentLoaded', () => {
           return;
         }
 
+        if (action === 'principal' || action === 'manage') {
+          window.location.href = '../index.html';
+          closeProfileMenu();
+          return;
+        }
+
         if (action === 'logout') {
           localStorage.removeItem('userRole');
           localStorage.removeItem('userEmail');
           localStorage.removeItem('userName');
           localStorage.removeItem('authToken');
-          alert('Logout realizado. A página será recarregada.');
+          alert('Logout realizado. A pÃ¡gina serÃ¡ recarregada.');
           window.location.href = '../index.html';
           return;
         }
@@ -2750,7 +2901,7 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Parallax - lógica copiada de Riodejaneiro.js (fundo fixo + movimento suave)
+  // Parallax - lÃ³gica copiada de Riodejaneiro.js (fundo fixo + movimento suave)
   let scheduled = false;
   const updateBackground = () => {
     const shift = window.scrollY * 0.2;
@@ -2765,3 +2916,4 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 
 });
+
