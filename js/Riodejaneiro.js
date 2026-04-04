@@ -3,7 +3,7 @@
 (() => {
     const pageTranslations = {
         pt: {
-            hero_title: 'Tuor no<br><span class="rio-city-highlight">RIO DE JANEIRO</span>',
+            hero_title: 'Tour no<br><span class="rio-city-highlight">RIO DE JANEIRO</span>',
             hero_location: 'Rio de Janeiro - Brasil',
             hero_desc: 'Seja bem-vindo à Cidade Maravilhosa! O Rio dos amores e da beleza inconfundível te espera de braços abertos.',
             hero_button: 'Conhecer Tours',
