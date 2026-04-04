@@ -233,11 +233,13 @@
                             <th>Idiomas</th>
                             <th>Encontro</th>
                             <th>Identificação</th>
-                            <th>Ações</th>
+                            <th>Link</th>
+                            <th>Valor</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody id="tourManagementBody">
-                        <tr><td colspan="6" style="padding:0.75rem;">Nenhum tour carregado.</td></tr>
+                        <tr><td colspan="8" style="padding:0.75rem;">Nenhum tour carregado.</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -342,10 +344,14 @@
               Nome
               <input type="text" id="tourModalName" required />
             </label>
-            <label>
-              Idiomas
-              <input type="text" id="tourModalLanguages" />
-            </label>
+            <fieldset>
+              <legend>Idiomas</legend>
+              <div class="checkbox-row">
+                <label><input type="checkbox" id="tourModalLanguagePt" value="Português" /> Português</label>
+                <label><input type="checkbox" id="tourModalLanguageEn" value="Inglês" /> Inglês</label>
+                <label><input type="checkbox" id="tourModalLanguageEs" value="Espanhol" /> Espanhol</label>
+              </div>
+            </fieldset>
             <label>
               Encontro
               <input type="text" id="tourModalMeeting" />
@@ -355,6 +361,14 @@
               <input type="text" id="tourModalIdentification" />
             </label>
             <label>
+              Link
+              <input type="url" id="tourModalLink" placeholder="https://..." />
+            </label>
+            <label>
+              Valor
+              <input type="number" id="tourModalValue" min="0" step="0.01" placeholder="0.00" />
+            </label>
+            <label>
               Status
               <select id="tourModalStatus">
                 <option value="Ativo">Ativo</option>
@@ -362,6 +376,8 @@
               </select>
             </label>
             <div class="modal-actions">
+              <button type="button" id="tourModalPause" class="btn-book" style="background:#f59e0b; color:#fff;">Pausar</button>
+              <button type="button" id="tourModalDelete" class="btn-book btn-danger">Excluir</button>
               <button type="button" id="tourModalCancel" class="btn-book">Cancelar</button>
               <button type="button" id="tourModalSave" class="btn-book">Salvar</button>
             </div>

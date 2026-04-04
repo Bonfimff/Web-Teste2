@@ -277,7 +277,82 @@ const setPageTours = (tours) => {
   }
 };
 
+const normalizeTourStatus = (status) => {
+  const raw = String(status || 'ativo').trim().toLowerCase();
+  if (raw === 'pausado') return 'Pausado';
+  if (raw === 'inativo') return 'Inativo';
+  return 'Ativo';
+};
+
+const mapBackendTourToPageTour = (tour) => {
+  return {
+    id: String(tour?.id ?? ''),
+    name: tour?.nome_tour || tour?.name || '',
+    languages: tour?.idiomas || tour?.languages || '',
+    meeting: tour?.encontro || tour?.meeting || '',
+    identification: tour?.identificacao || tour?.identification || '',
+    link: tour?.link_tour || tour?.link || '',
+    value: tour?.valor ?? tour?.value ?? 0,
+    status: normalizeTourStatus(tour?.estado || tour?.status)
+  };
+};
+
+const fetchPageToursFromBackend = async () => {
+  const currentUserEmail = localStorage.getItem('userEmail');
+  if (!currentUserEmail) return null;
+
+  try {
+    const response = await fetchWithApiFallback(`/get_tours_pagina?email=${encodeURIComponent(currentUserEmail)}`);
+    if (!response.ok) {
+      const detail = await response.text().catch(() => '');
+      console.warn('Falha ao carregar tours_pagina do backend, usando fallback local:', response.status, detail);
+      return null;
+    }
+
+    const payload = await response.json();
+    if (!Array.isArray(payload)) {
+      return null;
+    }
+
+    const mapped = payload.map(mapBackendTourToPageTour);
+    setPageTours(mapped);
+    return mapped;
+  } catch (error) {
+    console.warn('Erro ao buscar tours_pagina. Fallback local será usado.', error);
+    return null;
+  }
+};
+
+const formatTourValueBRL = (value) => {
+  const numeric = Number(value);
+  const safeNumber = Number.isFinite(numeric) ? numeric : 0;
+  return safeNumber.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+};
+
 let currentlyEditingTourId = null;
+
+const parseTourLanguages = (value) => {
+  if (!value) return [];
+  return value
+    .split(/[,;]+/) 
+    .map(part => part.trim())
+    .filter(Boolean);
+};
+
+const setTourModalLanguages = (value) => {
+  const selected = parseTourLanguages(value);
+  document.getElementById('tourModalLanguagePt').checked = selected.includes('Português');
+  document.getElementById('tourModalLanguageEn').checked = selected.includes('Inglês');
+  document.getElementById('tourModalLanguageEs').checked = selected.includes('Espanhol');
+};
+
+const getTourModalLanguages = () => {
+  return ['tourModalLanguagePt', 'tourModalLanguageEn', 'tourModalLanguageEs']
+    .map(id => document.getElementById(id))
+    .filter(el => el && el.checked)
+    .map(el => el.value)
+    .join(', ');
+};
 
 const openTourEditModal = (tourData) => {
   const modal = document.getElementById('tourEditModal');
@@ -287,10 +362,17 @@ const openTourEditModal = (tourData) => {
 
   document.getElementById('tourModalId').textContent = tourData.id || '--';
   document.getElementById('tourModalName').value = tourData.name || '';
-  document.getElementById('tourModalLanguages').value = tourData.languages || '';
-  document.getElementById('tourModalMeeting').value = tourData.meeting || '';
-  document.getElementById('tourModalIdentification').value = tourData.identification || '';
-  document.getElementById('tourModalStatus').value = tourData.status || 'Ativo';
+  setTourModalLanguages(tourData.languages || tourData.idiomas || '');
+  document.getElementById('tourModalMeeting').value = tourData.meeting || tourData.encontro || '';
+  document.getElementById('tourModalIdentification').value = tourData.identification || tourData.identificacao || '';
+  document.getElementById('tourModalLink').value = tourData.link || tourData.link_tour || '';
+  document.getElementById('tourModalValue').value = tourData.value != null ? tourData.value : tourData.valor != null ? tourData.valor : '';
+  document.getElementById('tourModalStatus').value = tourData.status || tourData.estado || 'Ativo';
+
+  const pauseButton = document.getElementById('tourModalPause');
+  if (pauseButton) {
+    pauseButton.textContent = (tourData.status || tourData.estado || 'Ativo') === 'Pausado' ? 'Retomar' : 'Pausar';
+  }
 
   modal.classList.remove('hidden');
 };
@@ -302,43 +384,110 @@ const closeTourEditModal = () => {
   currentlyEditingTourId = null;
 };
 
-const saveTourEditModal = () => {
-  const id = currentlyEditingTourId;
-  if (!id) return;
-
-  const name = document.getElementById('tourModalName').value.trim();
-  const languages = document.getElementById('tourModalLanguages').value.trim();
-  const meeting = document.getElementById('tourModalMeeting').value.trim();
-  const identification = document.getElementById('tourModalIdentification').value.trim();
-  const status = document.getElementById('tourModalStatus').value;
-
+const toggleTourPauseFromModal = () => {
+  if (!currentlyEditingTourId) return;
   const tours = getPageTours();
   const updatedTours = tours.map(t => {
-    if (String(t.id) === String(id)) {
-      return {
-        ...t,
-        name,
-        languages,
-        meeting,
-        identification,
-        status
-      };
-    }
-    return t;
+    if (String(t.id) !== String(currentlyEditingTourId)) return t;
+    const nextStatus = ((t.status || 'Ativo').toLowerCase() === 'pausado') ? 'Ativo' : 'Pausado';
+    return { ...t, status: nextStatus };
   });
+  setPageTours(updatedTours);
+  const updatedTour = updatedTours.find(t => String(t.id) === String(currentlyEditingTourId));
+  const statusSelect = document.getElementById('tourModalStatus');
+  const pauseButton = document.getElementById('tourModalPause');
+  if (statusSelect && updatedTour) statusSelect.value = updatedTour.status || 'Ativo';
+  if (pauseButton && updatedTour) {
+    pauseButton.textContent = (updatedTour.status || 'Ativo') === 'Pausado' ? 'Retomar' : 'Pausar';
+  }
+  carregarToursGerenciamento();
+};
 
+const deleteTourFromModal = () => {
+  if (!currentlyEditingTourId) return;
+  const tours = getPageTours();
+  const tourToDelete = tours.find(t => String(t.id) === String(currentlyEditingTourId));
+  if (!tourToDelete) return;
+  if (!confirm(`Excluir tour "${tourToDelete.name || tourToDelete.id}"?`)) return;
+  const updatedTours = tours.filter(t => String(t.id) !== String(currentlyEditingTourId));
   setPageTours(updatedTours);
   closeTourEditModal();
   carregarToursGerenciamento();
 };
 
-const carregarToursGerenciamento = () => {
-  const tours = getPageTours();
+const saveTourEditModal = async () => {
+  const id = currentlyEditingTourId;
+  if (!id) return;
+
+  const name = document.getElementById('tourModalName').value.trim();
+  const languages = getTourModalLanguages();
+  const meeting = document.getElementById('tourModalMeeting').value.trim();
+  const identification = document.getElementById('tourModalIdentification').value.trim();
+  const link = document.getElementById('tourModalLink').value.trim();
+  const value = parseFloat(document.getElementById('tourModalValue').value);
+  const status = document.getElementById('tourModalStatus').value;
+  const adminEmail = localStorage.getItem('userEmail') || '';
+
+  const payload = {
+    id,
+    nome_tour: name,
+    idiomas: languages,
+    encontro: meeting,
+    identificacao: identification,
+    link_tour: link,
+    valor: Number.isFinite(value) ? value : 0,
+    estado: status,
+    admin_email: adminEmail
+  };
+
+  try {
+    const response = await fetchWithApiFallback('/update_tour_pagina', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      alert(`Falha ao atualizar tour: ${errorData.message || response.statusText}`);
+      return;
+    }
+
+    const tours = getPageTours();
+    const updatedTours = tours.map(t => {
+      if (String(t.id) === String(id)) {
+        return {
+          ...t,
+          name,
+          languages,
+          meeting,
+          identification,
+          link,
+          value: Number.isFinite(value) ? value : (t.value ?? 0),
+          status
+        };
+      }
+      return t;
+    });
+
+    setPageTours(updatedTours);
+    closeTourEditModal();
+    carregarToursGerenciamento();
+    alert('Tour atualizado com sucesso.');
+  } catch (error) {
+    console.error('Erro ao salvar tour:', error);
+    alert('Erro ao salvar tour. Verifique sua conexão e tente novamente.');
+  }
+};
+
+const carregarToursGerenciamento = async () => {
+  const remoteTours = await fetchPageToursFromBackend();
+  const tours = Array.isArray(remoteTours) ? remoteTours : getPageTours();
   const tableBody = document.getElementById('tourManagementBody');
   if (!tableBody) return;
 
   if (!tours.length) {
-    tableBody.innerHTML = '<tr><td colspan="6" style="padding:0.75rem;">Nenhum tour carregado.</td></tr>';
+    tableBody.innerHTML = '<tr><td colspan="8" style="padding:0.75rem;">Nenhum tour carregado.</td></tr>';
     return;
   }
 
@@ -347,42 +496,23 @@ const carregarToursGerenciamento = () => {
   tours.forEach((tour, idx) => {
     const row = document.createElement('tr');
     row.dataset.id = tour.id || `tour-${idx}`;
+    const hasLink = Boolean(String(tour.link || '').trim());
+    const linkHtml = hasLink
+      ? `<a href="${tour.link}" target="_blank" rel="noopener noreferrer">Abrir link</a>`
+      : '-';
+
     row.innerHTML = `
       <td data-label="ID">${tour.id || `tour-${idx}`}</td>
       <td data-label="Tour">${tour.name || '-'}</td>
       <td data-label="Idiomas">${tour.languages || '-'}</td>
       <td data-label="Encontro">${tour.meeting || '-'}</td>
       <td data-label="Identificação">${tour.identification || '-'}</td>
+      <td data-label="Link">${linkHtml}</td>
+      <td data-label="Valor">${formatTourValueBRL(tour.value)}</td>
       <td data-label="Status">${tour.status || 'Ativo'}</td>
-      <td data-label="Ações">
-        <button class="btn-book" type="button" style="background:#3b82f6; color:#fff; margin-right:0.3rem;">Editar</button>
-        <button class="btn-book" type="button" style="background:${(tour.status || 'Ativo') === 'Pausado' ? '#10b981' : '#f59e0b'}; color:#fff; margin-right:0.3rem;">${(tour.status || 'Ativo') === 'Pausado' ? 'Retomar' : 'Pausar'}</button>
-        <button class="btn-book" type="button" style="background:#ef4444; color:#fff;">Excluir</button>
-      </td>
     `;
 
-    const [editBtn, pauseBtn, deleteBtn] = row.querySelectorAll('button');
-
-    editBtn?.addEventListener('click', () => openTourEditModal(tour));
-
-    pauseBtn?.addEventListener('click', () => {
-      const updatedTours = getPageTours().map(t => {
-        if (String(t.id) === String(tour.id)) {
-          return { ...t, status: ((t.status || 'Ativo') === 'Pausado') ? 'Ativo' : 'Pausado' };
-        }
-        return t;
-      });
-      setPageTours(updatedTours);
-      carregarToursGerenciamento();
-    });
-
-    deleteBtn?.addEventListener('click', () => {
-      if (!confirm(`Excluir tour "${tour.name || tour.id}"?`)) return;
-      const updatedTours = getPageTours().filter(t => String(t.id) !== String(tour.id));
-      setPageTours(updatedTours);
-      carregarToursGerenciamento();
-    });
-
+    row.addEventListener('dblclick', () => openTourEditModal(tour));
     tableBody.appendChild(row);
   });
 };
@@ -1483,6 +1613,20 @@ const setupAccountModalEvents = () => {
   if (tourModalCancel) {
     tourModalCancel.addEventListener('click', () => {
       closeTourEditModal();
+    });
+  }
+
+  const tourModalPause = document.getElementById('tourModalPause');
+  if (tourModalPause) {
+    tourModalPause.addEventListener('click', () => {
+      toggleTourPauseFromModal();
+    });
+  }
+
+  const tourModalDelete = document.getElementById('tourModalDelete');
+  if (tourModalDelete) {
+    tourModalDelete.addEventListener('click', () => {
+      deleteTourFromModal();
     });
   }
 

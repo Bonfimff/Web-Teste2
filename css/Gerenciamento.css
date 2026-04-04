@@ -1037,20 +1037,39 @@ body {
   transition: border-color 0.2s;
 }
 
-/* Garantir largura uniforme para todos os campos do formulário */
-.modal-body label {
-  width: 100%;
-  min-width: 0;
-}
+  .modal-body fieldset {
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 12px;
+    padding: 1rem;
+    margin: 0;
+  }
 
-.modal-body .phone-input-wrapper,
-.modal-body .modal-actions {
-  width: 100%;
-}
+  .modal-body fieldset legend {
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: #0b3c6d;
+  }
 
-.modal-body input:focus,
-.modal-body select:focus {
-  outline: none;
+  #tourEditModal p strong {
+    color: #0b3c6d;
+  }
+
+  .modal-body .checkbox-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .modal-body .checkbox-row label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin: 0;
+    font-weight: 400;
+  }
+
   border-color: #3b82f6;
 }
 

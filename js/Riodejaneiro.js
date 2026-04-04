@@ -19,6 +19,7 @@
             free_subtitle: 'Free Tours',
             paid_title: 'Outros Tours',
             paid_subtitle: 'Tours Pagos',
+            reserve_unavailable: 'Temporariamente indisponível',
             cards: [
                 {
                     name: 'Centro Histórico e Lapa',
@@ -97,6 +98,7 @@
             free_subtitle: 'Free Tours',
             paid_title: 'Other Tours',
             paid_subtitle: 'Paid Tours',
+            reserve_unavailable: 'Temporarily unavailable',
             cards: [
                 {
                     name: 'Centro Histórico e Lapa',
@@ -177,6 +179,7 @@
         free_subtitle: 'Free Tours',
         paid_title: 'Autres tours',
         paid_subtitle: 'Tours payants',
+        reserve_unavailable: 'Temporairement indisponible',
         cards: [
             {
                 name: 'Centro Histórico e Lapa',
@@ -255,6 +258,7 @@
         free_subtitle: 'Free Tours',
         paid_title: 'Otros tours',
         paid_subtitle: 'Tours pagados',
+        reserve_unavailable: 'Temporalmente no disponible',
         cards: [
             {
                 name: 'Centro Histórico e Lapa',
@@ -333,6 +337,7 @@
         free_subtitle: 'Free Tours',
         paid_title: 'Altri tour',
         paid_subtitle: 'Tour a pagamento',
+        reserve_unavailable: 'Temporaneamente non disponibile',
         cards: [
             {
                 name: 'Centro Histórico e Lapa',
@@ -411,6 +416,7 @@
         free_subtitle: 'Free Tours',
         paid_title: '其他旅游',
         paid_subtitle: '付费旅游',
+        reserve_unavailable: '暂时不可用',
         cards: [
             {
                 name: '历史中心和拉帕',
@@ -473,6 +479,7 @@
 
     let currentFooterInfo = pageTranslations.pt.footer_info;
     let rolePermissionsMap = {};
+    let toursFromDatabase = [];
 
     const DEFAULT_ROLE_PERMISSIONS = {
         cliente_user: {
@@ -753,12 +760,95 @@
     };
 
     const carregarToursDoBanco = async () => {
+        const endpoints = [
+            '/get_tours_pagina',
+            `${API_BASE_URL}/get_tours_pagina`,
+            'https://api.exksvol.com/get_tours_pagina',
+            'http://127.0.0.1:5000/get_tours_pagina',
+            'http://localhost:5000/get_tours_pagina'
+        ];
+
+        let tours = null;
+        let lastError = null;
+
+        for (const endpoint of endpoints) {
+            try {
+                const payload = await apiFetch(endpoint, { method: 'GET' });
+                if (Array.isArray(payload) && payload.length) {
+                    tours = payload;
+                    console.log('[Tours] carregados do endpoint:', endpoint, payload);
+                    break;
+                }
+            } catch (error) {
+                lastError = error;
+                console.warn('[Tours] Falha ao carregar de', endpoint, error);
+            }
+        }
+
+        if (!Array.isArray(tours) || !tours.length) {
+            toursFromDatabase = [];
+            if (lastError) {
+                throw lastError;
+            }
+            return tours;
+        }
+
         try {
-            const tours = await apiFetch('/tours', {
-                method: 'GET'
+            toursFromDatabase = tours;
+            try {
+                localStorage.setItem('pageTours', JSON.stringify(tours));
+            } catch {
+                // ignore
+            }
+
+            const cards = document.querySelectorAll('.rio-tour-card');
+            cards.forEach((card, index) => {
+                const tour = tours[index];
+                if (!tour) return;
+
+                const nameEl = card.querySelector('.rio-tour-name');
+                if (nameEl) {
+                    nameEl.textContent = tour.nome_tour || tour.name || nameEl.textContent;
+                }
+
+                const detailsEl = card.querySelector('.rio-tour-details');
+                if (detailsEl) {
+                    const languages = tour.idiomas || tour.languages || 'Português, Inglês e Espanhol';
+                    const meeting = tour.encontro || tour.meeting || 'Não informado';
+                    const identification = tour.identificacao || tour.identification || 'Guias com camisetas verdes';
+                    const value = tour.valor ?? tour.value;
+                    const estado = (tour.estado || tour.status || '').trim();
+                    let valueLine = '';
+                    if (value != null && value !== '') {
+                        const formatted = Number(value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                        valueLine = `<li><i class="fa fa-dollar-sign"></i> <strong>Valor:</strong> ${formatted}</li>`;
+                    }
+                    let stateLine = '';
+                    if (estado && estado.toLowerCase() !== 'ativo') {
+                        stateLine = `<li><i class="fa fa-info-circle"></i> <strong>Estado:</strong> ${estado}</li>`;
+                    }
+
+                    detailsEl.innerHTML = `
+                        <li><i class="fa fa-language"></i> <strong>Idiomas:</strong> ${languages}</li>
+                        <li><i class="fa fa-map-marker-alt"></i> <strong>Encontro:</strong> ${meeting}</li>
+                        <li><i class="fa fa-shirt"></i> <strong>Identificação:</strong> ${identification}</li>
+                        ${valueLine}
+                        ${stateLine}
+                    `;
+                }
+
+                const mapLink = card.querySelector('.rio-link-map');
+                const mapUrl = tour.link_tour || tour.link || '';
+                if (mapLink && mapUrl) {
+                    mapLink.href = mapUrl;
+                }
             });
-            console.log('Dados do banco:', tours);
-            // TODO: renderizar os tours na UI
+
+            // Reaplica idioma para garantir que conteúdo dinâmico vença qualquer texto estático.
+            if (typeof window.dispatchLanguageChange === 'function' && typeof window.getCurrentLang === 'function') {
+                window.dispatchLanguageChange(window.getCurrentLang());
+            }
+
             return tours;
         } catch (error) {
             console.error('Erro ao conectar com a API:', error);
@@ -766,8 +856,8 @@
         }
     };
 
-    // Exemplo de uso:
-    // carregarToursDoBanco().then(renderTours).catch(err => showError(err));
+    // Expor para a segunda IIFE (shared logic) poder chamar no DOMContentLoaded
+    window.carregarToursDoBanco = carregarToursDoBanco;
 
     const applyPageLanguage = (lang) => {
         const t = pageTranslations[lang] || pageTranslations.pt;
@@ -819,6 +909,60 @@
         if (footerTitle) footerTitle.textContent = footerTitleMap[lang] || footerTitleMap.pt;
 
         cards.forEach((card, index) => {
+            const dbTour = toursFromDatabase[index];
+            if (dbTour) {
+                const labels = {
+                    pt: { idiomas: 'Idiomas', encontro: 'Encontro', identificacao: 'Identificação' },
+                    en: { idiomas: 'Languages', encontro: 'Meeting', identificacao: 'Identification' },
+                    fr: { idiomas: 'Langues', encontro: 'Rendez-vous', identificacao: 'Identification' },
+                    es: { idiomas: 'Idiomas', encontro: 'Encuentro', identificacao: 'Identificación' },
+                    it: { idiomas: 'Lingue', encontro: 'Incontro', identificacao: 'Identificazione' },
+                    zh: { idiomas: '语言', encontro: '集合', identificacao: '识别' }
+                }[lang] || { idiomas: 'Idiomas', encontro: 'Encontro', identificacao: 'Identificação' };
+
+                const nameEl = card.querySelector('.rio-tour-name');
+                if (nameEl) nameEl.textContent = dbTour.nome_tour || dbTour.name || '-';
+
+                const detailList = card.querySelector('.rio-tour-details');
+                if (detailList) {
+                    const languages = dbTour.idiomas || dbTour.languages || 'Português, Inglês e Espanhol';
+                    const meeting = dbTour.encontro || dbTour.meeting || 'Não informado';
+                    const identification = dbTour.identificacao || dbTour.identification || 'Guias com camisetas verdes';
+                    detailList.innerHTML = `
+                        <li><i class="fa fa-language"></i> <strong>${labels.idiomas}:</strong> ${languages}</li>
+                        <li><i class="fa fa-map-marker-alt"></i> <strong>${labels.encontro}:</strong> ${meeting}</li>
+                        <li><i class="fa fa-shirt"></i> <strong>${labels.identificacao}:</strong> ${identification}</li>
+                    `;
+                }
+
+                const actions = card.querySelectorAll('.rio-tour-actions a');
+                if (actions[0]) {
+                    actions[0].innerHTML = (t.cards[index] && t.cards[index].map) ? t.cards[index].map : '<i class="fa fa-map"></i> Ver no Mapa';
+                    if (dbTour.link_tour) actions[0].href = dbTour.link_tour;
+                }
+                if (actions[1]) {
+                    const tourStatus = (dbTour.estado || dbTour.status || '').toString().trim().toLowerCase();
+                    const isAvailable = tourStatus === 'ativo' || tourStatus === 'active';
+                    if (!isAvailable) {
+                        const unavailableText = t.reserve_unavailable || 'Temporariamente indisponível';
+                        actions[1].textContent = unavailableText;
+                        actions[1].removeAttribute('href');
+                        actions[1].classList.add('disabled');
+                        actions[1].setAttribute('aria-disabled', 'true');
+                        actions[1].style.pointerEvents = 'none';
+                    } else {
+                        actions[1].textContent = (t.cards[index] && t.cards[index].reserve) ? t.cards[index].reserve : 'Reservar Agora';
+                        if (dbTour.link_tour) {
+                            actions[1].href = dbTour.link_tour;
+                        }
+                        actions[1].classList.remove('disabled');
+                        actions[1].removeAttribute('aria-disabled');
+                        actions[1].style.pointerEvents = '';
+                    }
+                }
+                return;
+            }
+
             const cardData = t.cards[index];
             if (!cardData) return;
 
@@ -1644,6 +1788,10 @@
         const ev = new CustomEvent('app:language-changed', { detail: { lang } });
         document.dispatchEvent(ev);
     };
+
+    // Expor para a primeira IIFE poder re-disparar após carregar tours do banco
+    window.dispatchLanguageChange = dispatchLanguageChange;
+    window.getCurrentLang = getCurrentLang;
 
     const selectLanguage = (lang) => {
         const normalized = normalizeLang(lang);
@@ -2964,6 +3112,7 @@
                 const password = document.getElementById('loginPassword')?.value || '';
 
                 if (!email || !password) {
+                
                     alert('Por favor, preencha email e senha.');
                     return;
                 }
@@ -3189,6 +3338,39 @@
             localStorage.setItem('pageTours', JSON.stringify(Array.isArray(tours) ? tours : []));
         } catch {
             // ignore
+        }
+    };
+
+    const mapBackendTourToPageTour = (tour) => {
+        return {
+            id: String(tour?.id ?? ''),
+            name: tour?.nome_tour || tour?.name || '',
+            languages: tour?.idiomas || '',
+            meeting: tour?.encontro || '',
+            identification: tour?.identificacao || '',
+            link: tour?.link_tour || tour?.mapUrl || '',
+            value: tour?.valor ?? 0,
+            status: tour?.estado || ''
+        };
+    };
+
+    const fetchToursFromBackend = async () => {
+        try {
+            const response = await fetch('/get_tours_pagina');
+            if (!response.ok) {
+                console.warn('Falha ao buscar tours no backend:', response.status, response.statusText);
+                return null;
+            }
+            const payload = await response.json();
+            if (!Array.isArray(payload)) {
+                return null;
+            }
+            const tours = payload.map(mapBackendTourToPageTour);
+            setTours(tours);
+            return tours;
+        } catch (error) {
+            console.warn('Erro ao buscar tours no backend:', error);
+            return null;
         }
     };
 
@@ -3838,6 +4020,10 @@
 
         document.querySelectorAll('.rio-btn-reserve').forEach(button => {
             button.addEventListener('click', (event) => {
+                if (button.classList.contains('disabled') || button.getAttribute('aria-disabled') === 'true') {
+                    event.preventDefault();
+                    return;
+                }
                 event.preventDefault();
                 const card = button.closest('.rio-tour-card');
                 const tourName = card?.querySelector('.rio-tour-name')?.textContent?.trim() || '';
@@ -4018,10 +4204,12 @@
         initReservationTracking();
         initFooterInfo();
 
-        // Importa tours da homepage (index) para gerenciamento centralizado
-        if (typeof syncToursFromIndex === 'function') {
-            syncToursFromIndex();
-        }
+        // Importa tours do banco para renderizar os cards da homepage.
+        window.carregarToursDoBanco().catch(() => {
+            if (typeof syncToursFromIndex === 'function') {
+                syncToursFromIndex();
+            }
+        });
 
         // Trigger initial language event so pages can format text on load
         dispatchLanguageChange(getCurrentLang());
