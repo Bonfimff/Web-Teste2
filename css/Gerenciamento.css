@@ -1424,16 +1424,24 @@ body {
   }
   
   .status-group {
-    flex-direction: column;
-    gap: 0.75rem;
+    flex-direction: row;
+    flex-wrap: nowrap !important;
+    gap: 0.4rem;
   }
   
   .status-card {
-    padding: 0.75rem;
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    padding: 0.55rem !important;
   }
   
   .status-card > div {
-    font-size: 1.5rem;
+    font-size: clamp(1rem, 5vw, 1.2rem) !important;
+  }
+
+  .status-card strong {
+    font-size: 0.62rem !important;
+    letter-spacing: 0.04em;
   }
   
   #nextTourCard {
@@ -1650,6 +1658,8 @@ section,
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .floating-translate-panel.hidden,
@@ -1685,12 +1695,14 @@ section,
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.75rem;
+  min-width: 0;
 }
 
 .floating-translate-panel .translator-actions-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.75rem;
+  min-width: 0;
 }
 
 .floating-translate-panel .translator-result-label {
@@ -1928,6 +1940,7 @@ section,
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 0.5rem;
+  min-width: 0;
 }
 
 .floating-calc-key {
@@ -1971,6 +1984,45 @@ section,
 
 .floating-calc-key--wide {
   grid-column: span 2;
+}
+
+@media (max-width: 480px) {
+  .floating-translate-panel,
+  .floating-calculator-panel {
+    left: 0.5rem;
+    right: 0.5rem;
+    width: auto;
+    max-width: calc(100vw - 1rem);
+    padding: 0.75rem;
+    border-radius: 14px;
+    max-height: calc(100dvh - 7rem);
+    overflow-y: auto;
+  }
+
+  .floating-translate-panel {
+    bottom: 5.25rem;
+  }
+
+  .floating-calculator-panel {
+    bottom: 4.75rem;
+  }
+
+  .floating-translate-panel .translator-direction-row,
+  .floating-translate-panel .translator-actions-row {
+    grid-template-columns: 1fr;
+    gap: 0.55rem;
+  }
+
+  .floating-translate-panel textarea,
+  .floating-translate-panel select,
+  .floating-calc-display,
+  .floating-calc-key {
+    font-size: 0.92rem;
+  }
+
+  .floating-calc-key {
+    padding: 0.72rem 0.5rem;
+  }
 }
 
 .floating-calculator-close {

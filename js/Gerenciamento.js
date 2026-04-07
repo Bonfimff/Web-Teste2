@@ -3616,5 +3616,71 @@ window.addEventListener('DOMContentLoaded', () => {
     window.requestAnimationFrame(updateBackground);
   });
 
+  // ─── Web Push: registra Service Worker e inscreve o dispositivo admin ────────
+  initWebPushForAdmin();
+
 });
+
+// ─── Web Push ─────────────────────────────────────────────────────────────────
+
+// Chave pública VAPID gerada no servidor (base64url, sem padding)
+const VAPID_PUBLIC_KEY = 'BPVs5zKTJWShCIzSBm1dlVeoqN37TcwKnE0abT5RCYv0zp6d4Ec7EOXbgA8-Abku0LixX02gDaGapROL-fxLgTk';
+
+const urlBase64ToUint8Array = (base64String) => {
+  const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const rawData = atob(base64);
+  return Uint8Array.from([...rawData].map((c) => c.charCodeAt(0)));
+};
+
+const initWebPushForAdmin = async () => {
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+
+  // Só ativa push para usuários com permissão de gestão
+  const email = typeof currentUserEmail !== 'undefined' ? currentUserEmail : null;
+  if (!email) return;
+
+  try {
+    // Regista o service worker na raiz para ter escopo total
+    const swPath = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost'
+      ? '/sw.js'
+      : '/sw.js';
+
+    const reg = await navigator.serviceWorker.register(swPath, { scope: '/' });
+    await navigator.serviceWorker.ready;
+
+    // Pede permissão de notificação
+    const permission = await Notification.requestPermission();
+    if (permission !== 'granted') return;
+
+    // Busca chave pública do servidor
+    let applicationServerKey = VAPID_PUBLIC_KEY;
+    try {
+      const keyResp = await fetchWithApiFallback('/get_vapid_public_key');
+      if (keyResp.ok) {
+        const keyData = await keyResp.json();
+        if (keyData.publicKey) applicationServerKey = keyData.publicKey;
+      }
+    } catch (_) { /* usa constante local */ }
+
+    // Cria ou reutiliza subscription existente
+    let subscription = await reg.pushManager.getSubscription();
+    if (!subscription) {
+      subscription = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(applicationServerKey)
+      });
+    }
+
+    // Envia subscription ao backend para ser notificado remotamente
+    await fetchWithApiFallback('/save_push_subscription', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, subscription: subscription.toJSON() })
+    });
+  } catch (err) {
+    console.warn('[WebPush] Falha ao inicializar push:', err);
+  }
+};
+
 
