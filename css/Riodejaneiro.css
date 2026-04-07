@@ -1508,6 +1508,24 @@ body.modal-open > :not(.login-modal-overlay):not(.register-modal-overlay) {
   color: #3b5168;
 }
 
+.my-reservations-detail a.my-reservations-map-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #1fac9c;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.my-reservations-detail a.my-reservations-map-link i {
+  font-size: 0.92rem;
+}
+
+.my-reservations-detail a.my-reservations-map-link:hover {
+  color: #11867c;
+  text-decoration: underline;
+}
+
 .my-reservations-status {
   display: inline-block;
   margin-top: 0.2rem;
@@ -1751,6 +1769,15 @@ body.modal-open > :not(.login-modal-overlay):not(.register-modal-overlay) {
   padding: 2rem 1.8rem;
   box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
   position: relative;
+}
+
+.login-modal__image {
+  width: 100%;
+  max-width: 240px;
+  display: block;
+  margin: 0 auto 1rem;
+  border-radius: 18px;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.12);
 }
 
 .login-modal__header {
@@ -2225,13 +2252,6 @@ header {
     margin: 0;
   }
 
-  .profile-dropdown .profile-user-info,
-  .profile-dropdown .profile-user-info > div:first-child span[data-i18n="profile_hello"],
-  .profile-dropdown .profile-user-info > span[data-i18n="profile_hello"],
-  .profile-user-info > span[data-i18n="profile_hello"] {
-    color: #0f3a7a !important;
-  }
-
   .lang-selector .lang-list li,
   .profile-dropdown .profile-item {
     padding: 0.6rem 1rem;
@@ -2240,6 +2260,13 @@ header {
 
   .nav-left nav.open a {
     color: #000;
+  }
+}
+
+@media (min-width: 1024px) {
+  .rio-page header .profile-user-info,
+  .rio-page header .profile-user-info span[data-i18n="profile_hello"] {
+    color: #0f2a57 !important;
   }
 }
 
@@ -2540,10 +2567,6 @@ header {
   z-index: 30;
 }
 
-.profile-dropdown .profile-user-info span[data-i18n="profile_hello"],
-.profile-user-info span[data-i18n="profile_hello"] {
-  color: #0f3a7a !important;
-}
 
 .profile-menu.open .profile-dropdown {
   display: block;

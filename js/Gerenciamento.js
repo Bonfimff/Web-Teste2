@@ -30,7 +30,7 @@ const fetchWithApiFallback = async (path, options = {}) => {
       }
 
       lastResponse = response;
-      console.warn('Endpoint respondeu com erro HTTP, tentando prÃ³ximo:', {
+      console.warn('Endpoint respondeu com erro HTTP, tentando próximo:', {
         base,
         status: response.status,
         statusText: response.statusText,
@@ -56,6 +56,181 @@ let selectedRoleName = null; // role atual selecionada no painel de nÃ­veis
 let currentRolesConfig = {}; // guarda as permissÃµes atuais carregadas
 let currentUserPermissions = null; // permissÃµes do usuÃ¡rio logado
 let currentReservations = []; // lista de reservas carregadas para gerenciamento da pÃ¡gina
+let importantInfoRefreshTimer = null;
+
+const escapeHtml = (value) => String(value ?? '')
+  .replace(/&/g, '&amp;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;')
+  .replace(/'/g, '&#39;');
+
+let lastImportantActivityTimestamp = localStorage.getItem('lastImportantActivityTimestamp') || null;
+const IMPORTANT_INFO_DISMISSED_KEY = 'importantInfoDismissedItems';
+
+const getDismissedImportantInfoItems = () => {
+  try {
+    const raw = localStorage.getItem(IMPORTANT_INFO_DISMISSED_KEY);
+    const items = raw ? JSON.parse(raw) : [];
+    return Array.isArray(items) ? items : [];
+  } catch (_error) {
+    return [];
+  }
+};
+
+const setDismissedImportantInfoItems = (items) => {
+  localStorage.setItem(IMPORTANT_INFO_DISMISSED_KEY, JSON.stringify(Array.isArray(items) ? items.slice(-200) : []));
+};
+
+const buildImportantInfoItemId = (item) => [
+  item.timestamp || '',
+  item.action || '',
+  item.reservation_id || '',
+  item.user_email || ''
+].join('::');
+
+const reservationActivityLabels = {
+  add: 'adicionou uma reserva',
+  update: 'alterou uma reserva',
+  cancel: 'cancelou uma reserva'
+};
+
+const showDeviceReservationNotification = async (item) => {
+  if (!('Notification' in window)) return;
+
+  if (Notification.permission === 'default') {
+    try {
+      await Notification.requestPermission();
+    } catch (err) {
+      console.warn('Não foi possível solicitar permissão de notificações:', err);
+      return;
+    }
+  }
+
+  if (Notification.permission !== 'granted') return;
+
+  const title = 'Nova atividade de reserva';
+  const actionLabel = reservationActivityLabels[item.action] || 'atualizou uma reserva';
+  const body = `${item.user_name || item.user_email || 'Cliente'} ${actionLabel} em ${item.tour || 'um tour'} (${item.date || 'data não informada'})`;
+  const notification = new Notification(title, {
+    body,
+    icon: '/favicon.ico'
+  });
+  notification.onclick = () => {
+    window.focus();
+  };
+};
+
+
+const formatReservationActivityTime = (value) => {
+  if (!value) return '';
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return '';
+  return parsed.toLocaleString('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+};
+
+const renderImportantInfoFeed = (items = []) => {
+  const feed = document.getElementById('importantInfoFeed');
+  if (!feed) return;
+
+  const dismissedItems = new Set(getDismissedImportantInfoItems());
+  const visibleItems = (Array.isArray(items) ? items : []).filter((item) => !dismissedItems.has(buildImportantInfoItemId(item)));
+
+  if (!visibleItems.length) {
+    feed.innerHTML = '<div class="important-info-empty" style="padding:0.85rem 1rem; border-radius:12px; background:rgba(255,255,255,0.82); color:#4b5563;">Nenhuma atividade recente de cliente encontrada.</div>';
+    return;
+  }
+
+  feed.innerHTML = visibleItems.map((item) => {
+    const itemId = escapeHtml(buildImportantInfoItemId(item));
+    const actionLabel = reservationActivityLabels[item.action] || 'atualizou uma reserva';
+    const when = formatReservationActivityTime(item.timestamp);
+    const statusText = item.status ? `Status: ${item.status}` : '';
+    const dateText = item.date || '-';
+    const timeText = item.time || '-';
+    const safeName = escapeHtml(item.user_name || item.user_email || 'Cliente');
+    const safeEmail = escapeHtml(item.user_email || '-');
+    const safeTour = escapeHtml(item.tour || '-');
+    const safeStatus = escapeHtml(statusText);
+    const safeWhen = escapeHtml(when || '');
+    const safeDate = escapeHtml(dateText);
+    const safeTime = escapeHtml(timeText);
+    return `
+      <article class="important-info-item" data-important-info-id="${itemId}" style="position:relative; padding:0.9rem 1rem; border-radius:14px; background:rgba(255,255,255,0.88); border:1px solid rgba(15,58,122,0.08); box-shadow:0 10px 30px rgba(15,58,122,0.08);">
+        <button type="button" class="important-info-dismiss" data-important-info-dismiss="${itemId}" aria-label="Fechar alerta" style="position:absolute; top:0.55rem; right:0.65rem; border:none; background:transparent; color:#6b7280; font-size:1.1rem; line-height:1; cursor:pointer; padding:0.15rem 0.35rem;">×</button>
+        <div style="display:flex; justify-content:space-between; gap:0.75rem; align-items:flex-start; flex-wrap:wrap; padding-right:1.5rem;">
+          <strong style="color:#0f3a7a;">${safeName} ${actionLabel}</strong>
+          <span style="font-size:0.82rem; color:#6b7280;">${safeWhen}</span>
+        </div>
+        <div style="margin-top:0.35rem; color:#1f2937; font-size:0.92rem;">Tour: <strong>${safeTour}</strong></div>
+        <div style="margin-top:0.25rem; color:#374151; font-size:0.88rem;">Data: ${safeDate} | Hora: ${safeTime}</div>
+        <div style="margin-top:0.25rem; color:#374151; font-size:0.88rem;">Cliente: ${safeEmail}</div>
+        ${safeStatus ? `<div style="margin-top:0.25rem; color:#374151; font-size:0.88rem;">${safeStatus}</div>` : ''}
+      </article>
+    `;
+  }).join('');
+
+  feed.querySelectorAll('[data-important-info-dismiss]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const itemId = button.getAttribute('data-important-info-dismiss');
+      if (!itemId) return;
+      const dismissed = getDismissedImportantInfoItems();
+      if (!dismissed.includes(itemId)) {
+        dismissed.push(itemId);
+        setDismissedImportantInfoItems(dismissed);
+      }
+      const card = button.closest('.important-info-item');
+      if (card) {
+        card.remove();
+      }
+      if (!feed.querySelector('.important-info-item')) {
+        feed.innerHTML = '<div class="important-info-empty" style="padding:0.85rem 1rem; border-radius:12px; background:rgba(255,255,255,0.82); color:#4b5563;">Nenhuma atividade recente de cliente encontrada.</div>';
+      }
+    });
+  });
+};
+
+const loadImportantInfoFeed = async () => {
+  const currentUserEmail = localStorage.getItem('userEmail') || '';
+  if (!currentUserEmail) return;
+
+  try {
+    const response = await fetchWithApiFallback(`/get_reservation_activity?email=${encodeURIComponent(currentUserEmail)}&limit=12`);
+    if (!response.ok) {
+      renderImportantInfoFeed([]);
+      return;
+    }
+
+    const result = await response.json().catch(() => ({ items: [] }));
+    const items = Array.isArray(result.items) ? result.items : [];
+    renderImportantInfoFeed(items);
+
+    if (items.length) {
+      const newestTimestamp = items[0].timestamp || null;
+      if (newestTimestamp && newestTimestamp !== lastImportantActivityTimestamp) {
+        const newItems = lastImportantActivityTimestamp
+          ? items.filter(item => item.timestamp && item.timestamp > lastImportantActivityTimestamp)
+          : [];
+
+        if (newItems.length) {
+          newItems.slice(0, 3).forEach(showDeviceReservationNotification);
+        }
+
+        lastImportantActivityTimestamp = newestTimestamp;
+        localStorage.setItem('lastImportantActivityTimestamp', newestTimestamp);
+      }
+    }
+  } catch (error) {
+    console.warn('Falha ao carregar atividades recentes de reservas:', error);
+    renderImportantInfoFeed([]);
+  }
+};
 
 const normalizeRoleName = (role) => {
   const normalized = String(role || 'cliente_user').toLowerCase();
@@ -151,15 +326,19 @@ const updateProfileMenuByPermissions = (perms) => {
   const showManagement = typeof canAccessManagement === 'function' ? canAccessManagement() : false;
   const managementAction = isManagementPage ? 'principal' : 'manage';
   const managementLabel = isManagementPage ? 'Principal' : 'Gerenciamento';
+  const showPersonalMenuItems = !isManagementPage;
+  const managementLink = showManagement
+    ? `<a href="#" class="profile-item profile-item--admin" data-profile-action="${managementAction}">${managementLabel}</a>`
+    : (isManagementPage ? '<a href="#" class="profile-item" data-profile-action="principal">Principal</a>' : '');
 
   profileDropdown.innerHTML = `
     <div class="profile-user-info" style="padding:8px 12px; border-bottom:1px solid #e5e7eb;">
       <div style="font-weight:700; color:#111827;"><span data-i18n="profile_hello">Olá</span>, ${userName}</div>
-      <div style="font-size:0.8rem; color:#6b7280;">NÃ­vel de acesso: ${formatRoleLabel(userRole)}</div>
+      <div style="font-size:0.8rem; color:#6b7280;">Nível de acesso: ${formatRoleLabel(userRole)}</div>
     </div>
-    ${showManagement ? `<a href="#" class="profile-item profile-item--admin" data-profile-action="${managementAction}">${managementLabel}</a>` : ''}
-    ${canShowMyReservations ? '<a href="#" class="profile-item" data-profile-action="my-reservations" data-i18n="profile_my_reservations">Minhas Reservas</a>' : ''}
-    ${canShowMyData ? '<a href="#" class="profile-item" data-profile-action="my-data" data-i18n="profile_my_data">Meus Dados</a>' : ''}
+    ${managementLink}
+    ${showPersonalMenuItems && canShowMyReservations ? '<a href="#" class="profile-item" data-profile-action="my-reservations" data-i18n="profile_my_reservations">Minhas Reservas</a>' : ''}
+    ${showPersonalMenuItems && canShowMyData ? '<a href="#" class="profile-item" data-profile-action="my-data" data-i18n="profile_my_data">Meus Dados</a>' : ''}
     <a href="#" class="profile-item" data-profile-action="logout" data-i18n="profile_logout">Sair</a>
   `;
 };
@@ -929,7 +1108,7 @@ const carregarAgendamentosDoBanco = async () => {
       } else {
         const dateStr = nextDateTime.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
         const timeStr = nextDateTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-        statNext.textContent = `${dateStr} ${timeStr} (${allNextDateTime.length} prÃ³ximo${allNextDateTime.length !== 1 ? 's' : ''})`;
+        statNext.textContent = `${dateStr} ${timeStr} (${allNextDateTime.length} próximo${allNextDateTime.length !== 1 ? 's' : ''})`;
       }
     }
 
@@ -1008,7 +1187,7 @@ const carregarAgendamentosDoBanco = async () => {
         nextToggle.setAttribute('aria-expanded', String(expanded));
         nextToggle.classList.toggle('open', expanded);
         nextDetails.style.display = expanded ? 'block' : 'none';
-        nextToggle.textContent = expanded ? 'â–´' : 'â–¾';
+        nextToggle.textContent = expanded ? '▼' : '▶';
       });
     }
 
@@ -1062,6 +1241,11 @@ const mostrarSecao = (secao) => {
 
   if (pageManagementTours) {
     pageManagementTours.style.display = secao === 'gerenciamento' ? 'block' : 'none';
+  }
+
+  const financeSection = document.getElementById('financeSection');
+  if (financeSection) {
+    financeSection.style.display = secao === 'financeiro' ? 'block' : 'none';
   }
 
   if (secao === 'financeiro') {
@@ -1233,7 +1417,7 @@ const carregarGerenciamentoPagina = () => {
       <td data-label="Data">${ag.data || '-'}</td>
       <td data-label="Hora">${ag.hora || '-'}</td>
       <td data-label="Pessoas">${ag.qtd ?? ag.qtd_pessoas ?? '-'}</td>
-      <td data-label="AÃ§Ãµes">-</td>
+      <td data-label="Ações">-</td>
     `;
 
     tableBody.appendChild(row);
@@ -1294,12 +1478,8 @@ const carregarContasDoBanco = async () => {
         <td data-label="Sobrenome">${account.sobrenome}</td>
         <td data-label="Celular">${account.celular}</td>
         <td data-label="Role">${account.role}</td>
-        <td data-label="PaÃ­s">${account.pais_origem}</td>
-        <td data-label="GÃªnero">${account.genero}</td>
-        <td data-label="AÃ§Ãµes">
-          <button class="btn-book btn-edit-account" type="button">Editar</button>
-          <button class="btn-book btn-danger btn-delete-account" type="button">Excluir</button>
-        </td>
+        <td data-label="País">${account.pais_origem}</td>
+        <td data-label="Gênero">${account.genero}</td>
       `;
 
       const editBtn = row.querySelector('.btn-edit-account');
@@ -1321,6 +1501,11 @@ const carregarContasDoBanco = async () => {
         }
       } else {
         editBtn?.addEventListener('click', () => {
+          openAccountModal(account);
+        });
+
+        row.style.cursor = 'pointer';
+        row.addEventListener('dblclick', () => {
           openAccountModal(account);
         });
 
@@ -1347,7 +1532,7 @@ const carregarContasDoBanco = async () => {
       tableBody.appendChild(row);
     });
 
-    // Atualiza grÃ¡fico de paÃ­ses com base no cadastro de contas
+    // Atualiza gráfico de países com base no cadastro de contas
     updateCountryPie(accounts);
 
     // Apenas quem pode gerenciar perfis deve visualizar/editar nÃ­veis de acesso.
@@ -1849,7 +2034,39 @@ const initReservationManagement = () => {
   const deleteSliderLabel = document.getElementById('deleteSliderLabel');
   const modalDeleteConfirm = document.getElementById('modalDeleteConfirm');
   const modalDeleteCancel = document.getElementById('modalDeleteCancel');
+  const reservationAlert = document.getElementById('reservationAlert');
+  const reservationAlertText = document.getElementById('reservationAlertText');
+  const reservationAlertClose = document.querySelector('.reservations-alert-close');
+  let reservationAlertTimer = null;
   if (!tableBody) return;
+
+  const hideReservationAlert = () => {
+    if (!reservationAlert) return;
+    reservationAlert.classList.add('hidden');
+    reservationAlert.classList.remove('visible', 'info', 'success', 'error');
+    if (reservationAlertText) reservationAlertText.textContent = '';
+    if (reservationAlertTimer) {
+      clearTimeout(reservationAlertTimer);
+      reservationAlertTimer = null;
+    }
+  };
+
+  const showReservationAlert = (message, type = 'info', duration = 6000) => {
+    if (!reservationAlert || !reservationAlertText) return;
+    reservationAlertText.textContent = message;
+    reservationAlert.classList.remove('hidden', 'info', 'success', 'error');
+    reservationAlert.classList.add('visible', type);
+    if (reservationAlertTimer) {
+      clearTimeout(reservationAlertTimer);
+    }
+    if (duration > 0) {
+      reservationAlertTimer = setTimeout(hideReservationAlert, duration);
+    }
+  };
+
+  if (reservationAlertClose) {
+    reservationAlertClose.addEventListener('click', hideReservationAlert);
+  }
 
   const whatsappLinkBtn = document.querySelector('.whatsapp-link');
   if (whatsappLinkBtn) {
@@ -2080,7 +2297,7 @@ const initReservationManagement = () => {
       const result = await response.json().catch(() => ({ message: 'Resposta nÃ£o JSON' }));
 
       if (response.ok) {
-        alert('Reserva salva no banco de dados com sucesso!');
+        showReservationAlert(isEdit ? 'Reserva atualizada com sucesso!' : 'Reserva salva no banco de dados com sucesso!', 'success');
 
         // Atualiza tabela do backend apÃ³s inclusÃ£o
         carregarAgendamentosDoBanco();
@@ -2116,11 +2333,11 @@ const initReservationManagement = () => {
         // NÃ£o forÃ§ar reload para a atualizaÃ§Ã£o instantÃ¢nea jÃ¡ ser feita pelo carregarAgendamentosDoBanco
       } else {
         const message = result?.message || `Status ${response.status}`;
-        alert('Erro ao salvar: ' + message);
+        showReservationAlert('Erro ao salvar: ' + message, 'error');
       }
     } catch (error) {
       console.error('Erro na requisiÃ§Ã£o:', error);
-      alert('NÃ£o foi possÃ­vel conectar ao servidor. ' + (error.message || ''));       
+      showReservationAlert('Não foi possível conectar ao servidor. ' + (error.message || ''), 'error');       
     }
   };
 
@@ -2142,11 +2359,11 @@ const initReservationManagement = () => {
         if (!response.ok) {
           const result = await response.json().catch(() => ({}));
           const msg = result?.message || `Status ${response.status}`;
-          alert('NÃ£o foi possÃ­vel excluir no servidor: ' + msg);
+          showReservationAlert('Não foi possível excluir no servidor: ' + msg, 'error');
           return;
         }
 
-        alert('Agendamento removido com sucesso!');
+        showReservationAlert('Agendamento removido com sucesso!', 'success');
         pendingUpdateId = null;
         activeEditIndex = null;
 
@@ -2154,7 +2371,7 @@ const initReservationManagement = () => {
         carregarAgendamentosDoBanco();
       } catch (error) {
         console.error('Erro de exclusÃ£o:', error);
-        alert('Erro ao excluir no servidor: ' + (error.message || ''));        
+        showReservationAlert('Erro ao excluir no servidor: ' + (error.message || ''), 'error');        
       }
     } else {
       // fallback local (sem id)
@@ -2163,6 +2380,7 @@ const initReservationManagement = () => {
       setReservations(reservations);
       activeEditIndex = null;
       render();
+      showReservationAlert('Agendamento removido com sucesso!', 'success');
     }
 
     hideDeleteConfirmation();
@@ -2450,12 +2668,22 @@ const initReservationManagement = () => {
   render();
 };
 
-const fetchCurrentUsdBrlRate = async () => {
-  const rateInput = document.getElementById('usdRate');
-  if (!rateInput) return null;
+const setUsdRateFields = (rate) => {
+  const formatted = Number.isFinite(rate) ? rate.toFixed(4) : '';
+  [
+    document.getElementById('usdRate'),
+    document.getElementById('usdRateFloating')
+  ].forEach((input) => {
+    if (input) {
+      input.value = formatted;
+    }
+  });
+};
 
+const fetchCurrentUsdBrlRate = async () => {
   const endpoints = [
     'https://open.er-api.com/v6/latest/USD',
+    'https://api.frankfurter.app/latest?from=USD&to=BRL',
     'https://api.exchangerate-api.com/v4/latest/USD'
   ];
 
@@ -2469,28 +2697,22 @@ const fetchCurrentUsdBrlRate = async () => {
       const data = await response.json();
       const rate = Number(data?.rates?.BRL);
       if (!Number.isFinite(rate) || rate <= 0) {
-        throw new Error('CotaÃ§Ã£o invÃ¡lida recebida');
+        throw new Error('Cotação inválida recebida');
       }
 
-      rateInput.value = rate.toFixed(4);
+      setUsdRateFields(rate);
       return rate;
     } catch (error) {
-      console.warn('[Gerenciamento] Falha ao buscar cotaÃ§Ã£o USD/BRL em', url, error);
+      console.warn('[Gerenciamento] Falha ao buscar cotação USD/BRL em', url, error);
     }
   }
 
-  if (rateInput) {
-    rateInput.value = '5.0000';
-  }
+  setUsdRateFields(5.0);
   return 5.0;
 };
 
-const initCurrencyConverter = () => {
-  const brlInput = document.getElementById('brlAmount');
-  const rateInput = document.getElementById('usdRate');
-  const resultInput = document.getElementById('usdResult');
-
-  if (!brlInput || !rateInput || !resultInput) return;
+const createCurrencyConverter = ({ brlInput, rateInput, resultInput }) => {
+  if (!brlInput || !rateInput || !resultInput) return null;
 
   let lastEdited = 'brl';
 
@@ -2541,8 +2763,6 @@ const initCurrencyConverter = () => {
     }
   };
 
-  window.convertCurrency = convert;
-
   brlInput.addEventListener('input', () => {
     lastEdited = 'brl';
     convertToUsd();
@@ -2559,7 +2779,434 @@ const initCurrencyConverter = () => {
     }
   });
 
-  fetchCurrentUsdBrlRate().then(() => convert()).catch(() => convert());
+  return { convert };
+};
+
+const evaluateCalcExpression = (expression) => {
+  const expr = String(expression || '').trim();
+  if (!expr) return '';
+
+  const normalizedExpression = expr.replace(/,/g, '.');
+  if (!/^[0-9+\-*/().\s]+$/.test(normalizedExpression)) {
+    throw new Error('Expressão inválida');
+  }
+
+  // Avalia expressões simples de calculadora com segurança relativa.
+  // Apenas operadores, parênteses, números, ponto e espaços são permitidos.
+  return Function(`"use strict"; return (${normalizedExpression})`)();
+};
+
+const initFloatingStandardCalculator = () => {
+  const display = document.getElementById('floatingCalcDisplay');
+  const keypad = document.querySelector('.floating-calc-keypad');
+  if (!display || !keypad) return;
+
+  const setDisplay = (value) => {
+    display.value = String(value);
+  };
+
+  const appendValue = (value) => {
+    display.value = `${display.value || ''}${value}`;
+  };
+
+  const clearDisplay = () => {
+    setDisplay('');
+  };
+
+  const backspace = () => {
+    setDisplay(display.value.slice(0, -1));
+  };
+
+  const calculate = () => {
+    try {
+      const expression = display.value.trim();
+      const result = evaluateCalcExpression(expression);
+      if (Number.isFinite(result)) {
+        const formattedResult = String(result).replace('.', ',');
+        setDisplay(`${expression}=${formattedResult}`);
+      } else {
+        setDisplay('Erro');
+      }
+    } catch (error) {
+      setDisplay('Erro');
+      setTimeout(() => {
+        if (display.value === 'Erro') {
+          clearDisplay();
+        }
+      }, 800);
+    }
+  };
+
+  keypad.querySelectorAll('button[data-value]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const value = button.dataset.value;
+      if (value === 'C') {
+        clearDisplay();
+      } else if (value === '⌫') {
+        backspace();
+      } else if (value === '=') {
+        calculate();
+      } else {
+        appendValue(value);
+      }
+    });
+  });
+
+  const sanitizeInput = () => {
+    display.value = display.value.replace(/[^0-9+=\-*/(),.\s]/g, '');
+    display.value = display.value.replace(/\./g, ',');
+  };
+
+  display.addEventListener('input', sanitizeInput);
+
+  display.addEventListener('keydown', (event) => {
+    const allowedKeys = [
+      '0','1','2','3','4','5','6','7','8','9',
+      '+','-','*','/','(',')',',','.',
+      'Backspace','Delete','ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End','Enter','Tab','Escape'
+    ];
+
+    const hasResult = display.value.includes('=');
+    const currentResult = hasResult ? display.value.split('=').pop().trim() : '';
+    const isOperatorKey = ['+','-','*','/'].includes(event.key);
+    const isNewExprKey = /^[0-9(.,]$/.test(event.key);
+
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      calculate();
+      return;
+    }
+
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      clearDisplay();
+      return;
+    }
+
+    if (hasResult && currentResult) {
+      if (isOperatorKey) {
+        event.preventDefault();
+        display.value = `${currentResult}${event.key}`;
+        return;
+      }
+      if (isNewExprKey) {
+        event.preventDefault();
+        display.value = event.key;
+        return;
+      }
+    }
+
+    if (!allowedKeys.includes(event.key)) {
+      event.preventDefault();
+    }
+  });
+};
+
+const getTranslatorLangs = (direction) => {
+  switch (direction) {
+    case 'pt-en': return { source: 'pt', target: 'en' };
+    case 'en-pt': return { source: 'en', target: 'pt' };
+    case 'pt-es': return { source: 'pt', target: 'es' };
+    case 'es-pt': return { source: 'es', target: 'pt' };
+    default: return { source: 'pt', target: 'en' };
+  }
+};
+
+const chooseBestAlternateTranslation = (alternates, target) => {
+  if (!Array.isArray(alternates)) return null;
+
+  const scored = alternates.map((item, index) => {
+    const candidate = String(item?.[0] || '').trim();
+    let score = 0;
+    if (!candidate) return { candidate, score, index };
+
+    if (/^[A-ZÀÂÄÁÃ]/.test(candidate)) score += 2;
+    if (/[,.!?¿¡]/.test(candidate)) score += 2;
+    if (/^hola\b/i.test(candidate) && target === 'es') score += 3;
+    if (/^hi\b/i.test(candidate) && target === 'en') score += 3;
+    if (/^hey\b/i.test(candidate) && target === 'en') score += 1;
+    if (candidate.includes("'")) score += 1;
+    if (candidate.endsWith('?')) score += 1;
+    return { candidate, score, index };
+  });
+
+  scored.sort((a, b) => {
+    if (b.score !== a.score) return b.score - a.score;
+    return a.index - b.index;
+  });
+
+  return scored[0]?.candidate || null;
+};
+
+const polishTranslatedText = (text, target) => {
+  let result = String(text || '').trim();
+  if (!result) return result;
+
+  if (target === 'es') {
+    if (/^hola\s+/i.test(result) && !/^Hola,\s+¿/.test(result)) {
+      result = result.replace(/^hola\s+/i, 'Hola, ¿');
+      if (!result.endsWith('?')) {
+        result += '?';
+      }
+      result = result.replace(/\s+\?$/, '?');
+    }
+    result = result.replace(/\bcomo\b/gi, 'cómo');
+  }
+
+  if (target === 'en') {
+    if (/^hey\s+/i.test(result)) {
+      result = result.replace(/^hey\s+/i, 'Hey ');
+      if (result.toLowerCase().includes("how's it going") && !/Hey,\s+how's/i.test(result)) {
+        result = result.replace(/^Hey\s+/i, 'Hey, ');
+      }
+    }
+    if (/^[a-z]/.test(result)) {
+      result = result.charAt(0).toUpperCase() + result.slice(1);
+    }
+  }
+
+  return result.trim();
+};
+
+const translateText = async (text, direction) => {
+  const { source, target } = getTranslatorLangs(direction);
+  const rawText = String(text || '').trim();
+  if (!rawText) return '';
+
+  const query = encodeURIComponent(rawText);
+  const googleUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${source}&tl=${target}&dt=t&dt=at&dt=rm&q=${query}`;
+
+  try {
+    const response = await fetch(googleUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+    if (response.ok) {
+      const data = await response.json();
+      let translated = '';
+
+      if (Array.isArray(data?.[0])) {
+        translated = data[0].map((seg) => seg[0]).join('');
+      }
+
+      const alternate = data?.[5]?.[0]?.[2];
+      const bestAlternate = chooseBestAlternateTranslation(alternate, target);
+      if (bestAlternate) {
+        translated = bestAlternate;
+      }
+
+      if (typeof translated === 'string' && translated.trim()) {
+        translated = polishTranslatedText(translated, target);
+        return translated;
+      }
+    }
+  } catch (error) {
+    console.warn('Google Translate attempt failed:', googleUrl, error);
+  }
+
+  const fallbackUrl = `https://api.mymemory.translated.net/get?q=${query}&langpair=${source}|${target}`;
+  const fallbackResponse = await fetch(fallbackUrl);
+  if (!fallbackResponse.ok) {
+    throw new Error(`HTTP ${fallbackResponse.status}`);
+  }
+
+  const fallbackData = await fallbackResponse.json();
+  const fallbackTranslated = fallbackData?.responseData?.translatedText;
+  return typeof fallbackTranslated === 'string' ? fallbackTranslated : '';
+};
+
+const normalizeTranslatedPunctuation = (text) => {
+  let normalized = String(text || '').trim();
+  if (!normalized) return '';
+
+  // Remove espaços antes de pontuação e garante espaço após pontuação.
+  normalized = normalized.replace(/\s+([.,!?;:])/g, '$1');
+  normalized = normalized.replace(/([.,!?;:])(?=[^\s\n])/g, '$1 ');
+  normalized = normalized.replace(/\s{2,}/g, ' ');
+  normalized = normalized.replace(/\s+([…])/g, '$1');
+
+  return normalized.trim();
+};
+
+const TRANSLATION_HISTORY_KEY = 'translationHistory';
+
+const initTranslationPanel = () => {
+  const translateButton = document.getElementById('translateFloatingBtn');
+  const translatePanel = document.getElementById('translateFloatingPanel');
+  const closeTranslatePanel = document.getElementById('closeTranslatePanel');
+  const translateSubmit = document.getElementById('translateSubmit');
+  const copyTranslationBtn = document.getElementById('copyTranslationBtn');
+  const saveTranslationBtn = document.getElementById('saveTranslationBtn');
+  const sourceInput = document.getElementById('translatorSource');
+  const sourceLangSelect = document.getElementById('translatorSourceLang');
+  const targetLangSelect = document.getElementById('translatorTargetLang');
+  const targetOutput = document.getElementById('translatorResult');
+  const historyList = document.getElementById('translationHistoryList');
+
+  if (!translateButton || !translatePanel || !closeTranslatePanel || !translateSubmit || !saveTranslationBtn || !copyTranslationBtn || !sourceInput || !sourceLangSelect || !targetLangSelect || !targetOutput || !historyList) return;
+
+  const getHistory = () => {
+    try {
+      const raw = localStorage.getItem(TRANSLATION_HISTORY_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  };
+
+  const saveHistory = (items) => {
+    localStorage.setItem(TRANSLATION_HISTORY_KEY, JSON.stringify(items));
+  };
+
+  const renderSavedTranslations = () => {
+    const history = getHistory();
+    if (!history.length) {
+      historyList.innerHTML = '<div class="translation-history-empty">Nenhuma tradução salva.</div>';
+      return;
+    }
+
+    historyList.innerHTML = history.map((item, index) => {
+      return `
+        <div class="translation-history-item" data-translation-index="${index}">
+          <div class="translation-history-meta">
+            <strong>${item.sourceLang.toUpperCase()} → ${item.targetLang.toUpperCase()}</strong>
+            <button type="button" class="translation-history-remove" data-delete-index="${index}" aria-label="Excluir tradução">×</button>
+          </div>
+          <div class="translation-history-text">${item.sourceText}</div>
+        </div>
+      `;
+    }).join('');
+
+    historyList.querySelectorAll('.translation-history-item').forEach((item) => {
+      item.addEventListener('click', () => {
+        const index = Number(item.dataset.translationIndex);
+        const history = getHistory();
+        const entry = history[index];
+        if (!entry) return;
+        sourceInput.value = entry.sourceText;
+        targetOutput.value = entry.resultText;
+        sourceLangSelect.value = entry.sourceLang;
+        targetLangSelect.value = entry.targetLang;
+      });
+    });
+
+    historyList.querySelectorAll('.translation-history-remove').forEach((button) => {
+      button.addEventListener('click', (event) => {
+        event.stopPropagation();
+        const index = Number(button.dataset.deleteIndex);
+        const history = getHistory();
+        if (index < 0 || index >= history.length) return;
+        history.splice(index, 1);
+        saveHistory(history);
+        renderSavedTranslations();
+      });
+    });
+  };
+
+  const togglePanel = () => {
+    const isHidden = translatePanel.classList.toggle('hidden');
+    translatePanel.setAttribute('aria-hidden', String(isHidden));
+    if (!isHidden) {
+      sourceInput.focus();
+      renderSavedTranslations();
+    }
+  };
+
+  translateButton.addEventListener('click', () => {
+    togglePanel();
+    if (!document.getElementById('financeCalculatorPanel')?.classList.contains('hidden')) {
+      document.getElementById('financeCalculatorPanel')?.classList.add('hidden');
+    }
+  });
+
+  closeTranslatePanel.addEventListener('click', () => {
+    translatePanel.classList.add('hidden');
+    translatePanel.setAttribute('aria-hidden', 'true');
+  });
+
+  const doTranslate = async () => {
+    const value = sourceInput.value.trim();
+    if (!value) {
+      targetOutput.value = '';
+      return;
+    }
+
+    const direction = `${sourceLangSelect.value}-${targetLangSelect.value}`;
+    targetOutput.value = 'Traduzindo...';
+    try {
+      let translated = await translateText(value, direction);
+      translated = normalizeTranslatedPunctuation(translated);
+      targetOutput.value = translated || 'Nenhum resultado encontrado';
+    } catch (error) {
+      console.warn('Erro ao traduzir:', error);
+      targetOutput.value = 'Erro ao traduzir';
+    }
+  };
+
+  const saveTranslation = () => {
+    const sourceText = sourceInput.value.trim();
+    const resultText = targetOutput.value.trim();
+    const sourceLang = sourceLangSelect.value;
+    const targetLang = targetLangSelect.value;
+
+    if (!sourceText || !resultText || !sourceLang || !targetLang) return;
+    const history = getHistory();
+    const newItem = {
+      sourceLang,
+      targetLang,
+      sourceText,
+      resultText,
+      savedAt: Date.now()
+    };
+
+    history.unshift(newItem);
+    if (history.length > 20) history.pop();
+    saveHistory(history);
+    renderSavedTranslations();
+  };
+
+  translateSubmit.addEventListener('click', doTranslate);
+  copyTranslationBtn.addEventListener('click', async () => {
+    const textToCopy = targetOutput.value.trim();
+    if (!textToCopy) return;
+
+    try {
+      await navigator.clipboard.writeText(textToCopy);
+      const original = copyTranslationBtn.innerHTML;
+      copyTranslationBtn.innerHTML = '<i class="fa fa-check" aria-hidden="true"></i> Copiado';
+      setTimeout(() => {
+        copyTranslationBtn.innerHTML = original;
+      }, 1200);
+    } catch (err) {
+      console.warn('Falha ao copiar tradução:', err);
+      alert('Não foi possível copiar a tradução.');
+    }
+  });
+  saveTranslationBtn.addEventListener('click', saveTranslation);
+  sourceInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      doTranslate();
+    }
+  });
+};
+
+const initCurrencyConverter = () => {
+  const financeConverter = createCurrencyConverter({
+    brlInput: document.getElementById('brlAmount'),
+    rateInput: document.getElementById('usdRate'),
+    resultInput: document.getElementById('usdResult')
+  });
+
+  const floatingConverter = createCurrencyConverter({
+    brlInput: document.getElementById('brlAmountFloating'),
+    rateInput: document.getElementById('usdRateFloating'),
+    resultInput: document.getElementById('usdResultFloating')
+  });
+
+  window.convertCurrency = () => {
+    financeConverter?.convert?.();
+    floatingConverter?.convert?.();
+  };
+
+  fetchCurrentUsdBrlRate().then(() => window.convertCurrency()).catch(() => window.convertCurrency());
 };
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -2577,6 +3224,8 @@ window.addEventListener('DOMContentLoaded', () => {
   if (document.getElementById('reservationsBody')) {
     initReservationManagement();
     initCurrencyConverter();
+    initFloatingStandardCalculator();
+    initTranslationPanel();
     attachSectionLinks();
     setupAccountModalEvents();
     setupRolesControls();
@@ -2584,6 +3233,37 @@ window.addEventListener('DOMContentLoaded', () => {
     // Inicialmente carregamos apenas a aba de reservas (sem prÃ©-carregar contas ou gerenciamento)
     mostrarSecao('reservas');
     carregarAgendamentosDoBanco();
+    loadImportantInfoFeed();
+
+    if (importantInfoRefreshTimer) {
+      clearInterval(importantInfoRefreshTimer);
+    }
+    importantInfoRefreshTimer = setInterval(loadImportantInfoFeed, 15000);
+  }
+
+  const calculatorButton = document.getElementById('financeFloatingCalc');
+  const financePanel = document.getElementById('financeCalculatorPanel');
+  const closeFinanceCalculator = document.getElementById('closeFinanceCalculator');
+  const translatePanel = document.getElementById('translateFloatingPanel');
+
+  if (calculatorButton && financePanel) {
+    calculatorButton.addEventListener('click', () => {
+      const isHidden = financePanel.classList.toggle('hidden');
+      financePanel.setAttribute('aria-hidden', String(isHidden));
+      if (!isHidden) {
+        translatePanel?.classList.add('hidden');
+        fetchCurrentUsdBrlRate()
+          .then(() => window.convertCurrency?.())
+          .catch(() => window.convertCurrency?.());
+      }
+    });
+  }
+
+  if (closeFinanceCalculator && financePanel) {
+    closeFinanceCalculator.addEventListener('click', () => {
+      financePanel.classList.add('hidden');
+      financePanel.setAttribute('aria-hidden', 'true');
+    });
   }
 
   const hamburger = document.getElementById('hamburger');
@@ -2648,10 +3328,63 @@ window.addEventListener('DOMContentLoaded', () => {
     updateMobileMenuView();
   };
 
+  const bindMobileProfileActions = (userBlock) => {
+    userBlock.querySelectorAll('.profile-item').forEach((item) => {
+      item.addEventListener('click', (event) => {
+        event.preventDefault();
+        const action = item.getAttribute('data-profile-action');
+        if (action === 'my-reservations') {
+          closeMobileMenu();
+          window.location.href = '../index.html';
+        } else if (action === 'my-data') {
+          closeMobileMenu();
+          window.location.href = '../index.html';
+        } else if (action === 'principal') {
+          closeMobileMenu();
+          window.location.href = '../index.html';
+        } else if (action === 'manage') {
+          closeMobileMenu();
+          window.location.href = 'html/Gerenciamento.html';
+        } else if (action === 'logout') {
+          localStorage.removeItem('userRole');
+          localStorage.removeItem('userEmail');
+          localStorage.removeItem('userName');
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('currentRolePermissions');
+          closeMobileMenu();
+          window.location.href = '../index.html';
+        } else if (action === 'login') {
+          closeMobileMenu();
+          const loginLink = document.querySelector('[data-profile-action="login"]');
+          if (loginLink) loginLink.click();
+        } else if (action === 'register') {
+          closeMobileMenu();
+          const registerLink = document.querySelector('[data-profile-action="register"]');
+          if (registerLink) registerLink.click();
+        }
+      });
+    });
+  };
+
+  const syncMobileProfileUserView = () => {
+    const container = getMobileMenuContainer();
+    const userView = container?.querySelector('.mobile-menu-user');
+    const profileDropdown = document.querySelector('.profile-dropdown');
+    if (!userView || !profileDropdown) return;
+
+    userView.innerHTML = '';
+    const userBlock = document.createElement('div');
+    userBlock.className = 'mobile-profile-dropdown';
+    userBlock.innerHTML = profileDropdown.innerHTML;
+    userView.appendChild(userBlock);
+    bindMobileProfileActions(userBlock);
+  };
+
   const toggleMobileMenu = () => {
     if (mobileMenuState.open) {
       closeMobileMenu();
     } else {
+      syncMobileProfileUserView();
       mobileMenuState.open = true;
       updateMobileMenuView();
     }
@@ -2712,45 +3445,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     userView.innerHTML = '';
-    if (profileDropdown) {
-      const userBlock = document.createElement('div');
-      userBlock.className = 'mobile-profile-dropdown';
-      userBlock.innerHTML = profileDropdown.innerHTML;
-      userView.appendChild(userBlock);
-
-      userBlock.querySelectorAll('.profile-item').forEach((item) => {
-        item.addEventListener('click', (event) => {
-          event.preventDefault();
-          const action = item.getAttribute('data-profile-action');
-          if (action === 'my-reservations') {
-            closeMobileMenu();
-            window.location.href = '../index.html';
-          } else if (action === 'my-data') {
-            closeMobileMenu();
-            window.location.href = '../index.html';
-          } else if (action === 'principal' || action === 'manage') {
-            closeMobileMenu();
-            window.location.href = '../index.html';
-          } else if (action === 'logout') {
-            localStorage.removeItem('userRole');
-            localStorage.removeItem('userEmail');
-            localStorage.removeItem('userName');
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('currentRolePermissions');
-            closeMobileMenu();
-            window.location.href = '../index.html';
-          } else if (action === 'login') {
-            closeMobileMenu();
-            const loginLink = document.querySelector('[data-profile-action="login"]');
-            if (loginLink) loginLink.click();
-          } else if (action === 'register') {
-            closeMobileMenu();
-            const registerLink = document.querySelector('[data-profile-action="register"]');
-            if (registerLink) registerLink.click();
-          }
-        });
-      });
-    }
+    syncMobileProfileUserView();
 
     const backButton = container.querySelector('#mobileMenuBack');
     const closeButton = container.querySelector('#mobileMenuClose');
@@ -2880,8 +3575,14 @@ window.addEventListener('DOMContentLoaded', () => {
           return;
         }
 
-        if (action === 'principal' || action === 'manage') {
+        if (action === 'principal') {
           window.location.href = '../index.html';
+          closeProfileMenu();
+          return;
+        }
+
+        if (action === 'manage') {
+          window.location.href = 'html/Gerenciamento.html';
           closeProfileMenu();
           return;
         }

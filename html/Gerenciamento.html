@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerenciamento de Reservas</title>
+    
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
@@ -21,7 +21,7 @@
             <nav class="gerenciamento-nav" id="gerenciamentoNav">
                 <a href="../index.html" class="nav-link">Principal</a>
                 <a href="#" class="nav-link" data-section="reservas">Reservas</a>
-                <a href="#" class="nav-link" data-section="gerenciamento">Gerenciamento da pÃ¡gina</a>
+                <a href="#" class="nav-link" data-section="gerenciamento">Gerenciamento da página</a>
                 <a href="#" class="nav-link" data-section="financeiro">Financeiro</a>
                 <a href="#" class="nav-link" data-section="contas">Contas</a>
             </nav>
@@ -57,7 +57,11 @@
     <main class="main-container">
         <section id="reservationsStatsSection" class="rio-notice reservas-section" style="padding-top: 2rem;">
             <div class="rio-notice-text blurry-card">
-                <h2 class="rio-notice-title">Gerenciamento de Reservas</h2>
+            <h2 class="rio-notice-title">Gerenciamento de Reservas</h2>
+            <div id="importantInfoFeed" class="important-info-feed" style="margin-top:0.85rem; display:grid; gap:0.75rem;">
+              <div class="important-info-empty" style="padding:0.85rem 1rem; border-radius:12px; background:rgba(255,255,255,0.82); color:#4b5563;">Carregando atividades recentes...</div>
+            </div>
+                
                 <div class="gerenciamento-stats" style="display:flex; gap:1rem; flex-wrap:wrap; overflow-x:hidden; margin-top:1rem;">
                     <div class="status-group" style="display:flex; gap:1rem; width:100%; flex-wrap:wrap; overflow-x:hidden;">
                         <div class="status-card" style="background:rgba(255,255,255,0.9); padding:1rem; border-radius:12px; min-width:120px; flex:0 0 120px;"> 
@@ -74,9 +78,9 @@
                         </div>
                     </div>
                     <div id="nextTourCard" style="background:rgba(255,255,255,0.9); padding:1rem; border-radius:12px; min-width:220px;">
-                        <strong>PrÃ³ximo tour</strong>
+                        <strong>Próximo tour</strong>
                         <div id="statNext" style="font-size:1.2rem; font-weight:700;">-</div>
-                        <button id="nextTourToggle" type="button" class="next-tour-toggle" aria-expanded="false">â–¾</button>
+                        <button id="nextTourToggle" type="button" class="next-tour-toggle" aria-expanded="false">▾</button>
                         <div id="nextTourDetails" class="next-tour-details-panel" style="margin-top:0.5rem; font-size:0.85rem; color:#374151;"></div>
                     </div>
                 </div>
@@ -123,6 +127,11 @@
                 </div>
             </div>
 
+            <div id="reservationAlert" class="reservation-alert hidden" role="status" aria-live="polite">
+                <span id="reservationAlertText">&nbsp;</span>
+                <button type="button" class="reservations-alert-close" aria-label="Fechar alerta">×</button>
+            </div>
+
             <div style="overflow-x:auto;">
                 <table class="rio-tour-table">
                     <thead>
@@ -148,7 +157,7 @@
             <div class="rio-notice-text" style="background:rgba(255,255,255,0.9); border-radius:12px; padding:1rem; margin-bottom:1rem;">
                 <div id="countryChartContainer" style="margin-top:0.5rem; color:#374151; display:flex; gap:1rem; align-items:center; flex-wrap:wrap;">
                     <div id="countryPie" style="width:150px; height:150px; border-radius:50%; background: conic-gradient(#e53e3e 0deg 0deg, #3182ce 0deg 0deg, #38a169 0deg 0deg, #dd6b20 0deg 0deg);"></div>
-                    <div id="countryLegend" style="font-size:0.9rem; line-height:1.4;">Carregando dados do paÃ­s...</div>
+                    <div id="countryLegend" style="font-size:0.9rem; line-height:1.4;">Carregando dados do país...</div>
                 </div>
             </div>
             <div style="overflow-x:auto;">
@@ -161,39 +170,38 @@
                             <th>Sobrenome</th>
                             <th>Celular</th>
                             <th>Role</th>
-                            <th>PaÃ­s</th>
-                            <th>GÃªnero</th>
-                            <th>AÃ§Ãµes</th>
+                            <th>País</th>
+                            <th>Gênero</th>
                         </tr>
                     </thead>
                     <tbody id="accountsBody">
-                        <tr><td colspan="9" style="padding:0.75rem;">Clique em "Contas" para carregar os registros.</td></tr>
+                        <tr><td colspan="8" style="padding:0.75rem;">Clique em "Contas" para carregar os registros.</td></tr>
                     </tbody>
                 </table>
             </div>
 
             <div id="rolesManager" style="margin-top:1.5rem; background:rgba(255,255,255,0.9); border-radius:12px; padding:1rem;">
-                <strong>Gerenciamento de NÃ­veis de Acesso</strong>
+                <strong>Gerenciamento de Níveis de Acesso</strong>
                 <div style="margin-top:0.75rem; display:flex; gap:0.5rem; align-items:center;">
                     <label style="display:block; margin-bottom:0.5rem; color:#1f2937; font-weight:700;">Perfil de Acesso:</label>
-                    <button id="addRoleBtn" class="btn-book" type="button" style="background:#18b015;color:#fff;">Adicionar nÃ­vel de acesso</button>
+                    <button id="addRoleBtn" class="btn-book" type="button" style="background:#18b015;color:#fff;">Adicionar nível de acesso</button>
                 </div>
                 <div style="margin-top:0.75rem;">
                     <select id="roleSelect" style="width:100%; max-width:320px; padding:0.5rem; border:1px solid #ccc; border-radius:0.5rem;"></select>
                 </div>
                 <div id="roleCheckboxes" style="margin-top:0.75rem; color:#1f2937;">
-                    <strong>PermissÃµes</strong><br />
+                    <strong>Permissões</strong><br />
                     <label><input type="checkbox" id="roleCheckReservas" /> Gerenciar Reservas</label><br />
                     <label><input type="checkbox" id="roleCheckContas" /> Gerenciar Contas</label><br />
                     <label><input type="checkbox" id="roleCheckPerfis" /> Gerenciar Perfis</label><br />
-                    <label><input type="checkbox" id="roleCheckSelfEdit" /> Alterar prÃ³prias informações</label><br />
+                    <label><input type="checkbox" id="roleCheckSelfEdit" /> Alterar próprias informações</label><br />
                     <label><input type="checkbox" id="roleCheckOtherEdit" /> Alterar informações de outros perfis</label><br />
                     <label><input type="checkbox" id="roleCheckConsultas" /> Realizar consultas</label><br />
                     <label><input type="checkbox" id="roleCheckCarregarReservas" /> Carregar todas as reservas</label>
                 </div>
 
                 <div style="margin-top:1rem; color:#1f2937;">
-                    <strong>Abas visÃ­veis</strong><br />
+                    <strong>Abas visíveis</strong><br />
                     <label><input type="checkbox" class="tab-perm" data-tab="Principal" /> Principal</label><br />
                     <label><input type="checkbox" class="tab-perm" data-tab="Reservas" /> Reservas</label><br />
                     <label><input type="checkbox" class="tab-perm" data-tab="Gerenciamento" /> Gerenciamento</label><br />
@@ -207,35 +215,35 @@
                 </div>
 
                 <div style="margin-top:1rem; color:#1f2937;">
-                    <strong>PÃ¡ginas permitidas</strong><br />
+                    <strong>Páginas permitidas</strong><br />
                     <label><input type="checkbox" class="page-perm" data-page="Principal" /> Principal</label><br />
                     <label><input type="checkbox" class="page-perm" data-page="Gerenciamento" /> Gerenciamento</label>
                 </div>
 
                 <div style="margin-top:0.75rem;">
-                    <button id="saveRolesConfig" class="btn-book" type="button">Salvar nÃ­veis</button>
+                    <button id="saveRolesConfig" class="btn-book" type="button">Salvar níveis</button>
                 </div>
             </div>
         </section>
 
         <section id="pageManagementSection" style="display:none; margin-top:2rem;">
             <div class="rio-notice-text" style="background:rgba(255,255,255,0.9); border-radius:12px; padding:1rem; margin-bottom:1rem;">
-                <!-- CabeÃ§alho de gerenciamento removido conforme solicitaÃ§Ã£o -->
+                <!-- Cabeçalho de gerenciamento removido conforme solicitação -->
             </div>
 
-            <div class="currency-converter" aria-label="Calculadora de conversÃ£o de moeda">
-                <h3>Calculadora Real â‡† DÃ³lar</h3>
+            <div id="financeSection" class="currency-converter" aria-label="Calculadora de conversão de moeda">
+                <h3>Calculadora Real ↔ Dólar</h3>
                 <div class="currency-converter-grid">
                     <label>
                         Valor em Real (BRL)
                         <input type="number" id="brlAmount" min="0" step="0.01" placeholder="0,00" />
                     </label>
                     <label>
-                        CotaÃ§Ã£o atual (1 USD = BRL)
+                        Cotação atual (1 USD = BRL)
                         <input type="number" id="usdRate" min="0" step="0.0001" readonly placeholder="Carregando..." />
                     </label>
                     <label>
-                        Valor em DÃ³lar (USD)
+                        Valor em Dólar (USD)
                         <input type="number" id="usdResult" min="0" step="0.01" placeholder="0,00" />
                     </label>
                 </div>
@@ -243,7 +251,7 @@
             </div>
 
             <div id="pageManagementToursSection" style="overflow-x:auto; margin-bottom: 1.25rem;">
-                <h3 style="margin:0 0 0.5rem; font-size:1rem;">Tours da PÃ¡gina</h3>
+                <h3 style="margin:0 0 0.5rem; font-size:1rem;">Tours da Página</h3>
                 <table class="rio-tour-table">
                     <thead>
                         <tr>
@@ -266,7 +274,7 @@
         </section>
     </main>
 
-    <!-- Modal de ediÃ§Ã£o de reserva -->
+    <!-- Modal de edição de reserva -->
     <div id="reservationModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
         <div class="modal-content">
             <h3 id="modalTitle">Editar reserva</h3>
@@ -337,14 +345,14 @@
                       <button type="button" id="modalSave" class="btn-book">Salvar</button>
                   </div>
                   <div id="deleteConfirmation" class="delete-confirmation hidden">
-                      <p>Deslize para confirmar a exclusÃ£o:</p>
+                      <p>Deslize para confirmar a exclusão:</p>
                       <div class="delete-slider">
                           <input type="range" id="deleteSlider" min="0" max="100" value="0" />
-                          <span id="deleteSliderLabel">Arraste atÃ© o final</span>
+                          <span id="deleteSliderLabel">Arraste até o final</span>
                       </div>
                     <div class="modal-actions">
                         <button type="button" id="modalDeleteCancel" class="btn-book">Cancelar</button>
-                        <button type="button" id="modalDeleteConfirm" class="btn-book btn-danger" disabled>Confirmar exclusÃ£o</button>
+                        <button type="button" id="modalDeleteConfirm" class="btn-book btn-danger" disabled>Confirmar exclusão</button>
                     </div>
                   </div>
               </form>
@@ -352,7 +360,7 @@
         </div>
     </div>
 
-    <!-- Modal de ediÃ§Ã£o de tour da pÃ¡gina -->
+    <!-- Modal de edição de tour da página -->
     <div id="tourEditModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="tourModalTitle" style="z-index:5000;">
       <div class="modal-content">
         <h3 id="tourModalTitle">Editar Tour</h3>
@@ -367,7 +375,7 @@
               <legend>Idiomas</legend>
               <div class="checkbox-row">
                 <label><input type="checkbox" id="tourModalLanguagePt" value="Português" /> Português</label>
-                <label><input type="checkbox" id="tourModalLanguageEn" value="InglÃªs" /> InglÃªs</label>
+                <label><input type="checkbox" id="tourModalLanguageEn" value="Inglês" /> Inglês</label>
                 <label><input type="checkbox" id="tourModalLanguageEs" value="Espanhol" /> Espanhol</label>
               </div>
             </fieldset>
@@ -405,14 +413,14 @@
       </div>
     </div>
 
-    <!-- Modal de ediÃ§Ã£o de perfil de acesso -->
+    <!-- Modal de edição de perfil de acesso -->
     <div id="accountModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="accountModalTitle" style="z-index:5000;">
       <div class="modal-content">
         <h3 id="accountModalTitle">Gerenciar Perfil de Acesso</h3>
         <div class="modal-body">
           <form id="accountForm">
             <label>
-              E-mail (nÃ£o editÃ¡vel)
+              E-mail (não editável)
               <input type="email" id="accountEmail" readonly />
             </label>
             <label>
@@ -428,7 +436,7 @@
               <input type="text" id="accountCelular" />
             </label>
             <label>
-              PaÃ­s de Origem
+              País de Origem
               <input type="text" id="accountPaisOrigem" placeholder="Brasil" />
             </label>
             <label>
@@ -447,6 +455,111 @@
           </form>
         </div>
       </div>
+    </div>
+
+    <div class="floating-calculator-group">
+      <button id="translateFloatingBtn" class="floating-action-button floating-translate-button" type="button" aria-label="Traduzir">
+        <i class="fa fa-language" aria-hidden="true"></i>
+      </button>
+      <button id="financeFloatingCalc" class="floating-calculator" type="button" aria-label="Abrir calculadora">
+        <i class="fa fa-calculator" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <div id="translateFloatingPanel" class="floating-translate-panel hidden" aria-hidden="true">
+      <div class="floating-calculator-header">
+        <span>Tradutor</span>
+        <button id="closeTranslatePanel" class="floating-calculator-close" type="button" aria-label="Fechar tradutor">×</button>
+      </div>
+      <div class="translator-widget">
+        <div class="translator-direction-row">
+          <label>
+            Idioma de origem
+            <select id="translatorSourceLang" aria-label="Idioma de origem">
+              <option value="pt">Português</option>
+              <option value="en">Inglês</option>
+              <option value="es">Espanhol</option>
+            </select>
+          </label>
+          <label>
+            Idioma de destino
+            <select id="translatorTargetLang" aria-label="Idioma de destino">
+              <option value="en">Inglês</option>
+              <option value="pt">Português</option>
+              <option value="es">Espanhol</option>
+            </select>
+          </label>
+        </div>
+        <label>
+          Texto a traduzir
+          <textarea id="translatorSource" rows="4" placeholder="Digite aqui o texto..." aria-label="Texto de origem"></textarea>
+        </label>
+        <label class="translator-result-label">
+          Resultado
+          <div class="translator-result-wrapper">
+            <textarea id="translatorResult" rows="4" placeholder="A tradução aparecerá aqui..." aria-label="Texto traduzido"></textarea>
+            <button id="copyTranslationBtn" class="translator-copy-icon" type="button" aria-label="Copiar tradução">
+              <i class="fa fa-copy" aria-hidden="true"></i>
+            </button>
+          </div>
+        </label>
+        <div class="translator-actions-row">
+          <button id="translateSubmit" class="btn-book" type="button">Traduzir</button>
+          <button id="saveTranslationBtn" class="btn-book btn-secondary" type="button">Salvar tradução</button>
+        </div>
+        <div class="translation-history">
+          <div class="translation-history-header">Traduções salvas</div>
+          <div id="translationHistoryList" class="translation-history-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="financeCalculatorPanel" class="floating-calculator-panel hidden" aria-hidden="true">
+        <div class="floating-calculator-header">
+            <span>Calculadora Real ↔ Dólar</span>
+            <button id="closeFinanceCalculator" class="floating-calculator-close" type="button" aria-label="Fechar calculadora">×</button>
+        </div>
+        <div class="currency-converter" aria-label="Calculadora de conversão de moeda">
+            <div class="currency-converter-grid">
+                <label>
+                    Valor em Real (BRL)
+                    <input type="number" id="brlAmountFloating" min="0" step="0.01" placeholder="0,00" />
+                </label>
+                <label>
+                    Cotação atual (1 USD = BRL)
+                    <input type="number" id="usdRateFloating" min="0" step="0.0001" readonly placeholder="Carregando..." />
+                </label>
+                <label>
+                    Valor em Dólar (USD)
+                    <input type="number" id="usdResultFloating" min="0" step="0.01" placeholder="0,00" />
+                </label>
+            </div>
+        </div>
+        <div class="floating-standard-calculator" aria-label="Calculadora convencional">
+            <input type="text" id="floatingCalcDisplay" class="floating-calc-display" inputmode="text" autocomplete="off" aria-label="Visor da calculadora" placeholder="Digite números e operadores" />
+            <div class="floating-calc-keypad">
+                <button type="button" class="floating-calc-key" data-value="C">C</button>
+                <button type="button" class="floating-calc-key" data-value="⌫">⌫</button>
+                <button type="button" class="floating-calc-key" data-value="(">(</button>
+                <button type="button" class="floating-calc-key" data-value=")">)</button>
+                <button type="button" class="floating-calc-key floating-calc-key--operator" data-value="/">÷</button>
+                <button type="button" class="floating-calc-key" data-value="7">7</button>
+                <button type="button" class="floating-calc-key" data-value="8">8</button>
+                <button type="button" class="floating-calc-key" data-value="9">9</button>
+                <button type="button" class="floating-calc-key floating-calc-key--operator" data-value="*">×</button>
+                <button type="button" class="floating-calc-key" data-value="4">4</button>
+                <button type="button" class="floating-calc-key" data-value="5">5</button>
+                <button type="button" class="floating-calc-key" data-value="6">6</button>
+                <button type="button" class="floating-calc-key floating-calc-key--operator" data-value="-">−</button>
+                <button type="button" class="floating-calc-key" data-value="1">1</button>
+                <button type="button" class="floating-calc-key" data-value="2">2</button>
+                <button type="button" class="floating-calc-key" data-value="3">3</button>
+                <button type="button" class="floating-calc-key floating-calc-key--operator" data-value="+">+</button>
+                <button type="button" class="floating-calc-key floating-calc-key--wide" data-value="0">0</button>
+                <button type="button" class="floating-calc-key" data-value=","> , </button>
+                <button type="button" class="floating-calc-key floating-calc-key--equals" data-value="=">=</button>
+            </div>
+        </div>
     </div>
 
     <script src="../js/Translation.js"></script>

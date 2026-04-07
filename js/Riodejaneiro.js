@@ -52,6 +52,15 @@
     const getCurrentUserRole = () => normalizeRole(localStorage.getItem('userRole') || 'cliente_user');
     const getCurrentUserEmail = () => (localStorage.getItem('userEmail') || '').toLowerCase();
 
+    const redirectToPrincipalPage = () => {
+        const path = window.location.pathname || '';
+        if (path.endsWith('/html/Gerenciamento.html') || path.endsWith('Gerenciamento.html')) {
+            window.location.href = '../index.html';
+        } else {
+            window.location.href = 'index.html';
+        }
+    };
+
     const getCurrentRolePermissions = () => {
         const currentRole = getCurrentUserRole();
         if (rolePermissionsMap[currentRole]) {
@@ -189,16 +198,28 @@
             const result = await response.json();
 
             if (result.success) {
-                alert('Reserva concluÃ­da com sucesso.');
+                if (typeof showGlobalNotification === 'function') {
+                    showGlobalNotification('Reserva concluída com sucesso.', 'success');
+                } else {
+                    alert('Reserva concluÃ­da com sucesso.');
+                }
                 if (typeof carregarAgendamentosDoBanco === 'function') {
                     carregarAgendamentosDoBanco();
                 }
             } else {
-                alert('Erro: ' + result.message);
+                if (typeof showGlobalNotification === 'function') {
+                    showGlobalNotification('Erro: ' + result.message, 'error');
+                } else {
+                    alert('Erro: ' + result.message);
+                }
             }
         } catch (error) {
             console.error('Erro na requisiÃ§Ã£o:', error);
-            alert('Ocorreu um erro de conexÃ£o com o servidor.');
+            if (typeof showGlobalNotification === 'function') {
+                showGlobalNotification('Ocorreu um erro de conexão com o servidor.', 'error');
+            } else {
+                alert('Ocorreu um erro de conexão com o servidor.');
+            }
         }
     };
 
@@ -332,9 +353,10 @@
 
                 const detailsEl = card.querySelector('.rio-tour-details');
                 if (detailsEl) {
-                    const languages = tour.idiomas || tour.languages || 'PortuguÃªs, InglÃªs e Espanhol';
-                    const meeting = tour.encontro || tour.meeting || 'NÃ£o informado';
-                    const identification = tour.identificacao || tour.identification || 'Guias com camisetas verdes';
+                    const currentLang = (typeof window.getCurrentLang === 'function') ? window.getCurrentLang() : 'pt';
+                    const languages = translateTourCardDetailValue('languages', tour.idiomas || tour.languages || 'Português, Inglês e Espanhol', currentLang);
+                    const meeting = translateTourCardDetailValue('meeting', tour.encontro || tour.meeting || 'Não informado', currentLang);
+                    const identification = translateTourCardDetailValue('identification', tour.identificacao || tour.identification || 'Guias com camisetas verdes', currentLang);
                     const value = tour.valor ?? tour.value;
                     const estado = (tour.estado || tour.status || '').trim();
                     let valueLine = '';
@@ -377,6 +399,61 @@
 
     // Expor para a segunda IIFE (shared logic) poder chamar no DOMContentLoaded
     window.carregarToursDoBanco = carregarToursDoBanco;
+
+    const translateTourCardDetailValue = (fieldKey, rawValue, lang) => {
+        if (!rawValue && rawValue !== 0) return rawValue || '';
+        const value = String(rawValue).trim();
+        const defaultsByLang = window.translationCatalog?.tourCardDefaultByLang?.[lang]
+            || window.translationCatalog?.tourCardDefaultByLang?.pt
+            || { languages: 'Português, Inglês e Espanhol', meeting: 'Não informado', identification: 'Guias com camisetas verdes' };
+
+        const knownValues = {
+            languages: {
+                pt: 'Português, Inglês e Espanhol',
+                en: 'Portuguese, English and Spanish',
+                fr: 'Portugais, anglais et espagnol',
+                es: 'Portugués, inglés y español',
+                it: 'Portoghese, inglese e spagnolo',
+                zh: '葡萄牙语、英语和西班牙语'
+            },
+            meeting: {
+                pt: 'Não informado',
+                en: 'Not informed',
+                fr: 'Non renseigné',
+                es: 'No informado',
+                it: 'Non indicato',
+                zh: '未指定'
+            },
+            identification: {
+                pt: 'Guias com camisetas verdes',
+                en: 'Guides wearing green shirts',
+                fr: 'Guides avec t-shirts verts',
+                es: 'Guías con camisetas verdes',
+                it: 'Guide con magliette verdi',
+                zh: '穿绿色T恤的导游'
+            }
+        };
+
+        const target = {
+            languages: defaultsByLang.languages,
+            meeting: defaultsByLang.meeting,
+            identification: defaultsByLang.identification
+        }[fieldKey] || value;
+
+        const normalize = (text) => text
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase();
+
+        const normalizedValue = normalize(value);
+        for (const [langKey, phrase] of Object.entries(knownValues[fieldKey] || {})) {
+            if (normalize(phrase) === normalizedValue) {
+                return target;
+            }
+        }
+
+        return value;
+    };
 
     const applyPageLanguage = (lang) => {
         const t = pageTranslations[lang] || pageTranslations.pt;
@@ -437,9 +514,9 @@
 
                 const detailList = card.querySelector('.rio-tour-details');
                 if (detailList) {
-                    const languages = dbTour.idiomas || dbTour.languages || 'PortuguÃªs, InglÃªs e Espanhol';
-                    const meeting = dbTour.encontro || dbTour.meeting || 'NÃ£o informado';
-                    const identification = dbTour.identificacao || dbTour.identification || 'Guias com camisetas verdes';
+                    const languages = translateTourCardDetailValue('languages', dbTour.idiomas || dbTour.languages || 'Português, Inglês e Espanhol', lang);
+                    const meeting = translateTourCardDetailValue('meeting', dbTour.encontro || dbTour.meeting || 'Não informado', lang);
+                    const identification = translateTourCardDetailValue('identification', dbTour.identificacao || dbTour.identification || 'Guias com camisetas verdes', lang);
                     detailList.innerHTML = `
                         <li><i class="fa fa-language"></i> <strong>${labels.idiomas}:</strong> ${languages}</li>
                         <li><i class="fa fa-map-marker-alt"></i> <strong>${labels.encontro}:</strong> ${meeting}</li>
@@ -661,6 +738,11 @@
 
             translateProfileDropdown(dropdown);
             applyRoleBasedControls();
+            if (typeof syncMobileProfileUserView === 'function') {
+                syncMobileProfileUserView();
+            } else {
+                window.syncMobileProfileUserView?.();
+            }
         } else {
             dropdown.innerHTML = `
                 <a href="#" class="profile-item" data-profile-action="login" data-i18n="profile_login">Entrar</a>
@@ -668,6 +750,11 @@
             `;
 
             translateProfileDropdown(dropdown);
+            if (typeof syncMobileProfileUserView === 'function') {
+                syncMobileProfileUserView();
+            } else {
+                window.syncMobileProfileUserView?.();
+            }
         }
     };
 
@@ -717,7 +804,7 @@
             } else if (action === 'principal') {
                 menu.classList.remove('open');
                 button.setAttribute('aria-expanded', 'false');
-                window.location.href = '../index.html';
+                redirectToPrincipalPage();
             } else if (action === 'my-data') {
                 menu.classList.remove('open');
                 button.setAttribute('aria-expanded', 'false');
@@ -969,7 +1056,13 @@
             back.style.visibility = mobileMenuState.view === 'main' ? 'hidden' : 'visible';
         }
 
+        if (!mobileMenuState.open && container.contains(document.activeElement)) {
+            document.activeElement.blur();
+        }
+
         container.setAttribute('aria-hidden', mobileMenuState.open ? 'false' : 'true');
+        container.inert = !mobileMenuState.open;
+
         if (mobileMenuState.open) {
             container.classList.add('open');
         } else {
@@ -986,10 +1079,61 @@
     };
 
     const toggleMobileMenu = (view = 'main') => {
+        syncMobileProfileUserView();
         mobileMenuState.view = view;
         mobileMenuState.open = true;
         updateMobileMenuView();
     };
+
+    function bindMobileProfileActions(userBlock) {
+        userBlock.querySelectorAll('.profile-item').forEach((item) => {
+            item.addEventListener('click', (event) => {
+                event.preventDefault();
+                const action = item.getAttribute('data-profile-action');
+                if (action === 'login') {
+                    closeMobileMenu();
+                    const loginLink = document.querySelector('[data-profile-action="login"]');
+                    if (loginLink) loginLink.click();
+                } else if (action === 'register') {
+                    closeMobileMenu();
+                    const registerLink = document.querySelector('[data-profile-action="register"]');
+                    if (registerLink) registerLink.click();
+                } else if (action === 'my-reservations') {
+                    closeMobileMenu();
+                    window.openMyReservationsModal?.();
+                } else if (action === 'my-data') {
+                    closeMobileMenu();
+                    window.openUserDataModal?.();
+                } else if (action === 'manage') {
+                    closeMobileMenu();
+                    window.location.href = 'html/Gerenciamento.html';
+                } else if (action === 'principal') {
+                    closeMobileMenu();
+                    redirectToPrincipalPage();
+                } else if (action === 'logout') {
+                    closeMobileMenu();
+                    const logoutLink = document.querySelector('.profile-dropdown [data-profile-action="logout"]');
+                    if (logoutLink) logoutLink.click();
+                }
+            });
+        });
+    }
+
+    function syncMobileProfileUserView() {
+        const container = getMobileMenuContainer();
+        const userView = container?.querySelector('.mobile-menu-user');
+        const profileDropdown = document.querySelector('.profile-dropdown');
+        if (!userView || !profileDropdown) return;
+
+        userView.innerHTML = '';
+        const userBlock = document.createElement('div');
+        userBlock.className = 'mobile-profile-dropdown';
+        userBlock.innerHTML = profileDropdown.innerHTML;
+        userView.appendChild(userBlock);
+        bindMobileProfileActions(userBlock);
+    }
+
+    window.syncMobileProfileUserView = syncMobileProfileUserView;
 
     const initMobileMenuContent = () => {
         const container = getMobileMenuContainer();
@@ -1039,43 +1183,7 @@
         langWrapper.appendChild(cloneLang);
         langView.appendChild(langWrapper);
 
-        userView.innerHTML = '';
-        const userBlock = document.createElement('div');
-        userBlock.className = 'mobile-profile-dropdown';
-        userBlock.innerHTML = profileDropdown.innerHTML;
-        userView.appendChild(userBlock);
-
-        userBlock.querySelectorAll('.profile-item').forEach((item) => {
-            item.addEventListener('click', (event) => {
-                event.preventDefault();
-                const action = item.getAttribute('data-profile-action');
-                if (action === 'login') {
-                    closeMobileMenu();
-                    const loginLink = document.querySelector('[data-profile-action="login"]');
-                    if (loginLink) loginLink.click();
-                } else if (action === 'register') {
-                    closeMobileMenu();
-                    const registerLink = document.querySelector('[data-profile-action="register"]');
-                    if (registerLink) registerLink.click();
-                } else if (action === 'my-reservations') {
-                    closeMobileMenu();
-                    window.openMyReservationsModal?.();
-                } else if (action === 'my-data') {
-                    closeMobileMenu();
-                    window.openUserDataModal?.();
-                } else if (action === 'manage') {
-                    closeMobileMenu();
-                    window.location.href = 'html/Gerenciamento.html';
-                } else if (action === 'principal') {
-                    closeMobileMenu();
-                    window.location.href = '../index.html';
-                } else if (action === 'logout') {
-                    closeMobileMenu();
-                    const logoutLink = document.querySelector('.profile-dropdown [data-profile-action="logout"]');
-                    if (logoutLink) logoutLink.click();
-                }
-            });
-        });
+        syncMobileProfileUserView();
 
         const backButton = container.querySelector('#mobileMenuBack');
         const closeButton = container.querySelector('#mobileMenuClose');
@@ -2286,6 +2394,10 @@
                     const loginOverlay = document.querySelector('.login-modal-overlay');
                     const whatsUrl = 'https://wa.me/5521970018590';
                     const mailUrl = 'mailto:riobyfoottour@gmail.com';
+                    const currentLang = typeof window.getCurrentLanguage === 'function'
+                        ? window.getCurrentLanguage()
+                        : (document.documentElement.lang || 'pt').slice(0, 2);
+                    const ui = window.uiTranslations?.[currentLang] || window.uiTranslations?.pt || {};
 
                     if (loginOverlay) {
                         loginOverlay.style.display = 'flex';
@@ -2294,26 +2406,33 @@
                         loginOverlay.classList.add('open');
                         document.body.classList.add('modal-open');
 
+                        const errorTitle = ui.connectivity_error_title || 'Erro de conexão';
                         const bodyMessage = isOnline
-                            ? `Sentimos muito, o servidor estÃ¡ temporariamente inacessÃ­vel.`
-                            : `Sem conexÃ£o com a internet. Verifique sua rede e tente novamente.`;
-
+                            ? ui.connectivity_error_body_online || 'Sentimos muito, o servidor está temporariamente inacessível.'
+                            : ui.connectivity_error_body_offline || 'Sem conexão com a internet. Verifique sua rede e tente novamente.';
                         const actionMessage = isOnline
-                            ? `Entre em contato com o nosso suporte via:`
-                            : `Quando estiver online, vocÃª poderÃ¡ tentar novamente ou contatar suporte via:`;
+                            ? ui.connectivity_error_support_online || 'Entre em contato com o nosso suporte via:'
+                            : ui.connectivity_error_support_offline || 'Quando estiver online, você poderá tentar novamente ou contatar suporte via:';
+                        const contactPrompt = ui.connectivity_error_contact_prompt || 'WhatsApp ou Email.';
+                        const emailButtonText = ui.connectivity_error_open_email || 'Abrir Email';
+                        const connectionHint = !isOnline
+                            ? `<p style="margin-top:0.5rem; color:#a00; font-weight:bold;">${ui.connectivity_error_check_connection || 'Conecte-se à internet e tente novamente.'}</p>`
+                            : '';
+                        const imageAlt = ui.connectivity_error_image_alt || 'Erro de conexão';
 
                         loginOverlay.innerHTML = `
-                            <div class="login-modal" role="alertdialog" aria-modal="true" aria-label="Suporte temporÃ¡rio">
+                            <div class="login-modal" role="alertdialog" aria-modal="true" aria-label="${escapeHtml(errorTitle)}">
                                 <div class="login-modal__header">
-                                    <h2 class="login-modal__title">Erro de conexÃ£o</h2>
+                                    <h2 class="login-modal__title">${escapeHtml(errorTitle)}</h2>
                                     <button type="button" class="login-modal__close" id="auth-support-overlay-close" aria-label="Fechar">&times;</button>
                                 </div>
                                 <div class="login-modal__body" style="padding:16px; color:#333; line-height:1.5;">
+                                    <img class="login-modal__image" src="imagem/assets/erro.gif" alt="${escapeHtml(imageAlt)}" loading="lazy" />
                                     <p>${bodyMessage}</p>
                                     <p>${actionMessage}</p>
                                     <p><a href="${whatsUrl}" target="_blank" rel="noopener" style="color:#007bff; text-decoration:underline;">WhatsApp</a> ou <a href="${mailUrl}" id="auth-support-email-link" style="color:#007bff; text-decoration:underline;">Email</a>.</p>
-                                    <p style="margin-top:1rem;"><button id="auth-support-email-btn" style="padding:8px 12px;border:none;background:#007bff;color:#fff;border-radius:4px;cursor:pointer;">Abrir Email</button></p>
-                                    ${!isOnline ? `<p style="margin-top:0.5rem; color:#a00; font-weight:bold;">Conecte-se Ã  internet e tente novamente.</p>` : ''}
+                                    <p style="margin-top:1rem;"><button id="auth-support-email-btn" style="padding:8px 12px;border:none;background:#007bff;color:#fff;border-radius:4px;cursor:pointer;">${escapeHtml(emailButtonText)}</button></p>
+                                    ${connectionHint}
                                 </div>
                             </div>
                         `;
@@ -2345,11 +2464,10 @@
                         return;
                     }
 
-                    if (!isOnline) {
-                        alert('Sem conexÃ£o com a internet. Verifique sua rede e tente novamente.');
-                    } else {
-                        alert(`Sentimos muito, o servidor estÃ¡ temporariamente inacessÃ­vel. Entre em contato via WhatsApp: ${whatsUrl} ou Email: ${mailUrl}`);
-                    }
+                    const alertMessage = isOnline
+                        ? ui.connectivity_error_body_online || 'Sentimos muito, o servidor está temporariamente inacessível.'
+                        : ui.connectivity_error_body_offline || 'Sem conexão com a internet. Verifique sua rede e tente novamente.';
+                    alert(alertMessage);
                 }
             });
         }
@@ -2515,10 +2633,11 @@
         overlay.id = 'appNotificationOverlay';
         overlay.className = 'app-notification-overlay';
         overlay.setAttribute('aria-hidden', 'true');
+        overlay.inert = true;
         overlay.innerHTML = `
             <div class="app-notification" role="status" aria-live="polite" aria-atomic="true">
                 <button type="button" class="app-notification__close" aria-label="Fechar">&times;</button>
-                <div class="app-notification__title">NotificaÃ§Ã£o</div>
+                <div class="app-notification__title">Notificação</div>
                 <div class="app-notification__media" hidden></div>
                 <div class="app-notification__message"></div>
                 <div class="app-notification__details" hidden></div>
@@ -2527,8 +2646,12 @@
 
         const closeButton = overlay.querySelector('.app-notification__close');
         const close = () => {
+            if (overlay.contains(document.activeElement)) {
+                document.activeElement.blur();
+            }
             overlay.classList.remove('open');
             overlay.setAttribute('aria-hidden', 'true');
+            overlay.inert = true;
         };
 
         closeButton?.addEventListener('click', close);
@@ -2554,6 +2677,10 @@
         .replace(/'/g, '&#39;');
 
     const showGlobalNotification = (message, type = 'info', options = {}) => {
+        const currentLang = typeof window.getCurrentLanguage === 'function'
+            ? window.getCurrentLanguage()
+            : (document.documentElement.lang || 'pt').slice(0, 2);
+        const ui = window.uiTranslations?.[currentLang] || window.uiTranslations?.pt || {};
         const overlay = ensureGlobalNotification();
         const title = overlay.querySelector('.app-notification__title');
         const body = overlay.querySelector('.app-notification__message');
@@ -2574,7 +2701,10 @@
                 title.hidden = true;
             } else {
                 title.hidden = false;
-                title.textContent = titleText || (type === 'success' ? 'Sucesso' : (type === 'error' ? 'AtenÃ§Ã£o' : 'NotificaÃ§Ã£o'));
+                title.textContent = titleText ||
+                    (type === 'success' ? ui.notification_title_success || 'Sucesso'
+                        : type === 'error' ? ui.notification_title_error || 'Atenção'
+                        : ui.notification_title_info || 'Notificação');
             }
         }
         if (body) {
@@ -2616,14 +2746,19 @@
 
         overlay.classList.add('open');
         overlay.setAttribute('aria-hidden', 'false');
+        overlay.inert = false;
     };
 
     window.showAppNotification = showGlobalNotification;
 
     const openMyReservationsModal = async () => {
+        const currentLang = typeof window.getCurrentLanguage === 'function'
+            ? window.getCurrentLanguage()
+            : (document.documentElement.lang || 'pt').slice(0, 2);
+        const ui = window.uiTranslations?.[currentLang] || window.uiTranslations?.pt || {};
         const tabs = (getCurrentRolePermissions()?.tabs || []).map(tab => String(tab).toUpperCase());
         if (!tabs.includes('MINHAS RESERVAS')) {
-            showGlobalNotification('Seu perfil nÃ£o tem permissÃ£o para acessar Minhas Reservas.', 'error');
+            showGlobalNotification(ui.reservation_access_denied || 'Seu perfil não tem permissão para acessar Minhas Reservas.', 'error');
             return;
         }
 
@@ -2634,11 +2769,11 @@
             modal.className = 'my-reservations-overlay';
             modal.setAttribute('aria-modal', 'true');
             modal.setAttribute('role', 'dialog');
-            modal.setAttribute('aria-label', 'Minhas Reservas');
+            modal.setAttribute('aria-label', ui.reservation_title || 'Minhas Reservas');
             modal.innerHTML = `
                 <div class="my-reservations-modal">
                     <button type="button" class="my-reservations-close" aria-label="Fechar">&times;</button>
-                    <h2 class="my-reservations-title">Minhas Reservas</h2>
+                    <h2 class="my-reservations-title">${ui.reservation_title || 'Minhas Reservas'}</h2>
                     <div class="my-reservations-list"></div>
                 </div>
             `;
@@ -2690,7 +2825,7 @@
                     break;
                 }
             } catch {
-                // tenta prÃ³ximo endpoint
+                // tenta próximo endpoint
             }
             }
         }
@@ -2718,24 +2853,69 @@
         }
 
         listEl.innerHTML = userReservations.map((r) => {
+            const currentLang = typeof window.getCurrentLanguage === 'function'
+                ? window.getCurrentLanguage()
+                : (document.documentElement.lang || 'pt').slice(0, 2);
+            const ui = window.uiTranslations?.[currentLang] || window.uiTranslations?.pt || {};
             const statusRaw = String(r.status || 'Pendente').trim();
             const statusKey = statusRaw.toLowerCase();
-            const statusLabel = statusKey.includes('pendente')
-                ? 'Status: ConfirmaÃ§Ã£o pendente'
-                : `Status: ${escapeHtml(statusRaw)}`;
-            const showActions = true;
+            const isPending = /pendente|pending|pendiente|en attente|in attesa|待定/i.test(statusRaw);
+            const isConfirmed = /confirmado|confirmed|confirmé|confermato|已确认/i.test(statusRaw);
+            const isCancelled = /cancelado|canceled|annulé|anulado|已取消|取消/i.test(statusRaw);
+            const statusText = isPending
+                ? (ui.reservation_status_pending || 'Confirmação pendente')
+                : isConfirmed
+                    ? (ui.reservation_status_confirmed || 'Confirmado')
+                    : isCancelled
+                        ? (ui.reservation_status_cancelled || 'Cancelado')
+                        : escapeHtml(statusRaw);
+            const statusLabel = `${ui.reservation_status_prefix || 'Status:'} ${statusText}`;
+
+            const normalizeText = (value) => String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+            const findTourMapUrl = (reservationTourName) => {
+                const tours = Array.isArray(getTours()) ? getTours() : [];
+                const normalizedReservationTour = normalizeText(reservationTourName);
+                if (!normalizedReservationTour || !tours.length) return '';
+                const match = tours.find((tour) => {
+                    const names = [tour.name, tour.nome_tour, tour.tour, tour.title].filter(Boolean);
+                    return names.some((name) => {
+                        const normalizedName = normalizeText(name);
+                        return normalizedName && (normalizedName.includes(normalizedReservationTour) || normalizedReservationTour.includes(normalizedName));
+                    });
+                });
+                return match ? (match.link || match.link_tour || match.mapUrl || match.url || '') : '';
+            };
+
+            let reservationMapRaw = r.url || r.link || r.mapUrl || r.link_tour || r.coordenadas || r.coordinates || r.coord || r.endereco || r.address || r.local || r.localizacao || r.location || '';
+            if (!reservationMapRaw && r.tour) {
+                reservationMapRaw = findTourMapUrl(r.tour);
+            }
+
+            let reservationMapUrl = '';
+            if (reservationMapRaw) {
+                if (/^https?:\/\//i.test(reservationMapRaw)) {
+                    reservationMapUrl = reservationMapRaw;
+                } else {
+                    const coordinatesMatch = reservationMapRaw.match(/^-?\d+(?:\.\d+)?,\s*-?\d+(?:\.\d+)?$/);
+                    reservationMapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(reservationMapRaw)}`;
+                }
+            }
+
+            const isFinalized = /finalizado|finalized|terminado|terminé|terminado|completed|concluído|concluido|concluída|concluida|conclu|完了|已完成/i.test(statusRaw);
+            const showActions = !(isCancelled || isFinalized);
             return `
             <div class="my-reservations-item" data-reservation-id="${escapeHtml(String(r.id || ''))}">
                 <strong class="my-reservations-tour">${escapeHtml(r.tour || 'â€”')}</strong>
-                <span class="my-reservations-date">Data: ${escapeHtml(r.data || 'â€”')}</span>
-                ${r.hora ? `<span class="my-reservations-detail">Hora: ${escapeHtml(r.hora)}</span>` : ''}
-                ${r.idioma ? `<span class="my-reservations-detail">Idioma: ${escapeHtml(r.idioma)}</span>` : ''}
-                ${r.qtd ? `<span class="my-reservations-detail">Pessoas: ${escapeHtml(String(r.qtd))}</span>` : ''}
+                <span class="my-reservations-date">${ui.reservation_list_date_label || 'Data'}: ${escapeHtml(r.data || 'â€”')}</span>
+                ${r.hora ? `<span class="my-reservations-detail">${ui.reservation_list_time_label || 'Hora'}: ${escapeHtml(r.hora)}</span>` : ''}
+                ${r.idioma ? `<span class="my-reservations-detail">${ui.reservation_list_language_label || 'Idioma'}: ${escapeHtml(r.idioma)}</span>` : ''}
+                ${r.qtd ? `<span class="my-reservations-detail">${ui.reservation_list_people_label || 'Pessoas'}: ${escapeHtml(String(r.qtd))}</span>` : ''}
+                ${reservationMapUrl ? `<span class="my-reservations-detail"><a class="my-reservations-map-link" href="${escapeHtml(reservationMapUrl)}" target="_blank" rel="noopener"><i class="fa fa-map"></i> ${ui.reservation_list_map_link_label || 'Ver no Mapa'}</a></span>` : ''}
                 <span class="my-reservations-status my-reservations-status--${escapeHtml(statusKey)}">${statusLabel}</span>
                 ${showActions ? `
                     <div class="my-reservations-actions">
-                        <button type="button" class="btn-edit-reservation" data-reservation-id="${escapeHtml(String(r.id || ''))}" data-reservation-tour="${escapeHtml(String(r.tour || ''))}" data-reservation-date="${escapeHtml(String(r.data || ''))}" data-reservation-hour="${escapeHtml(String(r.hora || ''))}" data-reservation-people="${escapeHtml(String(r.qtd || '1'))}">Editar</button>
-                        <button type="button" class="btn-cancel-reservation" data-reservation-id="${escapeHtml(String(r.id || ''))}">Cancelar</button>
+                        <button type="button" class="btn-edit-reservation" data-reservation-id="${escapeHtml(String(r.id || ''))}" data-reservation-tour="${escapeHtml(String(r.tour || ''))}" data-reservation-date="${escapeHtml(String(r.data || ''))}" data-reservation-hour="${escapeHtml(String(r.hora || ''))}" data-reservation-people="${escapeHtml(String(r.qtd || '1'))}" data-reservation-language="${escapeHtml(String(r.idioma || r.language || ''))}" data-reservation-modality="${escapeHtml(String(r.modalidade || r.modality || ''))}" data-reservation-guide="${escapeHtml(String(r.guia || r.guide || ''))}" data-reservation-name="${escapeHtml(String(r.nome || r.name || ''))}" data-reservation-phone="${escapeHtml(String(r.celular || r.telefone || r.phone || ''))}" data-reservation-email="${escapeHtml(String(r.email || ''))}" data-reservation-status="${escapeHtml(String(r.status || 'Pendente'))}">${ui.action_edit || 'Editar'}</button>
+                        <button type="button" class="btn-cancel-reservation" data-reservation-id="${escapeHtml(String(r.id || ''))}">${ui.action_cancel || 'Cancelar'}</button>
                     </div>
                 ` : ''}
             </div>
@@ -2757,30 +2937,43 @@
             let overlayEl = document.getElementById('reservationEditOverlay');
             if (overlayEl) return overlayEl;
 
+            const currentLang = typeof window.getCurrentLanguage === 'function'
+                ? window.getCurrentLanguage()
+                : (document.documentElement.lang || 'pt').slice(0, 2);
+            const ui = window.uiTranslations?.[currentLang] || window.uiTranslations?.pt || {};
+
             overlayEl = document.createElement('div');
             overlayEl.id = 'reservationEditOverlay';
             overlayEl.className = 'reservation-edit-overlay';
             overlayEl.innerHTML = `
-                <div class="reservation-edit-modal" role="dialog" aria-modal="true" aria-label="Editar reserva">
-                    <button type="button" class="reservation-edit-close" aria-label="Fechar">&times;</button>
-                    <h3 class="reservation-edit-title">Editar Reserva</h3>
+                <div class="reservation-edit-modal" role="dialog" aria-modal="true" aria-label="${ui.reservation_edit_title || 'Editar reserva'}">
+                    <button type="button" class="reservation-edit-close" aria-label="${ui.reservation_edit_close_label || 'Fechar'}">&times;</button>
+                    <h3 class="reservation-edit-title">${ui.reservation_edit_title || 'Editar Reserva'}</h3>
                     <form class="reservation-edit-form">
                         <input type="hidden" name="reservationId">
+                        <input type="hidden" name="reservationTour">
+                        <input type="hidden" name="reservationLanguage">
+                        <input type="hidden" name="reservationModality">
+                        <input type="hidden" name="reservationGuide">
+                        <input type="hidden" name="reservationName">
+                        <input type="hidden" name="reservationPhone">
+                        <input type="hidden" name="reservationEmail">
+                        <input type="hidden" name="reservationStatus">
                         <label>
-                            Data
+                            ${ui.reservation_edit_date_label || 'Data'}
                             <input type="date" name="date" required>
                         </label>
                         <label>
-                            Hora
+                            ${ui.reservation_edit_time_label || 'Hora'}
                             <input type="time" name="hour" required>
                         </label>
                         <label>
-                            Quantidade de pessoas
+                            ${ui.reservation_edit_people_label || 'Quantidade de pessoas'}
                             <input type="number" name="people" min="1" step="1" required>
                         </label>
                         <div class="reservation-edit-actions">
-                            <button type="button" class="reservation-edit-cancel">Cancelar</button>
-                            <button type="submit" class="reservation-edit-save">Salvar alteraÃ§Ãµes</button>
+                            <button type="button" class="reservation-edit-cancel">${ui.reservation_edit_cancel_btn || 'Cancelar'}</button>
+                            <button type="submit" class="reservation-edit-save">${ui.reservation_edit_save_btn || 'Salvar alterações'}</button>
                         </div>
                     </form>
                 </div>
@@ -2800,37 +2993,50 @@
                 const data = formEl.elements.date.value;
                 const hora = formEl.elements.hour.value;
                 const quantas_pessoas = Number(formEl.elements.people.value || 0);
+                const currentUserEmail = localStorage.getItem('userEmail') || '';
 
                 if (!id || !data || !hora || !quantas_pessoas || quantas_pessoas < 1) {
-                    showGlobalNotification('Preencha os dados de ediÃ§Ã£o corretamente.', 'error');
+                    showGlobalNotification('Preencha os dados de edição corretamente.', 'error');
                     return;
                 }
 
-                const payload = { id, data, hora, quantas_pessoas };
-                const endpointsUpdate = [
-                    `${API_BASE_URL}/update_agendamento`,
-                    'http://127.0.0.1:5000/update_agendamento',
-                    'https://api.exksvol.com/update_agendamento'
-                ];
+                if (!currentUserEmail) {
+                    showGlobalNotification('É necessário fazer login para atualizar a reserva.', 'error');
+                    return;
+                }
 
+                const payload = {
+                    id,
+                    tour: formEl.elements.reservationTour.value || undefined,
+                    data,
+                    hora,
+                    idioma: formEl.elements.reservationLanguage.value || undefined,
+                    modalidade: formEl.elements.reservationModality.value || undefined,
+                    guia: formEl.elements.reservationGuide.value || undefined,
+                    quantas_pessoas,
+                    pessoas: '',
+                    nome: formEl.elements.reservationName.value || currentUserEmail,
+                    celular: formEl.elements.reservationPhone.value || '',
+                    email: formEl.elements.reservationEmail.value || currentUserEmail,
+                    status: formEl.elements.reservationStatus.value || 'Pendente',
+                    admin_email: currentUserEmail
+                };
                 let updated = false;
-                for (const endpoint of endpointsUpdate) {
-                    try {
-                        const response = await fetch(endpoint, {
-                            method: 'PUT',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(payload)
-                        });
-                        if (response.ok) {
-                            const result = await response.json();
-                            if (result.success) {
-                                updated = true;
-                                break;
-                            }
-                        }
-                    } catch (err) {
-                        console.warn('AtualizaÃ§Ã£o falhou em', endpoint, err);
+                let lastErrorCause = null;
+                try {
+                    const result = await apiFetch('/update_agendamento', {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (result?.success) {
+                        updated = true;
+                    } else {
+                        lastErrorCause = result?.message || 'Resposta sem sucesso ao atualizar a reserva.';
                     }
+                } catch (err) {
+                    console.warn('Atualização falhou em /update_agendamento', err);
+                    lastErrorCause = err.message || String(err);
                 }
 
                 if (updated) {
@@ -2838,7 +3044,7 @@
                     showGlobalNotification('Reserva atualizada com sucesso.', 'success');
                     openMyReservationsModal();
                 } else {
-                    showGlobalNotification('NÃ£o foi possÃ­vel atualizar a reserva. Tente novamente.', 'error');
+                    showGlobalNotification(lastErrorCause || 'Não foi possível atualizar a reserva. Tente novamente.', 'error');
                 }
             });
 
@@ -2852,40 +3058,36 @@
                 e.stopPropagation();
                 const id = button.getAttribute('data-reservation-id');
                 if (!id) return;
-                if (!confirm('Deseja cancelar esta reserva? Clique em OK para continuar.')) return;
-                if (!confirm('Confirma novamente: realmente deseja cancelar a reserva?')) return;
+                const currentLang = typeof window.getCurrentLanguage === 'function'
+                    ? window.getCurrentLanguage()
+                    : (document.documentElement.lang || 'pt').slice(0, 2);
+                const ui = window.uiTranslations?.[currentLang] || window.uiTranslations?.pt || {};
+                if (!confirm(ui.reservation_confirm_cancel_prompt || 'Deseja cancelar esta reserva? Clique em OK para continuar.')) return;
+                if (!confirm(ui.reservation_confirm_cancel_again_prompt || 'Confirma novamente: realmente deseja cancelar a reserva?')) return;
 
-                const endpointsDelete = [
-                    `${API_BASE_URL}/delete_agendamento`,
-                    'http://127.0.0.1:5000/delete_agendamento',
-                    'https://api.exksvol.com/delete_agendamento'
-                ];
-
-                let deleted = false;
-                for (const endpoint of endpointsDelete) {
-                    try {
-                        const response = await fetch(endpoint, {
-                            method: 'DELETE',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ id })
-                        });
-                        if (response.ok) {
-                            const result = await response.json();
-                            if (result.success) {
-                                deleted = true;
-                                break;
-                            }
-                        }
-                    } catch (err) {
-                        console.warn('Cancelamento falhou em', endpoint, err);
-                    }
+                const currentUserEmail = localStorage.getItem('userEmail') || '';
+                if (!currentUserEmail) {
+                    showGlobalNotification(ui.reservation_cancel_failed || 'Não foi possível cancelar a reserva. Tente novamente.', 'error');
+                    return;
                 }
 
-                if (deleted) {
-                    showGlobalNotification('Reserva cancelada com sucesso.', 'success');
+                let updated = false;
+                try {
+                    const result = await apiFetch('/update_agendamento', {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id, status: 'Cancelado', admin_email: currentUserEmail })
+                    });
+                    updated = Boolean(result?.success);
+                } catch (err) {
+                    console.warn('Cancelamento falhou em /update_agendamento', err);
+                }
+
+                if (updated) {
+                    showGlobalNotification(ui.reservation_cancel_success || 'Reserva cancelada com sucesso.', 'success');
                     openMyReservationsModal();
                 } else {
-                    showGlobalNotification('NÃ£o foi possÃ­vel cancelar a reserva. Tente novamente.', 'error');
+                    showGlobalNotification(ui.reservation_cancel_failed || 'Não foi possível cancelar a reserva. Tente novamente.', 'error');
                 }
             });
         });
@@ -2905,6 +3107,14 @@
                 if (!formEl) return;
 
                 formEl.elements.reservationId.value = String(id);
+                formEl.elements.reservationTour.value = button.getAttribute('data-reservation-tour') || '';
+                formEl.elements.reservationLanguage.value = button.getAttribute('data-reservation-language') || '';
+                formEl.elements.reservationModality.value = button.getAttribute('data-reservation-modality') || '';
+                formEl.elements.reservationGuide.value = button.getAttribute('data-reservation-guide') || '';
+                formEl.elements.reservationName.value = button.getAttribute('data-reservation-name') || '';
+                formEl.elements.reservationPhone.value = button.getAttribute('data-reservation-phone') || '';
+                formEl.elements.reservationEmail.value = button.getAttribute('data-reservation-email') || '';
+                formEl.elements.reservationStatus.value = button.getAttribute('data-reservation-status') || 'Pendente';
                 formEl.elements.date.value = currentDate;
                 formEl.elements.hour.value = currentHour;
                 formEl.elements.people.value = String(currentPeople);
@@ -3008,12 +3218,16 @@
                 }
 
                 if (updated) {
+                    const currentLang = typeof window.getCurrentLanguage === 'function'
+                        ? window.getCurrentLanguage()
+                        : (document.documentElement.lang || 'pt').slice(0, 2);
+                    const ui = window.uiTranslations?.[currentLang] || window.uiTranslations?.pt || {};
                     localStorage.setItem('userName', payload.nome || email);
                     localStorage.setItem('userPhone', payload.celular || '');
                     localStorage.setItem('userSobrenome', payload.sobrenome || '');
                     localStorage.setItem('userPais', payload.pais_origem || '');
                     localStorage.setItem('userGenero', payload.genero || '');
-                    showGlobalNotification('Dados atualizados com sucesso.', 'success');
+                    showGlobalNotification(ui.data_updated_success || 'Dados atualizados com sucesso.', 'success');
                     if (typeof window.updateProfileMenuUI === 'function') {
                         window.updateProfileMenuUI();
                     }
@@ -3114,9 +3328,13 @@
             const userEmail = localStorage.getItem('userEmail');
             const userName = localStorage.getItem('userName');
             const userPhone = localStorage.getItem('userPhone');
+            const currentLang = typeof window.getCurrentLanguage === 'function'
+                ? window.getCurrentLanguage()
+                : (document.documentElement.lang || 'pt').slice(0, 2);
+            const ui = window.uiTranslations?.[currentLang] || window.uiTranslations?.pt || {};
 
             if (!userRole || !userEmail) {
-                showGlobalNotification('Ã‰ necessÃ¡rio realizar login para fazer uma reserva.', 'error');
+                showGlobalNotification(ui.reservation_login_required || 'É necessário realizar login para fazer uma reserva.', 'error');
                 return;
             }
 
@@ -3201,6 +3419,18 @@
                 const language = reservationLanguage.value;
                 const phone = reservationPhone.value.trim();
                 const email = reservationEmail.value.trim();
+                const currentLang = typeof window.getCurrentLanguage === 'function'
+                    ? window.getCurrentLanguage()
+                    : (document.documentElement.lang || 'pt').slice(0, 2);
+                const ui = window.uiTranslations?.[currentLang] || window.uiTranslations?.pt || {};
+
+                if (!navigator.onLine) {
+                    showGlobalNotification(ui.connectivity_error_body_offline || 'Sem conexão com a internet. Verifique sua rede e tente novamente.', 'error', {
+                        titleText: ui.connectivity_error_title || 'Erro de conexão',
+                        gifUrl: 'imagem/assets/erro.gif'
+                    });
+                    return;
+                }
 
                 const guideName = 'N/S';
                 const modality = 'privado';
@@ -3273,19 +3503,23 @@
                         await sendReservationToApi(endpoint);
                         const [yyyy, mm, dd] = date.split('-');
                         const formattedDate = (dd && mm && yyyy) ? `${dd}/${mm}/${yyyy}` : date;
-                        const safeMeetingPoint = escapeHtml(selectedMeetingPoint || 'Conforme descriÃ§Ã£o do tour');
+                        const currentLang = typeof window.getCurrentLanguage === 'function'
+                            ? window.getCurrentLanguage()
+                            : (document.documentElement.lang || 'pt').slice(0, 2);
+                        const ui = window.uiTranslations?.[currentLang] || window.uiTranslations?.pt || {};
+                        const safeMeetingPoint = escapeHtml(selectedMeetingPoint || 'Conforme descrição do tour');
                         const safeDate = escapeHtml(formattedDate);
                         const safeTime = escapeHtml(defaultTime);
                         const detailsHtml = `
                             <ul class="app-notification__summary">
-                                <li><strong>Data:</strong> ${safeDate}</li>
-                                <li><strong>Hora:</strong> ${safeTime}</li>
-                                <li><strong>Local de encontro:</strong> ${safeMeetingPoint}</li>
+                                <li><strong>${ui.booking_success_detail_date || 'Data:'}</strong> ${safeDate}</li>
+                                <li><strong>${ui.booking_success_detail_time || 'Hora:'}</strong> ${safeTime}</li>
+                                <li><strong>${ui.booking_success_detail_meeting_point || 'Local de encontro:'}</strong> ${safeMeetingPoint}</li>
                             </ul>
-                            <p class="app-notification__hint">Fique atento ao meio de contato cadastrado. Nossa equipe entrarÃ¡ em contato para confirmar.</p>
+                            <p class="app-notification__hint">${ui.booking_success_hint || 'Fique atento ao meio de contato cadastrado. Nossa equipe entrará em contato para confirmar.'}</p>
                         `;
 
-                        showGlobalNotification('Reserva concluÃ­da com sucesso.', 'success', {
+                        showGlobalNotification(ui.booking_success_title || 'Reserva concluída com sucesso.', 'success', {
                             titleText: '',
                             gifUrl: 'imagem/assets/certo.mp4',
                             detailsHtml
@@ -3301,7 +3535,7 @@
 
                 if (!saved) {
                     console.error('Todos endpoints falharam:', firstError);
-                    showGlobalNotification('NÃ£o foi possÃ­vel enviar a reserva ao servidor. Por favor, tente novamente mais tarde.', 'error');
+                    showGlobalNotification(ui.reservation_send_error || 'Não foi possível enviar a reserva ao servidor. Por favor, verifique a conexão e tente novamente mais tarde.', 'error');
                 }
             });
         }
@@ -3343,15 +3577,19 @@
         initReservationTracking();
         initFooterInfo();
 
-        // Importa tours do banco para renderizar os cards da homepage.
-        window.carregarToursDoBanco().catch(() => {
-            if (typeof syncToursFromIndex === 'function') {
-                syncToursFromIndex();
+        const initializePageContent = async () => {
+            try {
+                await window.carregarToursDoBanco();
+            } catch {
+                if (typeof syncToursFromIndex === 'function') {
+                    syncToursFromIndex();
+                }
+            } finally {
+                dispatchLanguageChange(getCurrentLang());
             }
-        });
+        };
 
-        // Trigger initial language event so pages can format text on load
-        dispatchLanguageChange(getCurrentLang());
+        initializePageContent();
     });
 })();
 
